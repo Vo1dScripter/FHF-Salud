@@ -1,0 +1,16 @@
+{
+  "entries": {
+    "og.jpg": {
+      "config_hash": "3c960663c84e83085255f1618cba9ff8c68fd8822aac21d0ffde170fdf05c505",
+      "outputs": [
+        "og/og.jpg"
+      ],
+      "source_hash": "d8c865cc6a29ca92538372cecbf6d891ca261a983109f1a2863871b178da75ee",
+      "source_mtime_ns": 1773982359003264822,
+      "source_size": 318074
+    }
+  },
+  "kind": "og",
+  "schema_version": 2,
+  "script_version": "2.0.0"
+}

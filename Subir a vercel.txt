@@ -1,0 +1,39 @@
+Primero quitar todos los procesos como npm run dev, luego cerrar VSC y abrir powershell como administrador, luego poner los siguientes comandos:
+
+✅ 1. Comandos para actualizar tu proyecto
+📁 Paso 1: Ir a tu carpeta del proyecto
+
+      cd C:\Users\rodri\Desktop\Web\PurosHabanosPapa
+
+🧹 Paso 2: (opcional) Borrar la carpeta .next si querés limpiar antes del build
+
+      Remove-Item -Recurse -Force .next
+
+Esto no siempre es necesario, pero ayuda si se quedó colgado algo.
+
+⚙️ Paso 3: Compilar para producción
+
+      npm run build
+
+Vercel va a hacer esto automáticamente, pero podés hacerlo localmente para asegurarte de que todo funcione.
+
+📤 Paso 4: Subir los cambios a GitHub
+
+      git status
+
+      git add .
+
+      git commit -m "Actualización de número"
+
+      git push
+
+
+Si algo no se está actualizando bien, usar el comando:
+
+      pnpm install
+
+      git add pnpm-lock.yaml
+
+      git commit -m "fix: update lockfile"
+
+      git push

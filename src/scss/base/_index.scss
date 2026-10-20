@@ -1,0 +1,12 @@
+@forward '_importacionesfonts'; // Hace  referencia al archivo de __importacionesfonts.scss
+@forward 'variables'; // Hace  referencia al archivo de _variables.scss
+@forward 'mixins'; // Hace  referencia al archivo de _mixins.scss
+@forward 'normalize'; // Hace  referencia al archivo de _normalize.scss
+@forward 'globales'; // Hace  referencia al archivo de _globales.scss
+@forward 'Motion'; // Sistema unificado para reveals y animaciones de texto
+@forward 'QuickNav'; // Maquetador rapido de navegacion reutilizable
+@forward 'Toolkit'; // Componentes rapidos para secciones, media, formularios y UI
+@forward 'animaciones'; // Hace  referencia al archivo de _animaciones.scss
+
+// Deben estar en orden de importancia, por ejemplo si el archivo de abajo depende de otro archivo, el otro
+// debe ir arriba para que se pueda cargar correctamente.

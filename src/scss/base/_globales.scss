@@ -1,0 +1,78 @@
+/* Datos globales */
+@use 'variables' as v; // Hace  referencia al archivo de _variables.scss
+
+html {
+  font-size: 62.5%; /*Configuración para que 1rem= 10px tamaño: max-width: 120rem;*/
+  box-sizing: border-box; /* Ajusta el html para que la suma del padding entre otras cosas, no afecte el tamaño original */
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit; /* Ajusta el html para que la suma del padding entre otras cosas, no afecte el tamaño original */
+}
+body {
+  font-size: 1.6rem;
+  font-family: v.$fuente_principal;
+  line-height: 2;
+  // background-color: v.$VerdeObscuro;
+}
+.contenedor {
+  max-width: 120rem;
+  width: 95%;
+  margin: 0 auto;
+}
+a {
+  text-decoration: none;
+}
+h1,
+h2,
+h3 {
+  margin: 0 0 5rem 0;
+}
+h1 {
+  font-size: 4rem;
+}
+h2 {
+  font-size: 3.6rem;
+}
+h3 {
+  font-size: 3rem;
+}
+h4 {
+  font-size: 2.8rem;
+}
+h5 {
+  font-size: 2.4rem;
+}
+h6 {
+  font-size: 1.8rem;
+}
+p {
+  font-size: 2rem;
+  color: v.$negro;
+}
+img {
+  max-width: 100%;
+}
+/** Utilidades **/
+.no-margin {
+  margin: 0;
+}
+.no-padding {
+  padding: 0;
+}
+.centrar-texto {
+  text-align: center;
+}
+.div-img-grid-responsive {
+  width: 100%;
+  height: auto;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center; /*Centrado vertical y centrado horizontal*/
+}
+.img-grid-responsive {
+  max-width: 100%;
+  max-height: auto;
+  object-fit: cover;
+}

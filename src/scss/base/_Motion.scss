@@ -1,0 +1,299 @@
+.motion-reveal,
+.motion-text__token {
+  will-change: transform, opacity, filter;
+}
+
+.motion-reveal {
+  --motion-delay: 0ms;
+  --motion-distance: 24px;
+  --motion-duration: 720ms;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-rotate: 12deg;
+  --motion-scale: 0.88;
+
+  opacity: 0;
+  transition:
+    opacity var(--motion-duration) var(--motion-ease),
+    transform var(--motion-duration) var(--motion-ease),
+    filter var(--motion-duration) var(--motion-ease);
+  transition-delay: var(--motion-delay);
+}
+
+.motion-reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  filter: blur(0);
+}
+
+.motion-reveal.motion-disabled,
+.motion-text.motion-disabled .motion-text__token {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition: none;
+}
+
+.motion-reveal--fade-up {
+  transform: translate3d(0, var(--motion-distance), 0);
+}
+
+.motion-reveal--fade-down {
+  transform: translate3d(0, calc(var(--motion-distance) * -1), 0);
+}
+
+.motion-reveal--fade-left {
+  transform: translate3d(calc(var(--motion-distance) * -1), 0, 0);
+}
+
+.motion-reveal--fade-right {
+  transform: translate3d(var(--motion-distance), 0, 0);
+}
+
+.motion-reveal--blur-up {
+  filter: blur(14px);
+  transform: translate3d(0, var(--motion-distance), 0);
+}
+
+.motion-reveal--blur-down {
+  filter: blur(14px);
+  transform: translate3d(0, calc(var(--motion-distance) * -1), 0);
+}
+
+.motion-reveal--scale {
+  transform: scale(var(--motion-scale));
+}
+
+.motion-reveal--pop {
+  transform: translate3d(0, var(--motion-distance), 0)
+    scale(var(--motion-scale));
+}
+
+.motion-reveal--rotate {
+  transform: translate3d(0, var(--motion-distance), 0)
+    rotate(calc(var(--motion-rotate) * -1));
+  transform-origin: left bottom;
+}
+
+.motion-text {
+  --motion-delay: 0ms;
+  --motion-distance: 20px;
+  --motion-duration: 700ms;
+  --motion-edge-distance: calc(50vw + 100%);
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-rotate: 14deg;
+  --motion-scale: 0.78;
+  --motion-stagger: 70ms;
+}
+
+.motion-text__token,
+.motion-text__space {
+  display: inline-block;
+}
+
+.motion-text__space {
+  white-space: pre;
+}
+
+.motion-text__token {
+  opacity: 0;
+  transition:
+    opacity var(--motion-duration) var(--motion-ease),
+    transform var(--motion-duration) var(--motion-ease),
+    filter var(--motion-duration) var(--motion-ease);
+  transition-delay: calc(
+    var(--motion-delay) + (var(--motion-index) * var(--motion-stagger))
+  );
+}
+
+.motion-text.is-visible .motion-text__token {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  filter: blur(0);
+}
+
+.motion-text--fade .motion-text__token {
+  transform: none;
+}
+
+.motion-text--slide-up .motion-text__token {
+  transform: translate3d(0, var(--motion-distance), 0);
+}
+
+.motion-text--slide-down .motion-text__token {
+  transform: translate3d(0, calc(var(--motion-distance) * -1), 0);
+}
+
+.motion-text--blur-up .motion-text__token {
+  filter: blur(12px);
+  transform: translate3d(0, var(--motion-distance), 0);
+}
+
+.motion-text--blur-down .motion-text__token {
+  filter: blur(12px);
+  transform: translate3d(0, calc(var(--motion-distance) * -1), 0);
+}
+
+.motion-text--edge-left .motion-text__token {
+  transform: translate3d(calc(var(--motion-edge-distance) * -1), 0, 0);
+}
+
+.motion-text--edge-right .motion-text__token {
+  transform: translate3d(var(--motion-edge-distance), 0, 0);
+}
+
+.motion-text--flip .motion-text__token {
+  transform: perspective(900px) rotateX(-90deg);
+  transform-origin: 50% 100%;
+}
+
+.motion-text--scale .motion-text__token {
+  transform: scale(var(--motion-scale));
+}
+
+.motion-text--swing .motion-text__token {
+  transform: translate3d(0, calc(var(--motion-distance) * -1), 0)
+    rotate(calc(var(--motion-rotate) * -1));
+  transform-origin: left bottom;
+}
+
+.motion-text--mask-up,
+.motion-text--clip-reveal {
+  overflow: hidden;
+}
+
+.motion-text--mask-up .motion-text__token {
+  transform: translate3d(0, 110%, 0);
+}
+
+.motion-text--clip-reveal .motion-text__token {
+  clip-path: inset(0 100% 0 0);
+  transform: translate3d(0, var(--motion-distance), 0);
+  transition:
+    opacity var(--motion-duration) var(--motion-ease),
+    transform var(--motion-duration) var(--motion-ease),
+    clip-path var(--motion-duration) var(--motion-ease),
+    filter var(--motion-duration) var(--motion-ease);
+}
+
+.motion-text--clip-reveal.is-visible .motion-text__token {
+  clip-path: inset(0);
+}
+
+.motion-text--wave .motion-text__token {
+  transform: translate3d(0, var(--motion-distance), 0) rotate(6deg);
+  transform-origin: 50% 100%;
+}
+
+.motion-text--scramble .motion-text__token {
+  filter: blur(8px);
+  transform: translate3d(0, calc(var(--motion-distance) * 0.5), 0);
+}
+
+.motion-text--typewriter .motion-text__token {
+  transform: translate3d(0, 0, 0);
+}
+
+.motion-text--highlight-sweep .motion-text__token {
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--motion-highlight-color, rgba(250, 204, 21, 0.55)) 45%,
+    transparent 100%
+  );
+  background-position: 100% 100%;
+  background-repeat: no-repeat;
+  background-size: 240% 0.45em;
+  transform: translate3d(0, var(--motion-distance), 0);
+  transition:
+    opacity var(--motion-duration) var(--motion-ease),
+    transform var(--motion-duration) var(--motion-ease),
+    background-position var(--motion-duration) var(--motion-ease),
+    filter var(--motion-duration) var(--motion-ease);
+}
+
+.motion-text--highlight-sweep.is-visible .motion-text__token {
+  background-position: 0 100%;
+}
+
+.motion-typewriter.has-cursor::after {
+  animation: motion-cursor-blink 0.9s steps(2, start) infinite;
+  content: '|';
+  margin-left: 0.08em;
+}
+
+.motion-scramble {
+  font-variant-numeric: tabular-nums;
+}
+
+.motion-group {
+  --motion-delay: 0ms;
+  --motion-duration: 720ms;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-stagger: 90ms;
+}
+
+.motion-group__item {
+  display: block;
+  opacity: 0;
+  transition:
+    opacity var(--motion-duration) var(--motion-ease),
+    transform var(--motion-duration) var(--motion-ease),
+    filter var(--motion-duration) var(--motion-ease);
+  transition-delay: calc(
+    var(--motion-delay) + (var(--motion-index) * var(--motion-stagger))
+  );
+}
+
+.motion-group.is-visible .motion-group__item,
+.motion-group.motion-disabled .motion-group__item {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+.motion-group.motion-disabled .motion-group__item {
+  transition: none;
+}
+
+.motion-group--fade-up .motion-group__item {
+  transform: translate3d(0, 24px, 0);
+}
+
+.motion-group--slide-left .motion-group__item {
+  transform: translate3d(-24px, 0, 0);
+}
+
+.motion-group--slide-right .motion-group__item {
+  transform: translate3d(24px, 0, 0);
+}
+
+.motion-group--scale .motion-group__item {
+  transform: scale(0.94);
+}
+
+@keyframes motion-cursor-blink {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  46%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-reveal,
+  .motion-text__token,
+  .motion-group__item {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition-duration: 1ms;
+    transition-delay: 0ms;
+  }
+
+  .motion-typewriter.has-cursor::after {
+    animation: none;
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "entries": {
+    "concierto.mp4": {
+      "config_hash": "718af6232159ef0d195ec4f8dece6b82ab645b0b4c669c435908a4c83cfb96f6",
+      "outputs": [
+        "videos/concierto.mp4",
+        "videos/concierto.webm",
+        "videos/concierto.ogg",
+        "gif/concierto.gif"
+      ],
+      "source_hash": "9f5ca1189ddd69697fb94e6278b3f1ec51fa8c2b10e6785ae6e8efbea198a04a",
+      "source_mtime_ns": 1773982359009264805,
+      "source_size": 4631422
+    }
+  },
+  "kind": "videos",
+  "schema_version": 2,
+  "script_version": "2.0.0"
+}
