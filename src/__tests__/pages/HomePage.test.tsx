@@ -3,19 +3,21 @@ import { render, screen } from '@testing-library/react';
 import HomePage from '@/app/page';
 
 describe('Homepage', () => {
-  it('renders the Components', () => {
+  it('renders the FHF Salud entry point', () => {
     render(<HomePage />);
 
     const heading = screen.getByRole('heading', {
-      name: /mi sitio con next\.js/i,
+      name: /atención organizada desde la primera cita/i,
     });
 
     expect(heading).toBeInTheDocument();
-    expect(screen.getByText(/galería de animaciones/i)).toBeInTheDocument();
     expect(
       screen.getByRole('heading', {
-        name: /cada bloque muestra un preset en pantalla completa/i,
+        name: /lista para su siguiente etapa de construcción/i,
       }),
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: /citas médicas/i }),
+    ).toHaveAttribute('href', '#citas');
   });
 });
