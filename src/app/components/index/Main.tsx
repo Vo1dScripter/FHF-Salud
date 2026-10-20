@@ -1,167 +1,125 @@
-import { QuickNav } from '@/components/navigation';
-
-const navItems = [
-  { href: '#inicio', label: 'Inicio' },
-  { href: '#modulos', label: 'Módulos' },
-  { href: '#citas', label: 'Citas médicas' },
-];
-
-const modules = [
+const areas = [
   {
     description:
-      'La estructura inicial deja listo el punto de integración para el registro y consulta de pacientes.',
+      'Una base preparada para identificar y consultar información cuando se integre el registro.',
+    eyebrow: '01',
     title: 'Pacientes',
   },
   {
     description:
-      'Los médicos tendrán un contrato propio para que su información no se mezcle con la agenda.',
-    title: 'Médicos',
+      'Un contrato independiente para mantener la información profesional separada de la agenda.',
+    eyebrow: '02',
+    title: 'Profesionales',
   },
   {
     description:
-      'Las citas ya cuentan con estados, duración y una interfaz de persistencia definida para su futura implementación.',
+      'Estados y duración definidos para construir después el flujo de programación y seguimiento.',
+    eyebrow: '03',
     title: 'Citas médicas',
   },
 ];
 
 export default function Main() {
   return (
-    <main className='w-full overflow-x-clip bg-slate-50 text-slate-900'>
-      <section className='border-b border-teal-950/10 bg-slate-950 px-4 py-4 text-white sm:px-6'>
-        <QuickNav
-          brand='FHF Salud'
-          cta={{ href: '#citas', label: 'Ver preparación' }}
-          items={navItems}
-          variant='floating'
-        />
-      </section>
-
-      <section
-        className='border-b border-teal-950/10 bg-[radial-gradient(circle_at_83%_22%,rgba(45,212,191,0.18),transparent_22rem),linear-gradient(135deg,#f0fdfa_0%,#f8fafc_54%,#ecfeff_100%)] px-6 py-16 sm:px-10 lg:px-14 lg:py-24'
-        id='inicio'
-      >
-        <div className='mx-auto grid max-w-6xl gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)] lg:items-end'>
-          <div>
-            <p className='text-xs font-bold tracking-[0.24em] text-teal-700 uppercase'>
-              Sistema de gestión médica
-            </p>
-            <h1
-              className='mt-5 max-w-3xl font-semibold tracking-tight text-slate-950'
-              style={{
-                fontSize: 'clamp(2.75rem, 8vw, 5rem)',
-                lineHeight: 0.95,
-              }}
-            >
-              Atención organizada desde la primera cita.
+    <main className='fhf-page'>
+      <section className='fhf-hero' id='inicio'>
+        <div className='fhf-shell fhf-hero__grid'>
+          <div className='fhf-hero__copy'>
+            <p className='fhf-eyebrow'>Sistema de gestión médica</p>
+            <h1>
+              Una atención más clara empieza con una cita bien organizada.
             </h1>
-            <p className='mt-6 max-w-2xl text-lg leading-8 text-slate-600 sm:text-xl'>
-              FHF Salud reúne las bases para gestionar pacientes, médicos y
-              citas médicas con una estructura clara y preparada para crecer.
+            <p className='fhf-lead'>
+              FHF Salud establece una base confiable para conectar pacientes,
+              profesionales y citas en las siguientes etapas del proyecto.
             </p>
-            <a
-              className='mt-8 inline-flex items-center rounded-full text-sm font-bold text-white transition focus-visible:outline-none'
-              href='#citas'
-              style={{
-                backgroundColor: '#0f172a',
-                minHeight: '44px',
-                padding: '0.75rem 1.5rem',
-              }}
-            >
-              Conocer el módulo de citas
+            <a className='fhf-button' href='#alcance'>
+              Conocer el alcance
+              <span aria-hidden='true'>↓</span>
             </a>
           </div>
 
-          <aside
-            className='border-l-4 border-teal-600 bg-white px-6 py-7 shadow-sm'
-            aria-label='Estado del proyecto'
-          >
-            <p className='text-sm font-bold tracking-[0.18em] text-teal-700 uppercase'>
-              Primer avance
+          <aside className='fhf-status' aria-label='Estado del primer avance'>
+            <p className='fhf-status__eyebrow'>Primer avance</p>
+            <p className='fhf-status__title'>
+              La estructura ya está lista para crecer.
             </p>
-            <p className='mt-4 text-2xl font-semibold text-slate-900'>
-              Base técnica preparada
+            <p className='fhf-status__copy'>
+              Preparamos contratos y puntos de integración sin exponer datos
+              médicos ni adelantar funcionalidades que aún no existen.
             </p>
-            <p className='mt-3 text-base leading-7 text-slate-600'>
-              La interfaz de gestión se construirá sobre contratos estables, sin
-              comprometer todavía datos reales ni una tecnología de
-              persistencia.
-            </p>
+            <dl className='fhf-status__list'>
+              <div>
+                <dt>Base técnica</dt>
+                <dd>Preparada</dd>
+              </div>
+              <div>
+                <dt>Datos clínicos</dt>
+                <dd>No incluidos</dd>
+              </div>
+            </dl>
           </aside>
         </div>
       </section>
 
-      <section className='px-6 py-16 sm:px-10 lg:px-14 lg:py-20' id='modulos'>
-        <div className='mx-auto max-w-6xl'>
-          <div className='max-w-2xl'>
-            <p className='text-xs font-bold tracking-[0.24em] text-teal-700 uppercase'>
-              Organización inicial
+      <section className='fhf-section' id='alcance'>
+        <div className='fhf-shell'>
+          <div className='fhf-section__heading'>
+            <p className='fhf-eyebrow'>Alcance del avance</p>
+            <h2>Tres áreas que compartirán una misma base de trabajo.</h2>
+            <p>
+              La organización inicial reduce cambios de nombre y estructura
+              cuando el equipo incorpore los flujos funcionales.
             </p>
-            <h2
-              className='mt-4 font-semibold tracking-tight text-slate-950'
-              style={{
-                fontSize: 'clamp(2.25rem, 6vw, 4rem)',
-                lineHeight: 0.98,
-              }}
-            >
-              Tres áreas, una misma base de trabajo.
-            </h2>
           </div>
 
-          <div className='mt-10 grid gap-px overflow-hidden border border-slate-200 bg-slate-200 md:grid-cols-3'>
-            {modules.map((module, index) => (
-              <article className='bg-white p-7 sm:p-8' key={module.title}>
-                <p className='text-sm font-bold text-teal-700'>0{index + 1}</p>
-                <h3 className='mt-8 text-2xl font-semibold text-slate-900'>
-                  {module.title}
-                </h3>
-                <p className='mt-4 leading-7 text-slate-600'>
-                  {module.description}
-                </p>
+          <div className='fhf-areas'>
+            {areas.map((area) => (
+              <article className='fhf-area' key={area.title}>
+                <p className='fhf-area__number'>{area.eyebrow}</p>
+                <h3>{area.title}</h3>
+                <p>{area.description}</p>
               </article>
             ))}
           </div>
         </div>
       </section>
 
-      <section
-        className='bg-slate-950 px-6 py-16 text-white sm:px-10 lg:px-14 lg:py-20'
-        id='citas'
-      >
-        <div className='mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.72fr)] lg:items-center'>
-          <div>
-            <p className='text-xs font-bold tracking-[0.24em] text-teal-300 uppercase'>
-              Gestión de citas médicas
-            </p>
-            <h2
-              className='mt-4 font-semibold tracking-tight'
-              style={{
-                fontSize: 'clamp(2.25rem, 6vw, 4rem)',
-                lineHeight: 0.98,
-              }}
-            >
-              Lista para su siguiente etapa de construcción.
-            </h2>
-            <p className='mt-5 max-w-2xl text-lg leading-8 text-slate-300'>
-              El proyecto ya establece cómo identificar pacientes y médicos, y
-              cómo representar una cita, sus estados y las operaciones que
-              llegarán en las siguientes iteraciones.
+      <section className='fhf-roadmap' id='siguiente-etapa'>
+        <div className='fhf-shell fhf-roadmap__grid'>
+          <div className='fhf-roadmap__intro'>
+            <p className='fhf-eyebrow'>Siguiente etapa</p>
+            <h2>La gestión de citas se construirá sobre esta preparación.</h2>
+            <p>
+              Cuando exista acceso por rol, la experiencia podrá avanzar de una
+              solicitud a una confirmación usando reglas y disponibilidad
+              reales.
             </p>
           </div>
 
-          <dl className='divide-y divide-white/15 border-y border-white/15 text-sm'>
-            <div className='flex items-center justify-between gap-6 py-4'>
-              <dt className='text-slate-300'>Contrato de citas</dt>
-              <dd className='font-semibold text-teal-300'>Preparado</dd>
-            </div>
-            <div className='flex items-center justify-between gap-6 py-4'>
-              <dt className='text-slate-300'>Rutas operativas</dt>
-              <dd className='font-semibold text-slate-100'>Pendientes</dd>
-            </div>
-            <div className='flex items-center justify-between gap-6 py-4'>
-              <dt className='text-slate-300'>Datos clínicos reales</dt>
-              <dd className='font-semibold text-slate-100'>No incluidos</dd>
-            </div>
-          </dl>
+          <ol className='fhf-steps'>
+            <li>
+              <span>01</span>
+              <div>
+                <h3>Identificar</h3>
+                <p>Relacionar a la persona y al profesional autorizado.</p>
+              </div>
+            </li>
+            <li>
+              <span>02</span>
+              <div>
+                <h3>Validar</h3>
+                <p>Consultar disponibilidad antes de reservar un horario.</p>
+              </div>
+            </li>
+            <li>
+              <span>03</span>
+              <div>
+                <h3>Confirmar</h3>
+                <p>Representar el estado de la cita de forma consistente.</p>
+              </div>
+            </li>
+          </ol>
         </div>
       </section>
     </main>

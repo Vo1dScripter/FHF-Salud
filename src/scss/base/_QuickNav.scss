@@ -90,7 +90,7 @@
 }
 
 .quick-nav__toggle.is-enabled {
-  display: flex;
+  display: none;
 }
 
 .quick-nav__toggle span {
@@ -117,6 +117,20 @@
 }
 
 .quick-nav--hamburger .quick-nav__links,
+.quick-nav--drawer .quick-nav__links {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  color: inherit;
+  display: flex;
+  flex-direction: row;
+  gap: 1.4rem;
+  min-width: 0;
+  padding: 0;
+  position: static;
+}
+
 .quick-nav--drawer .quick-nav__links {
   background: #ffffff;
   border: 1px solid rgba(15, 23, 42, 0.12);

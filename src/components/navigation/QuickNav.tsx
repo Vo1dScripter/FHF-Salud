@@ -31,7 +31,7 @@ export default function QuickNav({
   return (
     <nav
       className={cn('quick-nav', `quick-nav--${variant}`, className)}
-      aria-label='Navegacion principal'
+      aria-label='Navegación principal'
     >
       <Link className='quick-nav__brand' href='/'>
         {brand}
@@ -39,7 +39,7 @@ export default function QuickNav({
 
       <button
         aria-expanded={isOpen}
-        aria-label='Abrir menu'
+        aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
         className={cn('quick-nav__toggle', needsToggle && 'is-enabled')}
         onClick={() => setIsOpen((current) => !current)}
         type='button'
@@ -50,12 +50,21 @@ export default function QuickNav({
 
       <div className={cn('quick-nav__links', isOpen && 'is-open')}>
         {items.map((item) => (
-          <Link className='quick-nav__link' href={item.href} key={item.href}>
+          <Link
+            className='quick-nav__link'
+            href={item.href}
+            key={item.href}
+            onClick={() => setIsOpen(false)}
+          >
             {item.label}
           </Link>
         ))}
         {cta ? (
-          <Link className='quick-nav__cta' href={cta.href}>
+          <Link
+            className='quick-nav__cta'
+            href={cta.href}
+            onClick={() => setIsOpen(false)}
+          >
             {cta.label}
           </Link>
         ) : null}

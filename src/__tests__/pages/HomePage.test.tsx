@@ -7,17 +7,18 @@ describe('Homepage', () => {
     render(<HomePage />);
 
     const heading = screen.getByRole('heading', {
-      name: /atención organizada desde la primera cita/i,
+      name: /una atención más clara empieza con una cita bien organizada/i,
     });
 
     expect(heading).toBeInTheDocument();
     expect(
       screen.getByRole('heading', {
-        name: /lista para su siguiente etapa de construcción/i,
+        name: /la gestión de citas se construirá sobre esta preparación/i,
       }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole('link', { name: /citas médicas/i }),
-    ).toHaveAttribute('href', '#citas');
+    expect(screen.getByRole('link', { name: /ver avance/i })).toHaveAttribute(
+      'href',
+      '#siguiente-etapa',
+    );
   });
 });
