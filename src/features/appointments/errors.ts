@@ -3,6 +3,7 @@ export type AppointmentErrorCode =
   | 'conflict'
   | 'forbidden'
   | 'not_found'
+  | 'stale'
   | 'unauthenticated'
   | 'unavailable'
   | 'validation';
@@ -13,6 +14,8 @@ const defaultMessages: Record<AppointmentErrorCode, string> = {
   conflict: 'El horario seleccionado ya está ocupado para este médico.',
   forbidden: 'No tienes permiso para realizar esta operación.',
   not_found: 'La cita no existe o no está disponible para tu cuenta.',
+  stale:
+    'La cita cambió mientras la consultabas. Recarga la agenda y vuelve a intentarlo.',
   unauthenticated: 'Inicia sesión para consultar o registrar citas.',
   unavailable:
     'No se pudo conectar con el servicio de citas. Inténtalo de nuevo.',
@@ -46,6 +49,7 @@ export function appointmentHttpStatus(code: AppointmentErrorCode): number {
     case 'not_found':
       return 404;
     case 'conflict':
+    case 'stale':
       return 409;
     case 'configuration':
     case 'unavailable':
@@ -89,7 +93,14 @@ export function mapDatabaseError(error: unknown): AppointmentError {
     case '42501':
       return new AppointmentError('forbidden');
     case 'PGRST116':
+    case 'P0002':
+    case 'PT404':
       return new AppointmentError('not_found');
+    case 'PT409':
+      return new AppointmentError('stale');
+    case 'PT400':
+    case 'PT422':
+      return new AppointmentError('validation');
     case 'PGRST301':
     case 'PGRST302':
       return new AppointmentError('unauthenticated');

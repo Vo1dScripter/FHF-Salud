@@ -14,8 +14,8 @@ export default function AppointmentContext() {
           <div>
             <h4>Reglas de servidor</h4>
             <p>
-              La disponibilidad se comprueba antes de guardar y la base de datos
-              rechaza conflictos concurrentes del mismo médico.
+              Editar y confirmar revalidan la versión y el estado. Cancelar
+              conserva la fila, guarda el motivo y libera el horario.
             </p>
           </div>
         </li>
@@ -24,8 +24,8 @@ export default function AppointmentContext() {
           <div>
             <h4>Acceso por Rol</h4>
             <p>
-              Administración y recepción registran citas; cada médico consulta
-              su propia agenda. Las políticas RLS se aplican en la base.
+              Administración y recepción gestionan la agenda; cada médico
+              consulta la suya. Las políticas RLS se aplican en la base.
             </p>
           </div>
         </li>

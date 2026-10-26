@@ -1,6 +1,6 @@
 -- Prueba de integración de la restricción de solapamientos.
--- Requiere una base local con la migración 202610250002 aplicada.
--- No se ejecutó contra el proyecto remoto. Se puede correr con:
+-- Requiere una base local con las migraciones 202610250002 y 202610260003
+-- aplicadas. Se puede correr con:
 --   psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/appointments.sql
 -- Todo ocurre dentro de una transacción que termina en ROLLBACK.
 
@@ -91,7 +91,10 @@ values (
 );
 
 update public.appointments
-set status = 'cancelled'
+set
+  status = 'cancelled',
+  cancelled_at = now(),
+  cancellation_reason = 'Prueba de liberación de horario'
 where physician_id = '22222222-2222-4222-8222-222222222222'
   and starts_at = '2030-01-15T16:00:00Z';
 

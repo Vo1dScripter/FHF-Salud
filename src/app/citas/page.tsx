@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 
-import AppointmentList from '@/app/components/appointments/AppointmentList';
+import AppointmentAgenda from '@/app/components/appointments/AppointmentAgenda';
 
 export const metadata: Metadata = { title: 'Citas médicas' };
 
 export default function AppointmentsPage() {
-  return <AppointmentList />;
+  return <AppointmentAgenda />;
 }

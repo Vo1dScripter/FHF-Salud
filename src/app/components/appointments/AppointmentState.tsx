@@ -24,6 +24,10 @@ const messages = {
     title: 'Acceso restringido',
     copy: 'Tu cuenta no tiene permisos sobre esta agenda. La autorización se verifica en servidor para cada operación.',
   },
+  not_found: {
+    title: 'Cita no encontrada',
+    copy: 'La cita no existe o ya no está disponible para tu cuenta. No se muestran datos de otros registros.',
+  },
 };
 
 const defaultActionLabels: Record<
@@ -32,6 +36,7 @@ const defaultActionLabels: Record<
 > = {
   empty: 'Limpiar filtros',
   error: 'Reintentar',
+  not_found: 'Volver a la agenda',
   unauthenticated: 'Iniciar sesión',
 };
 
@@ -64,7 +69,7 @@ export default function AppointmentState({
         </p>
         <div className='appointments-rf-note'>
           <AppointmentIcon name='info' />
-          <span>RF-01, RF-02 y RF-05 con implementación pendiente de activación</span>
+          <span>RF-01 a RF-06 con implementación pendiente de activación del entorno</span>
         </div>
       </div>
     );

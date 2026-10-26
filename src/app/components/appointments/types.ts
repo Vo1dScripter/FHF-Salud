@@ -10,7 +10,8 @@ export type AppointmentListState =
         | 'loading'
         | 'empty'
         | 'unauthenticated'
-        | 'forbidden';
+        | 'forbidden'
+        | 'not_found';
     }
   | { kind: 'error'; message?: string }
   | { kind: 'populated'; appointments: AppointmentView[] };

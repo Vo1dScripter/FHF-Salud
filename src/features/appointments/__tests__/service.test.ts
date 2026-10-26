@@ -6,6 +6,7 @@ import type {
   AppointmentRepository,
   AppointmentView,
   CreateAppointmentInput,
+  RescheduleAppointmentInput,
 } from '../contracts';
 import { DefaultAppointmentAgendaService } from '../service';
 
@@ -53,11 +54,28 @@ function createRepository(
   overrides: Partial<AppointmentRepository> = {},
 ): AppointmentRepository {
   return {
+    cancel: jest.fn(
+      async (): Promise<Appointment> => ({
+        ...appointment,
+        status: 'cancelled' as const,
+      }),
+    ),
+    confirm: jest.fn(
+      async (): Promise<Appointment> => ({
+        ...appointment,
+        status: 'confirmed',
+      }),
+    ),
     create: jest.fn(async () => appointment),
     findConflicts: jest.fn(async () => []),
     findById: jest.fn(async () => appointment),
     list: jest.fn(async () => [appointment]),
-    update: jest.fn(async (_id, value) => value),
+    reschedule: jest.fn(
+      async (_id, value): Promise<Appointment> => ({
+        ...appointment,
+        ...value,
+      }),
+    ),
     ...overrides,
   };
 }
@@ -258,6 +276,7 @@ describe('DefaultAppointmentAgendaService', () => {
 
     await expect(service.listReferences(physician)).resolves.toEqual({
       canCreate: false,
+      canManage: false,
       patients: [],
       physicians: [view.physician],
     });
@@ -270,6 +289,7 @@ describe('DefaultAppointmentAgendaService', () => {
 
     await expect(service.listReferences(staff)).resolves.toEqual({
       canCreate: true,
+      canManage: true,
       patients: [view.patient],
       physicians: [view.physician],
     });
@@ -286,6 +306,314 @@ describe('DefaultAppointmentAgendaService', () => {
 
     await expect(service.list(staff)).rejects.toMatchObject({
       code: 'unavailable',
+    });
+  });
+
+  describe('RF-03, RF-04 y RF-06', () => {
+    it('confirma una cita pendiente y devuelve el nuevo estado', async () => {
+      const { repository, service } = createService();
+
+      await expect(
+        service.confirm(staff, appointmentId, appointment.updatedAt),
+      ).resolves.toMatchObject({ id: appointmentId, status: 'confirmed' });
+      expect(repository.confirm).toHaveBeenCalledWith(
+        appointmentId,
+        appointment.updatedAt,
+      );
+    });
+
+    it('rechaza confirmar una cita cancelada', async () => {
+      const { repository, service } = createService({
+        reader: {
+          findByIdView: jest.fn(async () => ({
+            ...view,
+            status: 'cancelled' as const,
+          })),
+        },
+      });
+
+      await expect(
+        service.confirm(staff, appointmentId, appointment.updatedAt),
+      ).rejects.toMatchObject({ code: 'validation' });
+      expect(repository.confirm).not.toHaveBeenCalled();
+    });
+
+    it('no repite efectos al confirmar una cita ya confirmada', async () => {
+      const { repository, service } = createService({
+        reader: {
+          findByIdView: jest.fn(async () => ({
+            ...view,
+            status: 'confirmed' as const,
+          })),
+        },
+      });
+
+      await expect(
+        service.confirm(staff, appointmentId, appointment.updatedAt),
+      ).resolves.toMatchObject({ status: 'confirmed' });
+      expect(repository.confirm).not.toHaveBeenCalled();
+    });
+
+    it('rechaza una mutación basada en una versión desactualizada', async () => {
+      const { repository, service } = createService();
+
+      await expect(
+        service.confirm(
+          staff,
+          appointmentId,
+          '2026-10-24T11:00:00-06:00',
+        ),
+      ).rejects.toMatchObject({ code: 'stale' });
+      expect(repository.confirm).not.toHaveBeenCalled();
+    });
+
+    it('traduce la versión desactualizada detectada por PostgreSQL', async () => {
+      const { service } = createService({
+        repository: {
+          confirm: jest.fn(async () => {
+            throw { code: 'PT409' };
+          }),
+        },
+      });
+
+      await expect(
+        service.confirm(staff, appointmentId, appointment.updatedAt),
+      ).rejects.toMatchObject({ code: 'stale' });
+    });
+
+    it('rechaza una mutación de una cita inexistente', async () => {
+      const { repository, service } = createService({
+        reader: { findByIdView: jest.fn(async () => null) },
+      });
+
+      await expect(
+        service.confirm(staff, appointmentId, appointment.updatedAt),
+      ).rejects.toMatchObject({ code: 'not_found' });
+      expect(repository.confirm).not.toHaveBeenCalled();
+    });
+
+    it('rechaza una reprogramación con duración no permitida', async () => {
+      const { repository, service } = createService();
+
+      await expect(
+        service.reschedule(
+          staff,
+          appointmentId,
+          {
+            durationMinutes:
+              20 as RescheduleAppointmentInput['durationMinutes'],
+            scheduledAt: '2030-01-16T11:00:00-06:00',
+          },
+          appointment.updatedAt,
+        ),
+      ).rejects.toMatchObject({ code: 'validation' });
+      expect(repository.reschedule).not.toHaveBeenCalled();
+    });
+
+    it('reprograma a un horario libre y excluye la propia cita', async () => {
+      const { repository, service } = createService();
+      const reschedule = {
+        durationMinutes: 45 as const,
+        scheduledAt: '2030-01-16T11:00:00-06:00',
+      };
+
+      await expect(
+        service.reschedule(
+          staff,
+          appointmentId,
+          reschedule,
+          appointment.updatedAt,
+        ),
+      ).resolves.toMatchObject({
+        id: appointmentId,
+        scheduledAt: reschedule.scheduledAt,
+        durationMinutes: 45,
+      });
+      expect(repository.findConflicts).toHaveBeenCalledWith(
+        physicianId,
+        reschedule.scheduledAt,
+        '2030-01-16T17:45:00.000Z',
+        appointmentId,
+      );
+      expect(repository.reschedule).toHaveBeenCalledWith(
+        appointmentId,
+        reschedule,
+        appointment.updatedAt,
+      );
+    });
+
+    it('rechaza un horario ocupado sin escribir la cita', async () => {
+      const { repository, service } = createService({
+        repository: {
+          findConflicts: jest.fn(async () => [appointment]),
+        },
+      });
+
+      await expect(
+        service.reschedule(
+          staff,
+          appointmentId,
+          {
+            durationMinutes: 30,
+            scheduledAt: '2030-01-16T11:00:00-06:00',
+          },
+          appointment.updatedAt,
+        ),
+      ).rejects.toMatchObject({ code: 'conflict' });
+      expect(repository.reschedule).not.toHaveBeenCalled();
+    });
+
+    it('traduce el conflicto concurrente al reprogramar', async () => {
+      const { service } = createService({
+        repository: {
+          reschedule: jest.fn(async () => {
+            throw { code: '23P01' };
+          }),
+        },
+      });
+
+      await expect(
+        service.reschedule(
+          staff,
+          appointmentId,
+          {
+            durationMinutes: 30,
+            scheduledAt: '2030-01-16T11:00:00-06:00',
+          },
+          appointment.updatedAt,
+        ),
+      ).rejects.toMatchObject({ code: 'conflict' });
+    });
+
+    it('rechaza reprogramar una cita cancelada', async () => {
+      const { repository, service } = createService({
+        reader: {
+          findByIdView: jest.fn(async () => ({
+            ...view,
+            status: 'cancelled' as const,
+          })),
+        },
+      });
+
+      await expect(
+        service.reschedule(
+          staff,
+          appointmentId,
+          {
+            durationMinutes: 30,
+            scheduledAt: '2030-01-16T11:00:00-06:00',
+          },
+          appointment.updatedAt,
+        ),
+      ).rejects.toMatchObject({ code: 'validation' });
+      expect(repository.reschedule).not.toHaveBeenCalled();
+    });
+
+    it('documenta que reprogramar una confirmada la devuelve a pendiente', async () => {
+      const { service } = createService({
+        reader: {
+          findByIdView: jest.fn(async () => ({
+            ...view,
+            status: 'confirmed' as const,
+          })),
+        },
+        repository: {
+          reschedule: jest.fn(async () => ({
+            ...appointment,
+            scheduledAt: '2030-01-16T11:00:00-06:00',
+            status: 'pending' as const,
+          })),
+        },
+      });
+
+      await expect(
+        service.reschedule(
+          staff,
+          appointmentId,
+          {
+            durationMinutes: 30,
+            scheduledAt: '2030-01-16T11:00:00-06:00',
+          },
+          appointment.updatedAt,
+        ),
+      ).resolves.toMatchObject({ status: 'pending' });
+    });
+
+    it('cancela conservando el registro y guarda el motivo', async () => {
+      const { repository, service } = createService({
+        repository: {
+          cancel: jest.fn(async () => ({
+            ...appointment,
+            cancelReason: 'Paciente no puede asistir',
+            status: 'cancelled' as const,
+          })),
+        },
+      });
+
+      await expect(
+        service.cancel(
+          staff,
+          appointmentId,
+          { reason: 'Paciente no puede asistir' },
+          appointment.updatedAt,
+        ),
+      ).resolves.toMatchObject({
+        cancelReason: 'Paciente no puede asistir',
+        id: appointmentId,
+        status: 'cancelled' as const,
+      });
+      expect(repository.cancel).toHaveBeenCalledWith(
+        appointmentId,
+        { reason: 'Paciente no puede asistir' },
+        appointment.updatedAt,
+      );
+    });
+
+    it('repetir una cancelación no vuelve a escribir ni auditar', async () => {
+      const cancelledView: AppointmentView = {
+        ...view,
+        cancelReason: 'Paciente no puede asistir',
+        status: 'cancelled' as const,
+      };
+      const { repository, service } = createService({
+        reader: { findByIdView: jest.fn(async () => cancelledView) },
+      });
+
+      await expect(
+        service.cancel(
+          staff,
+          appointmentId,
+          { reason: 'Paciente no puede asistir' },
+          appointment.updatedAt,
+        ),
+      ).resolves.toEqual(cancelledView);
+      expect(repository.cancel).not.toHaveBeenCalled();
+    });
+
+    it('exige un motivo de cancelación', async () => {
+      const { repository, service } = createService();
+
+      await expect(
+        service.cancel(
+          staff,
+          appointmentId,
+          { reason: '   ' },
+          appointment.updatedAt,
+        ),
+      ).rejects.toMatchObject({
+        code: 'validation',
+        fieldErrors: { reason: 'Indica el motivo de la cancelación.' },
+      });
+      expect(repository.cancel).not.toHaveBeenCalled();
+    });
+
+    it('deniega las mutaciones a un médico', async () => {
+      const { repository, service } = createService();
+
+      await expect(
+        service.confirm(physician, appointmentId, appointment.updatedAt),
+      ).rejects.toMatchObject({ code: 'forbidden' });
+      expect(repository.confirm).not.toHaveBeenCalled();
     });
   });
 });

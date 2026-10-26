@@ -10,7 +10,10 @@ import type {
   AppointmentRepository,
   AppointmentStatus,
   AppointmentView,
+  CancelAppointmentInput,
   CreateAppointmentInput,
+  IsoDateTime,
+  RescheduleAppointmentInput,
 } from './contracts';
 import { AppointmentError, mapDatabaseError } from './errors';
 import {
@@ -19,7 +22,7 @@ import {
 } from './validation';
 
 const appointmentColumns =
-  'id, patient_id, physician_id, starts_at, duration_minutes, reason, status, created_at, updated_at';
+  'id, patient_id, physician_id, starts_at, duration_minutes, reason, status, cancellation_reason, cancelled_at, confirmed_at, created_at, updated_at';
 
 const appointmentViewColumns = `${appointmentColumns}, patient:patients!appointments_patient_id_fkey(id, display_name), physician:physicians!appointments_physician_id_fkey(id, display_name)`;
 
@@ -29,6 +32,9 @@ type ReferenceRow = {
 };
 
 type AppointmentRow = {
+  cancellation_reason: string | null;
+  cancelled_at: string | null;
+  confirmed_at: string | null;
   created_at: string;
   duration_minutes: number;
   id: string;
@@ -84,14 +90,19 @@ export class SupabaseAppointmentRepository
     physicianId: string,
     startsAt: string,
     endsAt: string,
+    excludeAppointmentId?: string,
   ): Promise<Appointment[]> {
-    const { data, error } = await this.client
+    let request = this.client
       .from('appointments')
       .select(appointmentColumns)
       .eq('physician_id', physicianId)
       .neq('status', 'cancelled')
       .lt('starts_at', endsAt)
       .gt('ends_at', startsAt);
+    if (excludeAppointmentId) {
+      request = request.neq('id', excludeAppointmentId);
+    }
+    const { data, error } = await request;
     if (error) throw mapDatabaseError(error);
     return ((data ?? []) as unknown as AppointmentRow[]).map((row) =>
       this.mapAppointment(row),
@@ -121,25 +132,39 @@ export class SupabaseAppointmentRepository
     );
   }
 
-  async update(
+  async confirm(
     id: AppointmentId,
-    appointment: Appointment,
+    expectedUpdatedAt: IsoDateTime,
   ): Promise<Appointment> {
-    const { data, error } = await this.client
-      .from('appointments')
-      .update({
-        duration_minutes: appointment.durationMinutes,
-        patient_id: appointment.patientId,
-        physician_id: appointment.physicianId,
-        reason: appointment.reason,
-        starts_at: appointment.scheduledAt,
-        status: appointment.status,
-      })
-      .eq('id', id)
-      .select(appointmentColumns)
-      .single();
-    if (error) throw mapDatabaseError(error);
-    return this.mapAppointment(data as unknown as AppointmentRow);
+    return this.runMutation('confirm_appointment', {
+      p_appointment_id: id,
+      p_expected_updated_at: expectedUpdatedAt,
+    });
+  }
+
+  async reschedule(
+    id: AppointmentId,
+    input: RescheduleAppointmentInput,
+    expectedUpdatedAt: IsoDateTime,
+  ): Promise<Appointment> {
+    return this.runMutation('reschedule_appointment', {
+      p_appointment_id: id,
+      p_duration_minutes: input.durationMinutes,
+      p_expected_updated_at: expectedUpdatedAt,
+      p_starts_at: input.scheduledAt,
+    });
+  }
+
+  async cancel(
+    id: AppointmentId,
+    input: CancelAppointmentInput,
+    expectedUpdatedAt: IsoDateTime,
+  ): Promise<Appointment> {
+    return this.runMutation('cancel_appointment', {
+      p_appointment_id: id,
+      p_expected_updated_at: expectedUpdatedAt,
+      p_reason: input.reason,
+    });
   }
 
   async findByIdWithReferences(
@@ -224,6 +249,26 @@ export class SupabaseAppointmentRepository
     return this.listWithReferences(query);
   }
 
+  /**
+   * Las funciones de PostgreSQL bloquean la fila, revalidan la versión y el
+   * estado, y aplican la actualización dentro de la misma transacción. La
+   * restricción de exclusión sigue siendo la garantía final de disponibilidad.
+   */
+  private async runMutation(
+    functionName:
+      | 'cancel_appointment'
+      | 'confirm_appointment'
+      | 'reschedule_appointment',
+    parameters: Record<string, string | number>,
+  ): Promise<Appointment> {
+    const { data, error } = await this.client
+      .rpc(functionName, parameters)
+      .maybeSingle();
+    if (error) throw mapDatabaseError(error);
+    if (!data) throw new AppointmentError('not_found');
+    return this.mapAppointment(data as unknown as AppointmentRow);
+  }
+
   private async filteredAppointments(
     columns: string,
     query: AppointmentQuery,
@@ -255,6 +300,9 @@ export class SupabaseAppointmentRepository
       );
     }
     return {
+      cancelReason: row.cancellation_reason,
+      cancelledAt: row.cancelled_at,
+      confirmedAt: row.confirmed_at,
       createdAt: row.created_at,
       durationMinutes: row.duration_minutes as AppointmentDurationMinutes,
       id: row.id,

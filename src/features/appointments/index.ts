@@ -30,7 +30,11 @@ export {
   localDateTimeToIso,
 } from './datetime';
 export { AppointmentError, appointmentHttpStatus } from './errors';
-export { appointmentRoutes, appointmentStatusLabels } from './routes';
+export {
+  appointmentApiRoutes,
+  appointmentRoutes,
+  appointmentStatusLabels,
+} from './routes';
 export {
   APPOINTMENT_DURATIONS,
   APPOINTMENT_STATUSES,
@@ -38,5 +42,8 @@ export {
   assertScheduledAtNotPast,
   isIsoDateTime,
   parseAppointmentQuery,
+  parseCancelAppointmentInput,
   parseCreateAppointmentInput,
+  parseExpectedUpdatedAt,
+  parseRescheduleAppointmentInput,
 } from './validation';

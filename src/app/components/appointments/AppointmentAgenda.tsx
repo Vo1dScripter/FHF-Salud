@@ -12,6 +12,7 @@ import {
   dayRangeInTimeZone,
 } from '@/features/appointments';
 
+import AppointmentIcon from './AppointmentIcon';
 import AppointmentList from './AppointmentList';
 import type { AppointmentListState } from './types';
 
@@ -110,11 +111,26 @@ async function fetchAgenda(filters: AppliedFilters): Promise<AgendaResult> {
   }
 }
 
+function matchesFilters(
+  filters: AppliedFilters,
+  appointment: AppointmentView,
+): boolean {
+  if (filters.status && appointment.status !== filters.status) return false;
+  if (filters.physicianId && appointment.physicianId !== filters.physicianId) {
+    return false;
+  }
+  const startsAt = new Date(appointment.scheduledAt).getTime();
+  if (filters.from && startsAt < new Date(filters.from).getTime()) return false;
+  if (filters.to && startsAt >= new Date(filters.to).getTime()) return false;
+  return true;
+}
+
 export default function AppointmentAgenda() {
   const [draftFilters, setDraftFilters] = useState<Filters>(emptyFilters);
   const [appliedFilters, setAppliedFilters] =
     useState<AppliedFilters>(emptyAppliedFilters);
   const [directory, setDirectory] = useState<AppointmentDirectory | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [state, setState] = useState<AppointmentListState>({
     kind: 'loading',
   });
@@ -145,12 +161,38 @@ export default function AppointmentAgenda() {
     });
   }, [appliedFilters, applyResult]);
 
+  const handleAppointmentUpdated = useCallback(
+    (updated: AppointmentView) => {
+      const stillMatches = matchesFilters(appliedFilters, updated);
+      setState((current) => {
+        if (current.kind !== 'populated') return current;
+        const appointments = stillMatches
+          ? current.appointments.map((appointment) =>
+              appointment.id === updated.id ? updated : appointment,
+            )
+          : current.appointments.filter(
+              (appointment) => appointment.id !== updated.id,
+            );
+        return appointments.length
+          ? { appointments, kind: 'populated' }
+          : { kind: 'empty' };
+      });
+      setNotice(
+        stillMatches
+          ? 'Cambio guardado y reflejado en la agenda.'
+          : 'Cambio guardado. La cita ya no coincide con los filtros actuales.',
+      );
+    },
+    [appliedFilters],
+  );
+
   function applyFilters(next: Filters) {
     const applied = toAppliedFilters(next);
     if (!applied) {
       setState({ kind: 'error' });
       return;
     }
+    setNotice(null);
     setState({ kind: 'loading' });
     setDraftFilters(next);
     setAppliedFilters(applied);
@@ -161,6 +203,7 @@ export default function AppointmentAgenda() {
   }
 
   function retry() {
+    setNotice(null);
     setState({ kind: 'loading' });
     const currentRequest = requestId.current + 1;
     requestId.current = currentRequest;
@@ -242,8 +285,16 @@ export default function AppointmentAgenda() {
           <button type='submit'>Aplicar filtros</button>
         </div>
       </form>
+      {notice && (
+        <p className='appointment-form-note' role='status'>
+          <AppointmentIcon name='info' />
+          <span>{notice}</span>
+        </p>
+      )}
       <AppointmentList
         canCreate={directory?.canCreate ?? false}
+        canManage={directory?.canManage ?? false}
+        onAppointmentUpdated={handleAppointmentUpdated}
         onClearFilters={clearFilters}
         onRetry={retry}
         state={state}

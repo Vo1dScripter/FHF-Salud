@@ -4,7 +4,9 @@ import type {
   AppointmentDurationMinutes,
   AppointmentQuery,
   AppointmentStatus,
+  CancelAppointmentInput,
   CreateAppointmentInput,
+  RescheduleAppointmentInput,
 } from './contracts';
 import { AppointmentError } from './errors';
 
@@ -62,6 +64,19 @@ export const appointmentQuerySchema = z.object({
   to: isoDateTimeSchema.optional(),
 });
 
+export const rescheduleAppointmentSchema = z.object({
+  durationMinutes: appointmentDurationSchema,
+  scheduledAt: isoDateTimeSchema,
+});
+
+export const cancelAppointmentSchema = z.object({
+  reason: z
+    .string()
+    .trim()
+    .min(1, 'Indica el motivo de la cancelación.')
+    .max(500, 'El motivo de cancelación no puede superar 500 caracteres.'),
+});
+
 function fieldErrorsFromZod(error: z.ZodError): Record<string, string> {
   const fieldErrors: Record<string, string> = {};
   for (const issue of error.issues) {
@@ -80,6 +95,48 @@ export function parseCreateAppointmentInput(
       'validation',
       'Revisa los campos obligatorios de la cita.',
       fieldErrorsFromZod(result.error),
+    );
+  }
+  return result.data;
+}
+
+export function parseRescheduleAppointmentInput(
+  input: unknown,
+): RescheduleAppointmentInput {
+  const result = rescheduleAppointmentSchema.safeParse(input);
+  if (!result.success) {
+    throw new AppointmentError(
+      'validation',
+      'Revisa la nueva fecha, hora y duración de la cita.',
+      fieldErrorsFromZod(result.error),
+    );
+  }
+  return result.data;
+}
+
+export function parseCancelAppointmentInput(
+  input: unknown,
+): CancelAppointmentInput {
+  const result = cancelAppointmentSchema.safeParse(input);
+  if (!result.success) {
+    throw new AppointmentError(
+      'validation',
+      'Revisa el motivo de cancelación.',
+      fieldErrorsFromZod(result.error),
+    );
+  }
+  return result.data;
+}
+
+export function parseExpectedUpdatedAt(
+  value: unknown,
+): string {
+  const result = isoDateTimeSchema.safeParse(value);
+  if (!result.success) {
+    throw new AppointmentError(
+      'validation',
+      'No se recibió la versión de la cita. Recarga la agenda e inténtalo de nuevo.',
+      { expectedUpdatedAt: 'Recarga la cita antes de modificarla.' },
     );
   }
   return result.data;

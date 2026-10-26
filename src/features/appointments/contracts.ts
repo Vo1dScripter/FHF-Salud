@@ -23,6 +23,14 @@ export type AppointmentDurationMinutes = 15 | 30 | 45 | 60;
 
 /** Registro que entrega la persistencia al módulo de citas. */
 export type Appointment = {
+  /**
+   * Motivo conservado al cancelar. Es distinto del motivo de consulta y solo
+   * existe para las citas canceladas.
+   */
+  cancelReason?: string | null;
+  cancelledAt?: IsoDateTime | null;
+  /** Momento de la última confirmación, si la cita llegó a confirmarse. */
+  confirmedAt?: IsoDateTime | null;
   createdAt: IsoDateTime;
   durationMinutes: AppointmentDurationMinutes;
   id: AppointmentId;
@@ -66,6 +74,8 @@ export type AppointmentActor =
  */
 export type AppointmentDirectory = {
   canCreate: boolean;
+  /** Pista de presentación para confirmar, reprogramar o cancelar. */
+  canManage: boolean;
   patients: PatientReference[];
   physicians: PhysicianReference[];
 };
@@ -107,6 +117,7 @@ export interface AppointmentRepository {
   create(input: CreateAppointmentInput): Promise<Appointment>;
   /**
    * Devuelve citas activas del mismo médico que se superponen con el intervalo.
+   * `excludeAppointmentId` evita que una reprogramación choque consigo misma.
    * Es una comprobación de UX; la restricción de exclusión de PostgreSQL sigue
    * siendo la garantía ante solicitudes concurrentes.
    */
@@ -114,11 +125,29 @@ export interface AppointmentRepository {
     physicianId: PhysicianId,
     startsAt: IsoDateTime,
     endsAt: IsoDateTime,
+    excludeAppointmentId?: AppointmentId,
   ): Promise<Appointment[]>;
   findById(id: AppointmentId): Promise<Appointment | null>;
   list(query?: AppointmentQuery): Promise<Appointment[]>;
-  /** Reservado para RF-03/RF-04; hoy no hay política RLS de update. */
-  update(id: AppointmentId, appointment: Appointment): Promise<Appointment>;
+  /**
+   * Las mutaciones reciben `expectedUpdatedAt` para rechazar cambios basados en
+   * una versión desactualizada. La implementación de producción las ejecuta en
+   * una función transaccional de PostgreSQL.
+   */
+  cancel(
+    id: AppointmentId,
+    input: CancelAppointmentInput,
+    expectedUpdatedAt: IsoDateTime,
+  ): Promise<Appointment>;
+  confirm(
+    id: AppointmentId,
+    expectedUpdatedAt: IsoDateTime,
+  ): Promise<Appointment>;
+  reschedule(
+    id: AppointmentId,
+    input: RescheduleAppointmentInput,
+    expectedUpdatedAt: IsoDateTime,
+  ): Promise<Appointment>;
 }
 
 /** Lectura de agenda con nombres resueltos; puede aplicar RLS en el proveedor. */
@@ -136,11 +165,22 @@ export interface AppointmentDirectoryRepository {
 }
 
 /**
- * Operaciones implementadas en esta entrega (RF-01, RF-02 y RF-05).
- * Las operaciones de confirmación, reprogramación y cancelación permanecen en
- * AppointmentService para una entrega posterior.
+ * Operaciones implementadas por el servicio de aplicación. Todas reciben la
+ * identidad ya verificada en servidor; las mutaciones devuelven la vista con
+ * referencias resueltas para reflejar el cambio de inmediato.
  */
 export interface AppointmentAgendaService {
+  cancel(
+    actor: AppointmentActor,
+    id: AppointmentId,
+    input: CancelAppointmentInput,
+    expectedUpdatedAt: IsoDateTime,
+  ): Promise<AppointmentView>;
+  confirm(
+    actor: AppointmentActor,
+    id: AppointmentId,
+    expectedUpdatedAt: IsoDateTime,
+  ): Promise<AppointmentView>;
   create(
     actor: AppointmentActor,
     input: CreateAppointmentInput,
@@ -154,25 +194,16 @@ export interface AppointmentAgendaService {
     query?: AppointmentQuery,
   ): Promise<AppointmentView[]>;
   listReferences(actor: AppointmentActor): Promise<AppointmentDirectory>;
+  reschedule(
+    actor: AppointmentActor,
+    id: AppointmentId,
+    input: RescheduleAppointmentInput,
+    expectedUpdatedAt: IsoDateTime,
+  ): Promise<AppointmentView>;
 }
 
 /**
- * Operaciones de aplicación previstas, todavía sin implementación.
- * Cada método debe verificar sesión y autorización en servidor antes de leer
- * o escribir. El frontend nunca entrega un rol como prueba de permiso.
- * Fallos del proveedor deben notificarse como error, nunca como lista vacía.
+ * Alias conservado para consumidores que ya importaban este contrato. La
+ * implementación real es `DefaultAppointmentAgendaService`.
  */
-export interface AppointmentService {
-  cancel(
-    id: AppointmentId,
-    input: CancelAppointmentInput,
-  ): Promise<Appointment>;
-  confirm(id: AppointmentId): Promise<Appointment>;
-  create(input: CreateAppointmentInput): Promise<Appointment>;
-  getById(id: AppointmentId): Promise<Appointment | null>;
-  list(query?: AppointmentQuery): Promise<Appointment[]>;
-  reschedule(
-    id: AppointmentId,
-    input: RescheduleAppointmentInput,
-  ): Promise<Appointment>;
-}
+export type AppointmentService = AppointmentAgendaService;

@@ -9,14 +9,20 @@ import type {
   AppointmentReader,
   AppointmentRepository,
   AppointmentView,
+  CancelAppointmentInput,
   CreateAppointmentInput,
+  IsoDateTime,
+  RescheduleAppointmentInput,
 } from './contracts';
 import { AppointmentError, mapDatabaseError } from './errors';
 import {
   appointmentEndIso,
   assertScheduledAtNotPast,
   parseAppointmentQuery,
+  parseCancelAppointmentInput,
   parseCreateAppointmentInput,
+  parseExpectedUpdatedAt,
+  parseRescheduleAppointmentInput,
 } from './validation';
 
 function isStaff(
@@ -26,13 +32,19 @@ function isStaff(
 }
 
 /**
- * Servicio de aplicación de RF-01, RF-02 y RF-05.
+ * Servicio de aplicación de RF-01, RF-02, RF-03, RF-04, RF-05 y RF-06.
  *
- * Suposiciones conservadoras documentadas:
+ * Reglas conservadoras documentadas:
  * - La agenda la opera personal autenticado (admin/recepción).
- * - Un médico autenticado solo puede leer su propia agenda.
+ * - Un médico autenticado solo puede leer su propia agenda y no mutarla.
  * - El estado inicial siempre es pending y lo fija el servidor.
- * - No se implementan confirmación, reprogramación ni cancelación.
+ * - Confirmar solo aplica a pendientes; confirmar una cancelada se rechaza.
+ * - Reprogramar una confirmada la devuelve a pending para revalidar el nuevo
+ *   horario. Una cancelada no se puede reprogramar.
+ * - Cancelar conserva la fila; repetir la cancelación es idempotente y no
+ *   genera otra auditoría.
+ * - Las mutaciones exigen `expectedUpdatedAt`; la persistencia vuelve a
+ *   comprobarlo bajo bloqueo y la restricción de exclusión resuelve carreras.
  */
 export class DefaultAppointmentAgendaService
   implements AppointmentAgendaService
@@ -137,6 +149,7 @@ export class DefaultAppointmentAgendaService
         );
         return {
           canCreate: false,
+          canManage: false,
           patients: [],
           physicians: physician ? [physician] : [],
         };
@@ -145,10 +158,161 @@ export class DefaultAppointmentAgendaService
         this.directory.listPatients(),
         this.directory.listPhysicians(),
       ]);
-      return { canCreate: true, patients, physicians };
+      return { canCreate: true, canManage: true, patients, physicians };
     } catch (error) {
       throw mapDatabaseError(error);
     }
+  }
+
+  async confirm(
+    actor: AppointmentActor,
+    id: AppointmentId,
+    rawExpectedUpdatedAt: IsoDateTime,
+  ): Promise<AppointmentView> {
+    this.assertCanManage(actor);
+    this.assertValidId(id);
+    const expectedUpdatedAt = parseExpectedUpdatedAt(rawExpectedUpdatedAt);
+    const current = await this.loadForMutation(id);
+
+    if (current.status === 'cancelled') {
+      throw new AppointmentError(
+        'validation',
+        'No se puede confirmar una cita cancelada.',
+        { status: 'La cita está cancelada.' },
+      );
+    }
+    if (current.status === 'confirmed') {
+      // Confirmar de nuevo no produce efectos ni auditoría adicional.
+      return current;
+    }
+
+    this.assertExpectedVersion(current, expectedUpdatedAt);
+
+    try {
+      const updated = await this.repository.confirm(id, expectedUpdatedAt);
+      return this.withReferences(updated, current);
+    } catch (error) {
+      throw mapDatabaseError(error);
+    }
+  }
+
+  async reschedule(
+    actor: AppointmentActor,
+    id: AppointmentId,
+    rawInput: RescheduleAppointmentInput,
+    rawExpectedUpdatedAt: IsoDateTime,
+  ): Promise<AppointmentView> {
+    this.assertCanManage(actor);
+    this.assertValidId(id);
+    const input = parseRescheduleAppointmentInput(rawInput);
+    const expectedUpdatedAt = parseExpectedUpdatedAt(rawExpectedUpdatedAt);
+    const current = await this.loadForMutation(id);
+
+    if (current.status === 'cancelled') {
+      throw new AppointmentError(
+        'validation',
+        'No se puede reprogramar una cita cancelada.',
+        { status: 'La cita está cancelada.' },
+      );
+    }
+
+    assertScheduledAtNotPast(input.scheduledAt, this.now());
+    this.assertExpectedVersion(current, expectedUpdatedAt);
+
+    const endsAt = appointmentEndIso(
+      input.scheduledAt,
+      input.durationMinutes,
+    );
+
+    try {
+      const conflicts = await this.repository.findConflicts(
+        current.physicianId,
+        input.scheduledAt,
+        endsAt,
+        id,
+      );
+      if (conflicts.length > 0) {
+        throw new AppointmentError(
+          'conflict',
+          'El nuevo horario ya está ocupado para este médico.',
+          { scheduledAt: 'Selecciona otro horario disponible.' },
+        );
+      }
+      const updated = await this.repository.reschedule(
+        id,
+        input,
+        expectedUpdatedAt,
+      );
+      return this.withReferences(updated, current);
+    } catch (error) {
+      throw mapDatabaseError(error);
+    }
+  }
+
+  async cancel(
+    actor: AppointmentActor,
+    id: AppointmentId,
+    rawInput: CancelAppointmentInput,
+    rawExpectedUpdatedAt: IsoDateTime,
+  ): Promise<AppointmentView> {
+    this.assertCanManage(actor);
+    this.assertValidId(id);
+    const input = parseCancelAppointmentInput(rawInput);
+    const expectedUpdatedAt = parseExpectedUpdatedAt(rawExpectedUpdatedAt);
+    const current = await this.loadForMutation(id);
+
+    if (current.status === 'cancelled') {
+      // La fila se conserva y un reintento no vuelve a escribir ni auditar.
+      return current;
+    }
+
+    this.assertExpectedVersion(current, expectedUpdatedAt);
+
+    try {
+      const updated = await this.repository.cancel(
+        id,
+        input,
+        expectedUpdatedAt,
+      );
+      return this.withReferences(updated, current);
+    } catch (error) {
+      throw mapDatabaseError(error);
+    }
+  }
+
+  private async loadForMutation(
+    id: AppointmentId,
+  ): Promise<AppointmentView> {
+    let current: AppointmentView | null;
+    try {
+      current = await this.reader.findByIdView(id);
+    } catch (error) {
+      throw mapDatabaseError(error);
+    }
+    if (!current) {
+      throw new AppointmentError('not_found');
+    }
+    return current;
+  }
+
+  private assertExpectedVersion(
+    current: AppointmentView,
+    expectedUpdatedAt: IsoDateTime,
+  ): void {
+    if (current.updatedAt !== expectedUpdatedAt) {
+      throw new AppointmentError('stale');
+    }
+  }
+
+  private withReferences(
+    updated: Appointment,
+    current: AppointmentView,
+  ): AppointmentView {
+    return {
+      ...updated,
+      patient: current.patient,
+      physician: current.physician,
+    };
   }
 
   private assertCanCreate(actor: AppointmentActor): void {
@@ -156,6 +320,15 @@ export class DefaultAppointmentAgendaService
       throw new AppointmentError(
         'forbidden',
         'Solo administración o recepción puede registrar citas.',
+      );
+    }
+  }
+
+  private assertCanManage(actor: AppointmentActor): void {
+    if (!isStaff(actor)) {
+      throw new AppointmentError(
+        'forbidden',
+        'Solo administración o recepción puede modificar citas.',
       );
     }
   }
