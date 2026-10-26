@@ -10,5 +10,15 @@
       "src": "/favicon/android-chrome-512x512.png",
       "type": "image/png"
     }
-  ]
+  ],
+  "name": "FHF Salud",
+  "short_name": "FHF Salud",
+  "id": "/",
+  "start_url": "/citas",
+  "scope": "/",
+  "display": "standalone",
+  "lang": "es-MX",
+  "background_color": "#f5f7fb",
+  "theme_color": "#2161e8",
+  "description": "Portal académico FHF Salud"
 }

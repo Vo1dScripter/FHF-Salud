@@ -636,3 +636,37 @@ Comprobar la conexión pública sin acceder a tablas: `npm run supabase:check`.
 
 El SDK de Supabase instalado requiere Node.js 22 o superior; el requisito de
 `package.json` se alineó con esa versión.
+
+### Integraciones de infraestructura
+
+Guía para el equipo: [estado, variables, uso y pendientes de integraciones](docs/integraciones.md).
+
+- `.github/workflows/verify.yml` ejecuta `npm run verify` en pull requests y cambios
+  a `main`, con Node 24 y Python/Pillow; no necesita credenciales de producción.
+  El workflow comenzará a ejecutarse cuando estos cambios se publiquen en GitHub.
+- El manifiesto de instalación conserva los iconos existentes. El Service Worker
+  `/sw.js` se registra solo en producción: no guarda páginas, respuestas médicas
+  ni sesiones para uso offline y nunca solicita permisos automáticamente.
+- Web Push tiene claves VAPID propias: solo `NEXT_PUBLIC_VAPID_PUBLIC_KEY` pertenece
+  a Vercel/frontend. `VAPID_PRIVATE_KEY`, `VAPID_PUBLIC_KEY`, `VAPID_SUBJECT` y
+  `REMINDER_DISPATCH_SECRET` pertenecen a Supabase Edge Function Secrets. Los
+  archivos locales con valores reales están ignorados por Git. No regenerar las
+  claves si ya existen suscripciones: invalidaría su asociación.
+- `supabase/functions/reminder-dispatch/index.ts` es una base de infraestructura,
+  no un remitente terminado: exige POST y un secreto dedicado y devuelve 503
+  `not_ready` incluso con autorización hasta implementar recordatorios, permisos,
+  suscripciones protegidas, exclusión transaccional, idempotencia y reintentos.
+- La migración de infraestructura habilita Cron, pg_net y Vault sin crear tablas
+  médicas ni trabajos activos. Se provisiona `fhf-reminder-dispatch` con `active=false`. No activar un calendario antes de completar el
+  procesamiento. El secreto de invocación en Vault debe llamarse `fhf_reminder_dispatch_secret` y coincidir con
+  el de la función; la URL del endpoint se guarda como `fhf_reminder_function_url`. Una clave pública no autoriza llamadas de automatización.
+- SMTP externo queda pendiente de proveedor, credenciales y remitente/dominio
+  verificable. Para los mensajes de Supabase Auth se configura en Auth/SMTP,
+  no basta con agregar variables SMTP a Vercel.
+
+Estas bases no acreditan RF-21–RF-24 ni RF-30 como funcionalidades terminadas.
+
+La infraestructura SQL de esta preparación se aplicó desde el Dashboard de Supabase;
+el archivo de migración conserva su definición idempotente. No se registró con
+`supabase db push`: al incorporar un flujo CLI, conciliar primero el historial
+de migraciones. Los envíos y el job permanecen desactivados.

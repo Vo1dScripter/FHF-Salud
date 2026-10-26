@@ -4,6 +4,7 @@ import * as React from 'react';
 import '@/styles/tailwind.css';
 import '@/styles/app.css';
 
+import ServiceWorkerRegistration from '@/components/pwa/ServiceWorkerRegistration';
 import ThemeScript from '@/components/theme/ThemeScript';
 
 import { siteConfig } from '@/constant/config';
@@ -56,7 +57,10 @@ export default function RootLayout({
       <head>
         <ThemeScript />
       </head>
-      <body className='overflow-x-hidden'>{children}</body>
+      <body className='overflow-x-hidden'>
+        <ServiceWorkerRegistration />
+        {children}
+      </body>
     </html>
   );
 }

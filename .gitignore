@@ -42,3 +42,12 @@ __pycache__/
 
 # Referencias y evidencia local de diseño
 /.design-reference/
+
+# Supabase local runtime secrets and CLI state
+/supabase/functions/.env
+/supabase/.temp/
+/supabase/.branches/
+
+# Cualquier variante de entorno local; publicar solo plantillas sin valores reales
+.env.*
+!.env.example

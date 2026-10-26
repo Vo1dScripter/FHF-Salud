@@ -1,0 +1,6 @@
+project_id = "fhf-salud"
+
+# Scheduled service calls use the dedicated secret checked inside the function.
+# A publishable key alone never authorizes this endpoint.
+[functions.reminder-dispatch]
+verify_jwt = false

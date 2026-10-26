@@ -18,14 +18,15 @@
     "lint:fix": "eslint . --fix && npm run format",
     "lint:strict": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit --incremental false",
-    "verify": "npm run lint:strict && npm run typecheck && npm test -- --runInBand && npm run img:test && npm run build",
+    "verify": "npm run lint:strict && npm run typecheck && npm test -- --runInBand && npm run img:test && npm run integrations:test && npm run build",
     "test:watch": "jest --watch",
     "test": "jest",
     "format": "prettier -w .",
     "format:check": "prettier -c .",
     "postbuild": "next-sitemap --config next-sitemap.config.js",
     "prepare": "husky",
-    "supabase:check": "node scripts/check-supabase.mjs"
+    "supabase:check": "node scripts/check-supabase.mjs",
+    "integrations:test": "node --test scripts/tests/*.node-test.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
