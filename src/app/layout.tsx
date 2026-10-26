@@ -4,6 +4,8 @@ import * as React from 'react';
 import '@/styles/tailwind.css';
 import '@/styles/app.css';
 
+import ThemeScript from '@/components/theme/ThemeScript';
+
 import { siteConfig } from '@/constant/config';
 
 const ogImage = `${siteConfig.url}/og/og.jpg`;
@@ -50,7 +52,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang='es'>
+    <html data-theme='light' lang='es' suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
       <body className='overflow-x-hidden'>{children}</body>
     </html>
   );

@@ -1,11 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { type ReactNode, useId, useState } from 'react';
 
 import { cn } from '@/lib/utils';
 
 export type QuickNavItem = {
+  active?: boolean;
   href: string;
   label: string;
 };
@@ -14,6 +15,7 @@ export type QuickNavProps = {
   brand?: string;
   className?: string;
   cta?: QuickNavItem;
+  endContent?: ReactNode;
   items: QuickNavItem[];
   variant?: 'centered' | 'drawer' | 'floating' | 'hamburger' | 'inline';
 };
@@ -22,10 +24,12 @@ export default function QuickNav({
   brand = 'Mi Sitio',
   className,
   cta,
+  endContent,
   items,
   variant = 'inline',
 }: QuickNavProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const menuId = useId();
   const needsToggle = variant === 'hamburger' || variant === 'drawer';
 
   return (
@@ -37,20 +41,21 @@ export default function QuickNav({
         {brand}
       </Link>
 
-      <button
-        aria-expanded={isOpen}
-        aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
-        className={cn('quick-nav__toggle', needsToggle && 'is-enabled')}
-        onClick={() => setIsOpen((current) => !current)}
-        type='button'
+      <div
+        className={cn('quick-nav__links', isOpen && 'is-open')}
+        id={menuId}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') {
+            setIsOpen(false);
+            event.currentTarget.parentElement
+              ?.querySelector<HTMLButtonElement>('.quick-nav__toggle')
+              ?.focus();
+          }
+        }}
       >
-        <span />
-        <span />
-      </button>
-
-      <div className={cn('quick-nav__links', isOpen && 'is-open')}>
         {items.map((item) => (
           <Link
+            aria-current={item.active ? 'page' : undefined}
             className='quick-nav__link'
             href={item.href}
             key={item.href}
@@ -69,6 +74,20 @@ export default function QuickNav({
           </Link>
         ) : null}
       </div>
+
+      <div className='quick-nav__end'>{endContent}</div>
+
+      <button
+        aria-controls={menuId}
+        aria-expanded={isOpen}
+        aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
+        className={cn('quick-nav__toggle', needsToggle && 'is-enabled')}
+        onClick={() => setIsOpen((current) => !current)}
+        type='button'
+      >
+        <span />
+        <span />
+      </button>
 
       {variant === 'drawer' ? (
         <button

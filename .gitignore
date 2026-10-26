@@ -39,3 +39,6 @@ __pycache__/
 .codex
 .vscode/
 .idea/
+
+# Referencias y evidencia local de diseño
+/.design-reference/

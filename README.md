@@ -6,17 +6,20 @@ prepara contratos estables para el futuro módulo de Gestión de Citas Médicas.
 
 ## Preparación inicial de Gestión de Citas Médicas
 
-La aplicación conserva la ruta `/`, sus componentes, navegación, estilos y
-funcionalidades actuales. La única ruta API incluida por la plantilla es
-`GET /api/hello`. No se añadió una pantalla de citas, autenticación, una base
-de datos ni datos de prueba.
+La aplicación conserva la ruta `/`, su contenido y las anclas anteriores. El
+menú añade «Citas médicas» y el interruptor claro/oscuro. La única ruta API
+existente sigue siendo `GET /api/hello`. El módulo añade pantallas de preparación
+en `/citas`, `/citas/nueva` y `/citas/[id]`, sin autenticación, persistencia ni
+operaciones médicas. La ruta de QA `/citas/vista-previa` requiere modo desarrollo
+y una bandera explícita; sus datos sintéticos nunca son fallback de producción.
 
 La nueva estructura de dominio es:
 
 ```text
 src/features/
   appointments/
-    contracts.ts  # contrato del módulo y límite de persistencia
+    contracts.ts  # datos, persistencia y servicio de aplicación previstos
+    routes.ts     # URLs acordadas y etiquetas de estados
     index.ts      # API pública del módulo
   patients/
     types.ts      # identificador y referencia mínima de paciente
@@ -40,21 +43,32 @@ implementación de almacenamiento.
 2. Mantener identificadores como `string` mediante `PatientId`, `PhysicianId`
    y `AppointmentId`. Las fechas se intercambian como `IsoDateTime` en formato
    ISO 8601 con zona horaria.
-3. Conservar los estados `scheduled`, `confirmed`, `cancelled`, `attended` y
-   `no_show`. La cancelación es un cambio de estado, no una eliminación.
+3. Conservar los estados `pending` (pendiente), `confirmed` (confirmada) y
+   `cancelled` (cancelada). La cancelación es un cambio de estado, no una
+   eliminación. El motivo de consulta (`Appointment.reason`) es distinto del
+   motivo de cancelación (`CancelAppointmentInput.reason`).
 4. Implementar una fuente de datos detrás de `AppointmentRepository` cuando el
    equipo elija su infraestructura. Las rutas API o Server Actions deben usar
    el contrato, no depender directamente de una tecnología de base de datos.
 5. Colocar componentes exclusivos de futuras pantallas de citas bajo
    `src/app/components/appointments/`. Sólo promover piezas a `src/components/`
    cuando sean reutilizables fuera del módulo.
-6. Añadir rutas de citas únicamente al iniciar su interfaz y conservar la ruta
-   raíz de la plantilla mientras siga siendo necesaria para el proyecto.
+6. Usar `appointmentRoutes` para las URLs acordadas: `/citas`, `/citas/nueva`
+   y `/citas/[id]`. Las pantallas y el menú ya están incorporados como estructura
+   en preparación; la escritura permanece deshabilitada. Conservar la ruta raíz
+   y sus anclas.
+7. Implementar las operaciones detrás de `AppointmentService`: `list`,
+   `getById`, `create`, `confirm`, `reschedule` y `cancel`. El contrato no
+   ejecuta operaciones ni da por cumplidos los RF.
+
+El detalle de campos, responsabilidades, acceso y validación está en
+[el acuerdo de integración](docs/citas-integracion.md).
 
 La configuración de identidad está en `src/constant/config.ts`; actualiza
-`siteConfig.url` al definir el dominio de despliegue. No existe persistencia,
-autenticación ni proveedor de API configurado, por lo que esta entrega no
-introduce tecnologías adicionales.
+`siteConfig.url` al definir el dominio de despliegue. La base de conexión a Supabase ya está configurada con clientes de navegador y
+servidor, cookies SSR y renovación de sesión en `src/proxy.ts`. Aún no existen
+login, persistencia ni políticas de autorización por cita; la interfaz conserva
+su modo de preparación y no permite operaciones médicas.
 
 ## Plantilla Next.js
 
@@ -90,6 +104,24 @@ Esta base está pensada para:
 - `Jest 30`
 
 ## Inicio rápido
+
+Requisitos: Node.js >=22.0.0 y npm. Python y ffmpeg son necesarios solo para
+el pipeline multimedia descrito más abajo.
+
+```bash
+npm ci
+cp .env.example .env
+npm run dev
+```
+
+Abrir `http://localhost:3000`. Para probar producción:
+
+```bash
+npm run build
+npm run start
+```
+
+También se admite la instalación habitual:
 
 ```bash
 npm install
@@ -497,3 +529,110 @@ npm run build
 - no existe actualmente un `recursos.py`
 - si en documentación futura se menciona `recursos.py`, conviene unificar ese
   nombre para no confundir el flujo real del proyecto
+
+## Despliegue previsto en Vercel
+
+La plantilla usa Next.js App Router y genera un build de producción sin
+adaptadores adicionales. Importar el repositorio con preset Next.js, raíz del
+repositorio y comando `npm run build`; este comando ejecuta también Gulp en
+`prebuild` y genera el sitemap en `postbuild`. No configurar exportación
+estática: existe `/api/hello`. No hace falta ejecutar el pipeline multimedia
+en el hosting si se conservan los recursos optimizados versionados.
+
+El plan [Hobby](https://vercel.com/docs/plans/hobby) es para uso personal no
+comercial y está sujeto a sus límites. Next.js tiene
+[soporte nativo en Vercel](https://vercel.com/docs/frameworks/full-stack/nextjs).
+Compatibilidad local comprobada; no se realizó un despliegue remoto.
+
+El dominio confirmado `https://fhf-salud.vercel.app` ya está configurado en
+`src/constant/config.ts` y `next-sitemap.config.js`. Si cambia el dominio,
+actualizar ambos archivos y Site URL de Supabase para conservar metadatos,
+sitemap y retornos de autenticación coherentes. En el hosting,
+no cargar variables del pipeline local ni secretos que la aplicación no use.
+
+## Estado de la preparación PRY05
+
+Contratos, acuerdo técnico, menú, rutas renderizadas y componentes de citas
+preparados a partir de la propuesta aprobada (versión 3). Se excluyeron el selector
+de revisión y la guía de tamaños según autorización del integrante. Se añadió
+tema claro/oscuro con preferencia local persistente. La base de Supabase ya está integrada; el flujo de acceso y la autorización
+efectiva quedan pendientes de los siguientes integrantes. Esto no acredita RF-01 a RF-06
+ni operaciones médicas funcionales.
+
+El integrante debe revisar y seleccionar sus archivos para un único commit
+auténtico desde su cuenta:
+
+```text
+chore: preparar modulo de citas RF01-RF06
+```
+
+No incluir capturas, documentos personales ni carpetas locales de herramientas
+por usar `git add .` sin revisar el estado.
+
+## Temas y vista de desarrollo
+
+El interruptor «Modo oscuro» del encabezado alterna claro/oscuro en la portada
+y en el módulo. El tema inicial es claro y la elección se guarda en
+`localStorage` bajo `fhf-theme`; si el almacenamiento está bloqueado, sigue
+funcionando en la pestaña. La preferencia se aplica antes de pintar la página.
+
+Para revisar los estados con fixtures sintéticas, sin tocar consultas reales:
+
+```bash
+FHF_APPOINTMENT_PREVIEW=true npm run dev
+```
+
+Abrir `/citas/vista-previa?estado=poblado`. Estados admitidos: `preparacion`,
+`cargando`, `poblado`, `vacio`, `error`, `sesion`, `permiso`, `formulario`,
+`validacion`, `enviando`, `exito`, `detalle`. Son vistas de QA; no envían datos ni
+simulan una sesión real. Las pantallas normales siempre muestran preparación.
+La vista previa devuelve 404 sin la bandera o en producción incluso con ella.
+No establecer esta variable en el hosting. Los fixtures están aislados en
+`src/features/appointments/__fixtures__/preview.ts`.
+
+## Integración base de Supabase
+
+Se creó un proyecto gratuito exclusivo `fhf-salud` y se prepararon los clientes
+con `@supabase/supabase-js` y `@supabase/ssr`. La URL y la clave publicable se
+guardan localmente en `.env.local`, ignorado por Git, y en Vercel para
+Production, Preview y Development. `.env.example` contiene solo nombres vacíos:
+
+```dotenv
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+```
+
+Obtener los valores del proyecto Supabase → Settings → API Keys. Usar
+exclusivamente la clave `sb_publishable_`; el validador rechaza claves secretas,
+JWT legacy y URLs inseguras. La clave pública identifica la aplicación y no
+reemplaza sesión, autorización ni RLS. Nunca colocar claves `sb_secret_`,
+`service_role` ni contraseña de Postgres en frontend.
+
+- Navegador: importar `createClient` desde `@/lib/supabase/client`.
+- Server Components, Server Actions y Route Handlers: importar `createClient`
+  desde `@/lib/supabase/server` y usar `await createClient()`. La instancia se
+  crea por petición y utiliza cookies.
+- `src/proxy.ts` renueva/verifica claims en `/citas/:path*` y conserva cookies y
+  cabeceras devueltas por Supabase. Mantiene público el shell sin datos médicos;
+  no implementa autorización por cita.
+- Para proteger datos, verificar identidad con `auth.getClaims()` o
+  `auth.getUser()`, aplicar permisos en cada operación y añadir RLS. No confiar
+  en `auth.getSession()` como prueba de identidad en servidor.
+
+El proyecto se creó con exposición automática de tablas nuevas **desactivada**
+y RLS automático **activado**. No se crearon tablas médicas, políticas de
+acceso a citas, usuarios ni registros de demostración en Supabase.
+
+Supabase Auth tiene Site URL `https://fhf-salud.vercel.app` y retorno local
+`http://localhost:3000/`. Los callbacks específicos se definirán al implementar
+el flujo real de acceso, sin comodines globales.
+
+Después de guardar variables en Vercel se necesita un despliegue nuevo. Los
+cambios locales no se publican automáticamente por configurar el entorno;
+el integrante debe crear y subir su commit auténtico para que el proyecto Git
+conectado lo despliegue.
+
+Comprobar la conexión pública sin acceder a tablas: `npm run supabase:check`.
+
+El SDK de Supabase instalado requiere Node.js 22 o superior; el requisito de
+`package.json` se alineó con esa versión.

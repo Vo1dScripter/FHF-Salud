@@ -60,6 +60,7 @@ const eslintConfig = defineConfig([
   },
   globalIgnores([
     '.next/**',
+    '.design-reference/**',
     'out/**',
     'build/**',
     'coverage/**',

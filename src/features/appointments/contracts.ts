@@ -10,12 +10,7 @@ export type IsoDateTime = string;
  * Estados autorizados para una cita. Las transiciones y permisos se validarán
  * en la capa de aplicación cuando se implemente el módulo.
  */
-export type AppointmentStatus =
-  | 'scheduled'
-  | 'confirmed'
-  | 'cancelled'
-  | 'attended'
-  | 'no_show';
+export type AppointmentStatus = 'pending' | 'confirmed' | 'cancelled';
 
 /** Duraciones previstas por la especificación funcional del proyecto. */
 export type AppointmentDurationMinutes = 15 | 30 | 45 | 60;
@@ -27,6 +22,7 @@ export type Appointment = {
   id: AppointmentId;
   patientId: PatientId;
   physicianId: PhysicianId;
+  reason: string;
   scheduledAt: IsoDateTime;
   status: AppointmentStatus;
   updatedAt: IsoDateTime;
@@ -37,6 +33,7 @@ export type CreateAppointmentInput = {
   durationMinutes: AppointmentDurationMinutes;
   patientId: PatientId;
   physicianId: PhysicianId;
+  reason: string;
   scheduledAt: IsoDateTime;
 };
 
@@ -69,4 +66,25 @@ export interface AppointmentRepository {
   findById(id: AppointmentId): Promise<Appointment | null>;
   list(query?: AppointmentQuery): Promise<Appointment[]>;
   update(id: AppointmentId, appointment: Appointment): Promise<Appointment>;
+}
+
+/**
+ * Operaciones de aplicación previstas, todavía sin implementación.
+ * Cada método debe verificar sesión y autorización en servidor antes de leer
+ * o escribir. El frontend nunca entrega un rol como prueba de permiso.
+ * Fallos del proveedor deben notificarse como error, nunca como lista vacía.
+ */
+export interface AppointmentService {
+  cancel(
+    id: AppointmentId,
+    input: CancelAppointmentInput,
+  ): Promise<Appointment>;
+  confirm(id: AppointmentId): Promise<Appointment>;
+  create(input: CreateAppointmentInput): Promise<Appointment>;
+  getById(id: AppointmentId): Promise<Appointment | null>;
+  list(query?: AppointmentQuery): Promise<Appointment[]>;
+  reschedule(
+    id: AppointmentId,
+    input: RescheduleAppointmentInput,
+  ): Promise<Appointment>;
 }

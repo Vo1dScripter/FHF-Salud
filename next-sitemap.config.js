@@ -5,8 +5,10 @@
 module.exports = {
   // !STARTERCONF Change the siteUrl
   /** Without additional '/' on the end, e.g. https://theodorusclarence.com */
-  siteUrl: 'https://tsnext-tw.thcl.dev',
+  siteUrl: 'https://fhf-salud.vercel.app',
   generateRobotsTxt: true,
+  // La herramienta opt-in de QA no forma parte de las rutas públicas.
+  exclude: ['/citas/vista-previa'],
   robotsTxtOptions: {
     policies: [{ userAgent: '*', allow: '/' }],
   },
