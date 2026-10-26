@@ -1,5 +1,11 @@
-import type { PatientId } from '@/features/patients/types';
-import type { PhysicianId } from '@/features/physicians/types';
+import type {
+  PatientId,
+  PatientReference,
+} from '@/features/patients/types';
+import type {
+  PhysicianId,
+  PhysicianReference,
+} from '@/features/physicians/types';
 
 export type AppointmentId = string;
 
@@ -7,15 +13,15 @@ export type AppointmentId = string;
 export type IsoDateTime = string;
 
 /**
- * Estados autorizados para una cita. Las transiciones y permisos se validarán
- * en la capa de aplicación cuando se implemente el módulo.
+ * Estados autorizados para una cita. El alta siempre crea en `pending`;
+ * confirmar, reprogramar y cancelar pertenecen a RF-03/RF-04.
  */
 export type AppointmentStatus = 'pending' | 'confirmed' | 'cancelled';
 
 /** Duraciones previstas por la especificación funcional del proyecto. */
 export type AppointmentDurationMinutes = 15 | 30 | 45 | 60;
 
-/** Registro que una futura fuente de datos debe entregar al módulo de citas. */
+/** Registro que entrega la persistencia al módulo de citas. */
 export type Appointment = {
   createdAt: IsoDateTime;
   durationMinutes: AppointmentDurationMinutes;
@@ -26,6 +32,42 @@ export type Appointment = {
   scheduledAt: IsoDateTime;
   status: AppointmentStatus;
   updatedAt: IsoDateTime;
+};
+
+/** Registro de agenda con las referencias mínimas ya resueltas para la interfaz. */
+export type AppointmentView = Appointment & {
+  patient: PatientReference;
+  physician: PhysicianReference;
+};
+
+/**
+ * Identidad de aplicación. Los roles se leen de app_metadata del JWT firmado;
+ * nunca de un encabezado, formulario o selector del navegador.
+ *
+ * El módulo actual es operado por personal: administración/recepción puede
+ * consultar y registrar; un médico solo consulta su propia agenda.
+ */
+export type AppointmentActor =
+  | {
+      role: 'admin' | 'receptionist';
+      userId: string;
+    }
+  | {
+      physicianId: PhysicianId;
+      role: 'physician';
+      userId: string;
+    };
+
+/**
+ * Catálogo mínimo autorizado para construir la agenda y el formulario.
+ * `canCreate` es una pista de presentación; la autorización real se vuelve a
+ * comprobar en el servicio y en RLS. Un médico recibe solo su propia
+ * referencia y ningún paciente.
+ */
+export type AppointmentDirectory = {
+  canCreate: boolean;
+  patients: PatientReference[];
+  physicians: PhysicianReference[];
 };
 
 /** Datos necesarios para solicitar el registro de una cita. */
@@ -58,14 +100,60 @@ export type AppointmentQuery = {
 };
 
 /**
- * Límite de persistencia del módulo. No presupone base de datos ni proveedor.
- * La implementación concreta vivirá en infraestructura cuando ésta se decida.
+ * Límite de persistencia del módulo. La implementación de producción usa
+ * Supabase/PostgREST y RLS en `supabase-repository.ts`; las pruebas usan dobles.
  */
 export interface AppointmentRepository {
   create(input: CreateAppointmentInput): Promise<Appointment>;
+  /**
+   * Devuelve citas activas del mismo médico que se superponen con el intervalo.
+   * Es una comprobación de UX; la restricción de exclusión de PostgreSQL sigue
+   * siendo la garantía ante solicitudes concurrentes.
+   */
+  findConflicts(
+    physicianId: PhysicianId,
+    startsAt: IsoDateTime,
+    endsAt: IsoDateTime,
+  ): Promise<Appointment[]>;
   findById(id: AppointmentId): Promise<Appointment | null>;
   list(query?: AppointmentQuery): Promise<Appointment[]>;
+  /** Reservado para RF-03/RF-04; hoy no hay política RLS de update. */
   update(id: AppointmentId, appointment: Appointment): Promise<Appointment>;
+}
+
+/** Lectura de agenda con nombres resueltos; puede aplicar RLS en el proveedor. */
+export interface AppointmentReader {
+  findByIdView(id: AppointmentId): Promise<AppointmentView | null>;
+  listView(query?: AppointmentQuery): Promise<AppointmentView[]>;
+}
+
+/** Catálogo de referencias activas para el formulario. */
+export interface AppointmentDirectoryRepository {
+  findPatient(id: PatientId): Promise<PatientReference | null>;
+  findPhysician(id: PhysicianId): Promise<PhysicianReference | null>;
+  listPatients(): Promise<PatientReference[]>;
+  listPhysicians(): Promise<PhysicianReference[]>;
+}
+
+/**
+ * Operaciones implementadas en esta entrega (RF-01, RF-02 y RF-05).
+ * Las operaciones de confirmación, reprogramación y cancelación permanecen en
+ * AppointmentService para una entrega posterior.
+ */
+export interface AppointmentAgendaService {
+  create(
+    actor: AppointmentActor,
+    input: CreateAppointmentInput,
+  ): Promise<Appointment>;
+  getById(
+    actor: AppointmentActor,
+    id: AppointmentId,
+  ): Promise<AppointmentView | null>;
+  list(
+    actor: AppointmentActor,
+    query?: AppointmentQuery,
+  ): Promise<AppointmentView[]>;
+  listReferences(actor: AppointmentActor): Promise<AppointmentDirectory>;
 }
 
 /**

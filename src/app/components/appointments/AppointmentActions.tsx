@@ -19,8 +19,8 @@ export default function AppointmentActions() {
       <label htmlFor='appointment-cancel-reason'>Motivo de cancelación</label>
       <textarea disabled id='appointment-cancel-reason' rows={3} />
       <p id='appointment-actions-note'>
-        Acciones en preparación, sujetas a sesión, permisos y respuesta del
-        servidor.
+        Confirmar, reprogramar y cancelar pertenecen a RF-03/RF-04 y quedan
+        fuera de esta entrega. No se habilitan sin sus políticas y pruebas.
       </p>
     </div>
   );

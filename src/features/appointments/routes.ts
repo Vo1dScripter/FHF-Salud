@@ -3,6 +3,7 @@
  * No contienen operaciones de persistencia.
  */
 export const appointmentRoutes = {
+  access: '/citas/acceso',
   detail: (id: string) => `/citas/${encodeURIComponent(id)}`,
   list: '/citas',
   new: '/citas/nueva',

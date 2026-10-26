@@ -23,19 +23,19 @@ export default function AppointmentDetail({
         </span>
       ) : (
         <p>
-          No se ha consultado ningún registro. El acceso y el servicio de citas
-          están pendientes de integración.
+          No se ha consultado ningún registro. Esta vista de propuesta no tiene
+          una cita seleccionada.
         </p>
       )}
       <dl>
         <div>
           <dt>Paciente</dt>
-          <dd>{appointment?.patient.displayName ?? 'Pendiente de conexión'}</dd>
+          <dd>{appointment?.patient.displayName ?? 'Sin datos'}</dd>
         </div>
         <div>
           <dt>Médico</dt>
           <dd>
-            {appointment?.physician.displayName ?? 'Pendiente de conexión'}
+            {appointment?.physician.displayName ?? 'Sin datos'}
           </dd>
         </div>
         <div>
@@ -46,19 +46,19 @@ export default function AppointmentDetail({
                   appointment.scheduledAt,
                   appointment.durationMinutes,
                 )
-              : 'Pendiente de conexión'}
+              : 'Sin datos'}
           </dd>
         </div>
         <div>
           <dt>Motivo</dt>
-          <dd>{appointment?.reason ?? 'Pendiente de conexión'}</dd>
+          <dd>{appointment?.reason ?? 'Sin datos'}</dd>
         </div>
         <div>
           <dt>Auditoría</dt>
           <dd>
             {appointment
               ? `Creación: ${formatAppointmentDate(appointment.createdAt)} · Actualización: ${formatAppointmentDate(appointment.updatedAt)} · UTC−06:00`
-              : 'Pendiente de conexión'}
+              : 'Sin datos'}
           </dd>
         </div>
       </dl>
