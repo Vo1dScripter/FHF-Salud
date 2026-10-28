@@ -94,8 +94,9 @@ npm run dev
 ```
 
 Abrir `http://localhost:3000/citas`. `supabase:check` comprueba el acceso público a
-Auth, no valida tablas, permisos ni el funcionamiento de citas. Las pantallas de
-citas siguen siendo preparación; no presentan operaciones médicas como terminadas.
+Auth, no valida tablas, permisos ni el funcionamiento de citas. Las acciones
+RF-03/RF-04/RF-06 están implementadas y probadas localmente; la migración y la
+prueba E2E contra el proyecto Supabase remoto siguen pendientes de activación.
 
 Para comprobar cambios:
 

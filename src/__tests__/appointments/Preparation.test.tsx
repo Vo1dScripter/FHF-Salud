@@ -20,7 +20,7 @@ describe('Appointment preparation boundary', () => {
   it('does not accept medical input or enable writes before integration', () => {
     render(
       <>
-        <AppointmentForm />
+        <AppointmentForm state='preparation' />
         <AppointmentDetail />
       </>,
     );

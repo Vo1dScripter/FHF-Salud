@@ -1,10 +1,12 @@
+import AppointmentSessionControl from './AppointmentSessionControl';
+
 export default function AppointmentContext() {
   return (
     <aside className='appointments-context' aria-label='Contexto del módulo'>
       <h3>Contexto del Módulo</h3>
       <p>
-        Este panel acompaña la gestión de citas para ofrecer información de
-        auditoría y reglas de negocio.
+        La agenda aplica validación de servidor, referencias activas y una
+        restricción de base de datos contra solapamientos.
       </p>
       <ul>
         <li>
@@ -12,8 +14,8 @@ export default function AppointmentContext() {
           <div>
             <h4>Reglas de servidor</h4>
             <p>
-              Las citas se validarán contra la disponibilidad del profesional en
-              tiempo real.
+              Editar y confirmar revalidan la versión y el estado. Cancelar
+              conserva la fila, guarda el motivo y libera el horario.
             </p>
           </div>
         </li>
@@ -22,12 +24,13 @@ export default function AppointmentContext() {
           <div>
             <h4>Acceso por Rol</h4>
             <p>
-              Solo usuarios autorizados podrán editar o cancelar citas
-              existentes.
+              Administración y recepción gestionan la agenda; cada médico
+              consulta la suya. Las políticas RLS se aplican en la base.
             </p>
           </div>
         </li>
       </ul>
+      <AppointmentSessionControl />
     </aside>
   );
 }

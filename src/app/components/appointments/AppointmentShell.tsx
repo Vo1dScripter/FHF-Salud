@@ -14,8 +14,9 @@ export default function AppointmentShell({
           <p className='appointments-eyebrow'>Gestión de Agenda</p>
           <h1>Citas médicas</h1>
           <p className='appointments-lead'>
-            Módulo en etapa de preparación. Esta vista proyecta la estructura
-            técnica y visual sin conexión activa a servicios de datos.
+            Agenda conectada a Supabase cuando el entorno y la sesión están
+            configurados. La escritura requiere personal autorizado y las citas
+            se validan en servidor.
           </p>
         </header>
         <div className='appointments-grid'>

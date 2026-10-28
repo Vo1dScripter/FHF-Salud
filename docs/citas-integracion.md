@@ -1,20 +1,25 @@
 # Acuerdo de integración del módulo de citas · PRY05
 
-Preparación del integrante 1 para RF-01 a RF-06. Este documento acuerda límites;
-no afirma que las seis funciones estén implementadas. La base de conexión a Supabase se integró después de aprobar la preparación.
-El flujo de acceso, las políticas por cita y la persistencia del módulo siguen
-pendientes; el shell no expone datos médicos.
+Estado actual: RF-01 a RF-06 están implementados en código y verificados
+localmente. Este documento conserva los límites acordados y registra cómo se
+resolvieron acceso, persistencia, acciones y concurrencia. La migración y la
+prueba E2E contra el proyecto Supabase remoto siguen pendientes de activación;
+la aplicación no presenta datos ficticios como si fueran productivos.
 
 ## Estado y componentes reutilizables
 
 Next.js 16 / React 19 / TypeScript; App Router, Tailwind 4 y SCSS compilado por
-Gulp. La portada `/` compone Header → QuickNav, Main y Footer. Reutilizar estos
-componentes, marca textual, tipografía local y estilos `.fhf-*`. Conservar las
-anclas `#inicio`, `#alcance` y `#siguiente-etapa`, así como `/api/hello`.
-No hay sesión, proveedor de citas ni tablas. Hay formulario y detalle de
-preparación sin envío ni consulta de datos médicos.
-`QuickContactForm` es un formulario genérico de contacto, no una fuente de
-pacientes ni una implementación de alta de citas.
+Gulp. La portada `/` compone Header → QuickNav, Main y Footer. Se reutilizan
+estos componentes, marca textual, tipografía local y estilos `.fhf-*`. Se
+conservan las anclas `#inicio`, `#alcance` y `#siguiente-etapa`, así como
+`/api/hello`.
+
+El módulo tiene sesión Supabase, rutas API, servicio de aplicación, políticas
+RLS y persistencia PostgreSQL. `/citas` consulta la agenda real; `/citas/nueva`
+registra; `/citas/[id]` muestra el detalle autorizado; las acciones de confirmar,
+reprogramar y cancelar se ejecutan desde la lista y el detalle.
+`QuickContactForm` sigue siendo un formulario genérico de contacto, no una
+fuente de pacientes ni una implementación de alta de citas.
 
 ## Datos compartidos
 
@@ -30,83 +35,99 @@ Importar desde `@/features/appointments`, `@/features/patients` y
 | durationMinutes      | 15, 30, 45 o 60                | Duración; fin derivado de inicio + duración     |
 | reason               | string                         | Motivo de consulta requerido                    |
 | status               | pending, confirmed o cancelled | Pendiente, confirmada o cancelada               |
+| confirmedAt          | IsoDateTime o null             | Última confirmación vigente                     |
+| cancelledAt          | IsoDateTime o null             | Momento de la cancelación                       |
+| cancelReason         | string o null                  | Motivo conservado al cancelar                   |
 | createdAt            | IsoDateTime                    | Fecha de creación asignada por servidor         |
-| updatedAt            | IsoDateTime                    | Última actualización asignada por servidor      |
+| updatedAt            | IsoDateTime                    | Versión usada para el control de concurrencia   |
 
 `PatientReference` y `PhysicianReference` aportan `id` y `displayName`; los
 nombres no se duplican como identidad dentro de Appointment. La capa de lectura
-resolverá sus referencias autorizadas. `IsoDateTime` documenta el formato: un
+resuelve sus referencias autorizadas. `IsoDateTime` documenta el formato: un
 alias TypeScript no valida valores recibidos en ejecución.
 
-`CreateAppointmentInput` recibe paciente, médico, inicio, duración y motivo;
-no recibe identificador, estado ni auditoría del navegador. El servicio futuro
-creará en estado `pending`. `RescheduleAppointmentInput` recibe inicio y duración.
+`CreateAppointmentInput` recibe paciente, médico, inicio, duración y motivo; no
+recibe identificador, estado ni auditoría del navegador. El servidor crea en
+`pending`. `RescheduleAppointmentInput` recibe inicio y duración.
 `CancelAppointmentInput.reason` es el motivo de cancelación, separado del motivo
-de consulta; la implementación deberá conservarlo en la auditoría de cancelación.
+de consulta; se guarda en `cancel_reason` y en `appointment_events`.
+
+`updatedAt` funciona como versión optimista. Las mutaciones envían
+`expectedUpdatedAt`; el servicio y la función SQL rechazan una versión vieja con 409. La restricción de exclusión de PostgreSQL es la garantía final de
+disponibilidad.
 
 El contrato anterior usaba `scheduled` y estados adicionales `attended` y
-`no_show`. Ningún consumidor ni persistencia existentes los utiliza. Se alineó
-el contrato a los tres estados del PROMPT 1; no hay migración de datos ni tablas.
+`no_show`. Ningún consumidor ni persistencia existentes los utilizaba. Se alineó
+el contrato a los tres estados del PROMPT 1; no hubo datos históricos que
+migrar.
 
-## URLs y operaciones acordadas
+## URLs y operaciones implementadas
 
-`appointmentRoutes` centraliza las URLs de las páginas; no crea endpoints de
-operaciones ni sustituye la persistencia.
-Las tres rutas ya renderizan la estructura aprobada en modo preparación.
+`appointmentRoutes` centraliza las URLs de las páginas y `appointmentApiRoutes`
+los endpoints internos.
 
-| URL prevista | Región / componentes previstos                                     |
-| ------------ | ------------------------------------------------------------------ |
-| /citas       | Listado: AppointmentList y estado de preparación/carga/error/vacío |
-| /citas/nueva | Formulario: AppointmentForm con campos etiquetados                 |
-| /citas/[id]  | Detalle: AppointmentDetail y AppointmentActions                    |
+| URL implementada | Región / componentes                                        |
+| ---------------- | ----------------------------------------------------------- |
+| /citas           | Agenda real: filtros, AppointmentList y acciones por fila   |
+| /citas/nueva     | Formulario: AppointmentForm con validación y persistencia   |
+| /citas/[id]      | Detalle server-side: AppointmentDetail y AppointmentActions |
+| /citas/acceso    | Acceso con Supabase Auth                                    |
 
-Colocar esos componentes bajo `src/app/components/appointments/`, con páginas
-pequeñas que los compongan. Reusar el shell existente; no duplicar una portada.
-La entrada «Citas médicas» ya navega a `/citas`; se conservan las anclas previas
-y se usa `aria-current` dentro del módulo.
+Los componentes están bajo `src/app/components/appointments/`, con páginas
+pequeñas que los componen. Se reutiliza el shell existente. La entrada «Citas
+médicas» navega a `/citas`; se conservan las anclas previas y se usa
+`aria-current` dentro del módulo.
 
-`AppointmentService` es el límite de aplicación que usará la interfaz:
+`AppointmentAgendaService` es el límite de aplicación implementado:
 
-| Operación  | Entrada                                   | Salida                                                      |
-| ---------- | ----------------------------------------- | ----------------------------------------------------------- |
-| list       | AppointmentQuery opcional                 | Appointment[] autorizado                                    |
-| getById    | AppointmentId                             | Appointment o null si no existe dentro del ámbito permitido |
-| create     | CreateAppointmentInput                    | Appointment persistida                                      |
-| confirm    | AppointmentId                             | Appointment actualizada                                     |
-| reschedule | AppointmentId, RescheduleAppointmentInput | Appointment actualizada                                     |
-| cancel     | AppointmentId, CancelAppointmentInput     | Appointment actualizada                                     |
+| Operación  | Entrada                                                      | Salida                                             |
+| ---------- | ------------------------------------------------------------ | -------------------------------------------------- |
+| list       | AppointmentQuery opcional                                    | AppointmentView[] autorizado                       |
+| getById    | AppointmentId                                                | AppointmentView o null dentro del ámbito permitido |
+| create     | CreateAppointmentInput                                       | Appointment persistida                             |
+| confirm    | AppointmentId, expectedUpdatedAt                             | AppointmentView actualizado                        |
+| reschedule | AppointmentId, RescheduleAppointmentInput, expectedUpdatedAt | AppointmentView actualizado                        |
+| cancel     | AppointmentId, CancelAppointmentInput, expectedUpdatedAt     | AppointmentView actualizado                        |
 
-La interfaz todavía no tiene implementación. Un adaptador futuro puede usar
-Server Actions o API, pero no se declaran endpoints HTTP inexistentes como
-operativos. `AppointmentRepository` conserva create/findById/list/update como
-límite interno de persistencia y nunca se expone directamente al navegador.
+La interfaz usa `GET /api/citas`, `GET /api/citas/referencias`,
+`GET /api/citas/[id]` y `PATCH /api/citas/[id]` con `action` igual a `confirm`,
+`reschedule` o `cancel`. `AppointmentRepository` sigue siendo el límite interno
+de persistencia y nunca se expone directamente al navegador; las mutaciones se
+ejecutan mediante RPC `security definer`.
 
-Requisitos para la siguiente implementación: validar entradas en servidor,
-referencias existentes, disponibilidad sin solapamientos y ámbito del usuario;
-confirmar pendiente → confirmada, cancelar pendiente/confirmada → cancelada,
-rechazar cambios sobre canceladas. Propuesta para acordar con el equipo: la reprogramación de una confirmada
-vuelve a pendiente para confirmar el nuevo horario. Estos son acuerdos para
-la implementación futura, no reglas ya ejecutadas por los tipos. Crear y
-reprogramar deben resolver concurrencia en persistencia, no solo en el formulario.
-Los fallos se comunicarán como errores recuperables; una dependencia no disponible
-no significa `[]`, éxito ni ausencia de citas.
+Reglas ejecutadas:
 
-## Control de acceso previsto
+- Validación Zod en servidor, referencias activas, fechas y motivo de
+  cancelación.
+- Confirmar una pendiente la pasa a confirmada; confirmar una confirmada es
+  idempotente; confirmar una cancelada se rechaza.
+- Reprogramar una confirmada la devuelve a pendiente para confirmar el nuevo
+  horario; una cancelada no se puede reprogramar.
+- Cancelar conserva la fila, guarda el motivo y libera el horario; repetir la
+  cancelación no duplica la auditoría.
+- Toda mutación comprueba `expectedUpdatedAt` y la disponibilidad dentro de una
+  transacción con bloqueo de fila.
+- Los fallos se comunican como errores recuperables; una dependencia no
+  disponible no significa `[]`, éxito ni ausencia de citas.
+
+## Control de acceso implementado
 
 - El shell informativo puede ser público. Leer datos médicos y operar citas
   requiere sesión verificada y autorización del usuario en servidor.
-- No existe autenticación reutilizable actualmente. Al integrar Supabase,
-  verificar su sesión mediante el mecanismo oficial server-side y aplicar RLS
-  para el ámbito autorizado en cada operación, incluidas lecturas y detalle.
-- El responsable de datos definirá y documentará los permisos del equipo antes
-  de habilitar operaciones; negar por defecto cualquier operación sin política.
-  Una sesión válida por sí sola no concede acceso a todas las citas.
-- Obtener identidad y permisos del servidor/proveedor; no aceptar un rol, ID de
-  usuario o selector visual enviado por el navegador como prueba de autorización.
-- Validar en cada operación y sobre cada cita, incluidos IDs proporcionados por
-  URL; ocultar botones o bloquear una página no protege la base de datos.
-- Hasta completar sesión, políticas y servicio, no leer ni escribir citas,
-  mostrar registros ficticios ni ofrecer guardados o inicios de sesión falsos.
+- La sesión se verifica con `supabase.auth.getUser()` en cada petición. RLS y
+  las funciones RPC aplican el ámbito autorizado en lecturas, detalle y
+  mutaciones.
+- `admin` y `receptionist` operan toda la agenda. Un `physician` solo lee su
+  propia agenda y no puede mutar citas. Una cuenta sin rol recibe 403; una
+  petición sin sesión recibe 401.
+- La identidad y el rol vienen de `app_metadata` del JWT firmado; no se acepta
+  un rol, ID de usuario o selector visual enviado por el navegador.
+- Se valida cada operación y cada cita, incluidos IDs proporcionados por URL;
+  ocultar botones o bloquear una página no protege la base de datos.
+- Las mutaciones no tienen `UPDATE`/`DELETE` directos: solo se ejecutan por RPC
+  que vuelven a comprobar sesión, rol, estado y versión.
+- Sin configuración o sin sesión no se leen citas, no se muestran registros
+  ficticios y no se ofrece un guardado falso.
 
 ## Supabase: base integrada
 
@@ -114,18 +135,21 @@ Se creó el proyecto gratuito exclusivo `fhf-salud`; se configuró su URL y clav
 `sb_publishable_` en `.env.local` (ignorado por Git) y Vercel para Production,
 Preview y Development. `.env.example` contiene nombres vacíos. El cliente
 rechaza claves secretas/legacy y orígenes inseguros, sin imprimir credenciales.
+Esta copia de trabajo no incluye `.env.local`, por lo que la verificación de
+esta entrega no se conectó al proyecto remoto.
 
 Clientes SSR en `src/lib/supabase/client.ts` y `server.ts`; renovación/verificación
-de claims en `src/proxy.ts`, limitada al módulo. La preparación pública permanece
-accesible; no se considera autenticado a un usuario por tener clave pública ni
-se habilitan acciones médicas. La autorización por registro deberá añadirse junto
-con el servicio y sus políticas RLS. El servidor no debe confiar en getSession()
-como prueba de identidad.
+de claims en `src/proxy.ts`, limitada al módulo. La portada pública permanece
+accesible; tener la clave pública no autentica a nadie. El servidor no confía en
+`getSession()` como prueba de identidad: usa `getUser()` y RLS.
 
-Exposición automática de tablas nuevas desactivada y RLS automático activado
-al crear el proyecto. No se crearon tablas de citas, políticas clínicas ni usuarios.
-Nunca usar `sb_secret_`, `service_role` o contraseña de Postgres en frontend.
-La clave pública no sustituye autorización ni RLS.
+Las migraciones `202610250002_appointments.sql` y
+`202610260003_appointment_actions.sql` definen tablas, restricción de
+solapamientos, RLS, auditoría y RPC. Están aplicadas y probadas en PostgreSQL
+16.4 local, pero no se aplicaron al proyecto remoto desde esta copia de trabajo.
+Exposición automática de tablas nuevas desactivada y RLS automático activado al
+crear el proyecto. Nunca usar `sb_secret_`, `service_role` o contraseña de
+Postgres en frontend. La clave pública no sustituye autorización ni RLS.
 
 Comprobar el acceso público sin leer ni escribir datos: `npm run supabase:check`.
 Tras guardar variables en Vercel se necesita desplegar el nuevo commit; las
@@ -140,21 +164,21 @@ controles de 44px y foco visible; escritorio 1440px, tablet 768px, móvil 390px.
 Sin movimiento estructural ni runtime de animación nuevo; hover/focus CSS 180ms,
 y sin transformaciones para `prefers-reduced-motion`. Sin imágenes de relleno.
 
-| Estado                   | Tratamiento acordado                                                            |
-| ------------------------ | ------------------------------------------------------------------------------- |
-| Preparación actual       | Servicio/acceso pendientes; escritura deshabilitada y explicada; no falso vacío |
-| Cargando futuro          | Estado anunciado y skeleton; sin porcentaje inventado                           |
-| Poblado futuro           | Todas las citas autorizadas; nombres/motivos largos con wrap; detalle accesible |
-| Vacío futuro             | Solo tras consulta exitosa; distinguir filtros sin coincidencias                |
-| Error/unavailable futuro | Explicación y recuperación real cuando exista adaptador                         |
-| Sin sesión futuro        | Sin datos médicos, acceso a autenticación real cuando exista                    |
-| Sin permiso futuro       | Mensaje de acceso restringido y retorno seguro; sin exponer registro            |
-| Formulario futuro        | Labels, errores inline, deshabilitado/enviando/éxito según respuesta real       |
-| Detalle/acciones futuro  | Auditoría y motivos, confirmación de acciones, reglas y permisos server-side    |
+| Estado            | Tratamiento implementado                                                     |
+| ----------------- | ---------------------------------------------------------------------------- |
+| Preparación (QA)  | Solo en `/citas/vista-previa`; explica que es una propuesta y no es fallback |
+| Cargando          | Estado anunciado y skeleton; sin porcentaje inventado                        |
+| Poblado           | Citas autorizadas; nombres/motivos largos con wrap; detalle accesible        |
+| Vacío             | Solo tras consulta exitosa; distingue filtros sin coincidencias              |
+| Error/unavailable | Mensaje seguro de la API y reintento real                                    |
+| Sin sesión        | Sin datos médicos; enlace al acceso real                                     |
+| Sin permiso       | Mensaje de acceso restringido; no expone el registro                         |
+| Formulario        | Labels, errores inline, deshabilitado/enviando/éxito según respuesta real    |
+| Detalle/acciones  | Motivo de cancelación, confirmación, reglas y permisos server-side           |
 
-Los datos sintéticos del mockup se identificarán expresamente como propuesta,
-no se incorporarán como fallback productivo. Cualquier fixture futura será
-exclusivamente opt-in de desarrollo/test y mantendrá visible el error genuino.
+Los datos sintéticos del mockup se identifican como propuesta en la vista previa
+y no se incorporan como fallback productivo. Las fixtures son exclusivamente
+opt-in de desarrollo/test y no ocultan un error real.
 
 React Bits no es elegible sin `components.json`; no inicializar shadcn. Se
 inspeccionaron los loaders Uiverse `SteveBloX/wise-moose-53` (progreso ficticio,
@@ -169,6 +193,8 @@ pruebas multimedia y build; arrancar la app y verificar navegación previa más
 rutas nuevas con Playwright en escritorio, tablet y móvil, teclado y movimiento
 reducido. Comparar capturas con la propuesta aprobada; no acreditar RF por
 pantallas sin datos. La compatibilidad local con Vercel no acredita un despliegue.
+Las acciones RF-03/RF-04/RF-06 se verificaron con pruebas UI y SQL locales; la
+prueba E2E contra Supabase remoto sigue pendiente.
 
 No crear el commit con una cuenta ajena. Mensaje previsto para el único commit
 propio del integrante: `chore: preparar modulo de citas RF01-RF06`.
@@ -181,9 +207,10 @@ de la interfaz productiva con autorización expresa del integrante. La
 comparación conserva el resto de regiones, SVGs y jerarquía de referencia;
 el interruptor de tema es una adición autorizada.
 
-Validación local: lint estricto, TypeScript, Jest (5 suites / 12 pruebas),
+Validación local: lint estricto, TypeScript, Jest (11 suites / 75 pruebas),
 multimedia (8 pruebas), formato de archivos modificados y build de producción
-correctos. La portada conserva sus tres anclas y menú responsive, comprobados
+correctos. Las pruebas SQL de citas y acciones se ejecutaron contra PostgreSQL
+16.4 local. La portada conserva sus tres anclas y menú responsive, comprobados
 con Playwright a 1440, 768 y 390px, sin desbordamiento horizontal. Se revisó
 además el borrador en sus doce variantes a los tres tamaños. Evidencias locales
 en `.design-reference/citas/` (ignorada por Git); no son datos médicos ni componentes de producción.

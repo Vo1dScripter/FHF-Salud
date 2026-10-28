@@ -1,74 +1,86 @@
 # FHF Salud
 
 Base de construcción para el sistema de gestión médica de la materia Ingeniería
-de Software (SCD-1011). La plantilla conserva su interfaz actual y esta entrega
-prepara contratos estables para el futuro módulo de Gestión de Citas Médicas.
+de Software (SCD-1011). La portada conserva su interfaz y el módulo de Gestión
+de Citas Médicas está implementado de extremo a extremo en código: RF-01 a
+RF-06, sesión Supabase, persistencia PostgreSQL, RLS y auditoría.
 
-## Preparación inicial de Gestión de Citas Médicas
+## Módulo de Gestión de Citas Médicas
 
 La aplicación conserva la ruta `/`, su contenido y las anclas anteriores. El
-menú añade «Citas médicas» y el interruptor claro/oscuro. La única ruta API
-existente sigue siendo `GET /api/hello`. El módulo añade pantallas de preparación
-en `/citas`, `/citas/nueva` y `/citas/[id]`, sin autenticación, persistencia ni
-operaciones médicas. La ruta de QA `/citas/vista-previa` requiere modo desarrollo
-y una bandera explícita; sus datos sintéticos nunca son fallback de producción.
+menú añade «Citas médicas» y el interruptor claro/oscuro. El módulo ofrece:
 
-La nueva estructura de dominio es:
+- `/citas`: agenda autorizada con filtros por fecha, médico y estado.
+- `/citas/nueva`: alta de citas con paciente, médico, inicio, duración y motivo.
+- `/citas/[id]`: detalle server-side con acciones de confirmar, reprogramar y
+  cancelar.
+- `/citas/acceso`: acceso con Supabase Auth.
+- `/citas/vista-previa`: QA de desarrollo opt-in; sus datos sintéticos nunca son
+  fallback de producción.
+
+Endpoints internos:
+
+```text
+GET   /api/citas                  agenda autorizada
+POST  /api/citas                  alta en estado pending
+GET   /api/citas/referencias      pacientes y médicos activos
+GET   /api/citas/[id]             detalle autorizado
+PATCH /api/citas/[id]             confirm, reschedule o cancel
+```
+
+Reglas implementadas:
+
+- Solo `admin` y `receptionist` pueden mutar citas. Un `physician` solo lee su
+  propia agenda. El rol se lee de `app_metadata` del JWT firmado y se vuelve a
+  comprobar en el servicio, en las RPC y en RLS.
+- Confirmar pasa `pending` a `confirmed`; una cancelada no se puede confirmar;
+  repetir la confirmación es idempotente.
+- Reprogramar una confirmada la devuelve a `pending` para confirmar el nuevo
+  horario. Una cancelada no se puede reprogramar.
+- Cancelar exige motivo, conserva la fila y libera el horario. Repetir la
+  cancelación no duplica la auditoría.
+- Cada mutación envía `expectedUpdatedAt`; las funciones PostgreSQL bloquean la
+  fila y rechazan una versión desactualizada con 409. La restricción `EXCLUDE`
+  sigue siendo la garantía atómica contra solapamientos.
+- No hay `UPDATE`/`DELETE` directos para `authenticated`: las mutaciones solo se
+  ejecutan por RPC `security definer`.
+- La interfaz no anuncia éxito si la API no devuelve la cita actualizada.
+
+La estructura de dominio es:
 
 ```text
 src/features/
   appointments/
-    contracts.ts  # datos, persistencia y servicio de aplicación previstos
-    routes.ts     # URLs acordadas y etiquetas de estados
-    index.ts      # API pública del módulo
+    contracts.ts      # datos, persistencia y servicio de aplicación
+    validation.ts     # Zod, fechas y reglas de entrada
+    service.ts        # autorización, estados y concurrencia
+    supabase-repository.ts
+    routes.ts         # URLs y etiquetas de estados
+    index.ts          # API pública del módulo
   patients/
-    types.ts      # identificador y referencia mínima de paciente
+    types.ts
     index.ts
   physicians/
-    types.ts      # identificador y referencia mínima de médico
+    types.ts
     index.ts
 ```
 
-`src/features/appointments/contracts.ts` es la fuente de verdad inicial para
-los nombres de citas. Define `Appointment`, sus estados, duración, entradas
-para alta, reprogramación y cancelación, filtros de consulta y
-`AppointmentRepository`. No contiene datos médicos, datos de prueba ni una
-implementación de almacenamiento.
+La migración `supabase/migrations/202610250002_appointments.sql` crea pacientes,
+médicos, citas, la restricción de solapamientos y RLS.
+`supabase/migrations/202610260003_appointment_actions.sql` añade cancelación,
+confirmación, historial de eventos y RPC transaccionales.
 
-### Contrato de trabajo para los siguientes integrantes
-
-1. Importar contratos desde los `index.ts` públicos, por ejemplo
-   `@/features/appointments`; no duplicar tipos de paciente, médico o cita en
-   rutas y componentes.
-2. Mantener identificadores como `string` mediante `PatientId`, `PhysicianId`
-   y `AppointmentId`. Las fechas se intercambian como `IsoDateTime` en formato
-   ISO 8601 con zona horaria.
-3. Conservar los estados `pending` (pendiente), `confirmed` (confirmada) y
-   `cancelled` (cancelada). La cancelación es un cambio de estado, no una
-   eliminación. El motivo de consulta (`Appointment.reason`) es distinto del
-   motivo de cancelación (`CancelAppointmentInput.reason`).
-4. Implementar una fuente de datos detrás de `AppointmentRepository` cuando el
-   equipo elija su infraestructura. Las rutas API o Server Actions deben usar
-   el contrato, no depender directamente de una tecnología de base de datos.
-5. Colocar componentes exclusivos de futuras pantallas de citas bajo
-   `src/app/components/appointments/`. Sólo promover piezas a `src/components/`
-   cuando sean reutilizables fuera del módulo.
-6. Usar `appointmentRoutes` para las URLs acordadas: `/citas`, `/citas/nueva`
-   y `/citas/[id]`. Las pantallas y el menú ya están incorporados como estructura
-   en preparación; la escritura permanece deshabilitada. Conservar la ruta raíz
-   y sus anclas.
-7. Implementar las operaciones detrás de `AppointmentService`: `list`,
-   `getById`, `create`, `confirm`, `reschedule` y `cancel`. El contrato no
-   ejecuta operaciones ni da por cumplidos los RF.
-
-El detalle de campos, responsabilidades, acceso y validación está en
+El detalle funcional, la matriz de estados, la API y la evidencia de verificación
+están en [la implementación del módulo](docs/citas-implementacion.md). Los
+límites y acuerdos de integración están en
 [el acuerdo de integración](docs/citas-integracion.md).
 
 La configuración de identidad está en `src/constant/config.ts`; actualiza
-`siteConfig.url` al definir el dominio de despliegue. La base de conexión a Supabase ya está configurada con clientes de navegador y
-servidor, cookies SSR y renovación de sesión en `src/proxy.ts`. Aún no existen
-login, persistencia ni políticas de autorización por cita; la interfaz conserva
-su modo de preparación y no permite operaciones médicas.
+`siteConfig.url` al definir el dominio de despliegue. Los clientes de navegador
+y servidor, las cookies SSR y la renovación de sesión en `src/proxy.ts` ya están
+integrados. La migración está probada en PostgreSQL local, pero no se aplicó al
+proyecto Supabase remoto desde esta copia de trabajo; la prueba E2E contra
+Supabase sigue pendiente de activación.
 
 ## Plantilla Next.js
 
@@ -550,14 +562,19 @@ actualizar ambos archivos y Site URL de Supabase para conservar metadatos,
 sitemap y retornos de autenticación coherentes. En el hosting,
 no cargar variables del pipeline local ni secretos que la aplicación no use.
 
-## Estado de la preparación PRY05
+## Estado del módulo de citas
 
-Contratos, acuerdo técnico, menú, rutas renderizadas y componentes de citas
-preparados a partir de la propuesta aprobada (versión 3). Se excluyeron el selector
-de revisión y la guía de tamaños según autorización del integrante. Se añadió
-tema claro/oscuro con preferencia local persistente. La base de Supabase ya está integrada; el flujo de acceso y la autorización
-efectiva quedan pendientes de los siguientes integrantes. Esto no acredita RF-01 a RF-06
-ni operaciones médicas funcionales.
+RF-01 a RF-06 están implementados y verificados localmente. La propuesta visual
+aprobada (versión 3) se conserva, excluyendo el selector de revisión y la guía de
+tamaños según autorización del integrante. Se añadió tema claro/oscuro con
+preferencia local persistente. La base de Supabase, el flujo de acceso, la
+autorización por registro y las operaciones médicas están integrados en código.
+
+La migración y la prueba E2E contra el proyecto Supabase remoto siguen pendientes
+de activación; esta copia de trabajo no incluye `.env.local`. Las pruebas SQL se
+ejecutaron contra PostgreSQL 16.4 local y las pruebas Jest usan dobles de prueba.
+La evidencia completa está en
+[docs/citas-implementacion.md](docs/citas-implementacion.md).
 
 El integrante debe revisar y seleccionar sus archivos para un único commit
 auténtico desde su cuenta:
@@ -585,17 +602,18 @@ FHF_APPOINTMENT_PREVIEW=true npm run dev
 Abrir `/citas/vista-previa?estado=poblado`. Estados admitidos: `preparacion`,
 `cargando`, `poblado`, `vacio`, `error`, `sesion`, `permiso`, `formulario`,
 `validacion`, `enviando`, `exito`, `detalle`. Son vistas de QA; no envían datos ni
-simulan una sesión real. Las pantallas normales siempre muestran preparación.
-La vista previa devuelve 404 sin la bandera o en producción incluso con ella.
-No establecer esta variable en el hosting. Los fixtures están aislados en
-`src/features/appointments/__fixtures__/preview.ts`.
+simulan una sesión real. Las pantallas normales usan la agenda, la sesión y la
+persistencia reales. La vista previa devuelve 404 sin la bandera o en producción
+incluso con ella. No establecer esta variable en el hosting. Los fixtures están
+aislados en `src/features/appointments/__fixtures__/preview.ts`.
 
 ## Integración base de Supabase
 
 Se creó un proyecto gratuito exclusivo `fhf-salud` y se prepararon los clientes
 con `@supabase/supabase-js` y `@supabase/ssr`. La URL y la clave publicable se
 guardan localmente en `.env.local`, ignorado por Git, y en Vercel para
-Production, Preview y Development. `.env.example` contiene solo nombres vacíos:
+Production, Preview y Development. Esta copia de trabajo no incluye `.env.local`.
+`.env.example` contiene solo nombres vacíos:
 
 ```dotenv
 NEXT_PUBLIC_SUPABASE_URL=
@@ -614,18 +632,20 @@ reemplaza sesión, autorización ni RLS. Nunca colocar claves `sb_secret_`,
   crea por petición y utiliza cookies.
 - `src/proxy.ts` renueva/verifica claims en `/citas/:path*` y conserva cookies y
   cabeceras devueltas por Supabase. Mantiene público el shell sin datos médicos;
-  no implementa autorización por cita.
+  la autorización por cita se aplica en el servicio, en las RPC y en RLS.
 - Para proteger datos, verificar identidad con `auth.getClaims()` o
-  `auth.getUser()`, aplicar permisos en cada operación y añadir RLS. No confiar
+  `auth.getUser()`, aplicar permisos en cada operación y usar RLS. No confiar
   en `auth.getSession()` como prueba de identidad en servidor.
 
 El proyecto se creó con exposición automática de tablas nuevas **desactivada**
-y RLS automático **activado**. No se crearon tablas médicas, políticas de
-acceso a citas, usuarios ni registros de demostración en Supabase.
+y RLS automático **activado**. Las migraciones de citas y acciones definen las
+tablas, políticas y RPC, pero no se aplicaron al proyecto remoto desde esta copia
+de trabajo. No se crearon usuarios ni registros de demostración en Supabase.
 
 Supabase Auth tiene Site URL `https://fhf-salud.vercel.app` y retorno local
-`http://localhost:3000/`. Los callbacks específicos se definirán al implementar
-el flujo real de acceso, sin comodines globales.
+`http://localhost:3000/`. El acceso implementado usa email/contraseña; los
+callbacks adicionales se definirán al habilitar otros proveedores, sin comodines
+globales.
 
 Después de guardar variables en Vercel se necesita un despliegue nuevo. Los
 cambios locales no se publican automáticamente por configurar el entorno;

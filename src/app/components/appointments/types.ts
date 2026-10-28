@@ -1,12 +1,7 @@
-import type { Appointment } from '@/features/appointments';
-import type { PatientReference } from '@/features/patients';
-import type { PhysicianReference } from '@/features/physicians';
+import type { AppointmentView as AppointmentViewContract } from '@/features/appointments';
 
-/** Referencias autorizadas resueltas por la futura capa de lectura. */
-export type AppointmentView = Appointment & {
-  patient: PatientReference;
-  physician: PhysicianReference;
-};
+/** Referencias autorizadas resueltas por la capa de lectura. */
+export type AppointmentView = AppointmentViewContract;
 
 export type AppointmentListState =
   | {
@@ -14,10 +9,11 @@ export type AppointmentListState =
         | 'preparation'
         | 'loading'
         | 'empty'
-        | 'error'
         | 'unauthenticated'
-        | 'forbidden';
+        | 'forbidden'
+        | 'not_found';
     }
+  | { kind: 'error'; message?: string }
   | { kind: 'populated'; appointments: AppointmentView[] };
 
 export type AppointmentFormState =
@@ -27,6 +23,8 @@ export type AppointmentFormState =
   | 'success';
 
 export function formatAppointmentDate(iso: string) {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return 'Fecha no disponible';
   return new Intl.DateTimeFormat('es-MX', {
     day: '2-digit',
     hour: '2-digit',
@@ -35,16 +33,18 @@ export function formatAppointmentDate(iso: string) {
     month: 'short',
     timeZone: 'America/Mexico_City',
     year: 'numeric',
-  }).format(new Date(iso));
+  }).format(date);
 }
 
 export function formatAppointmentRange(iso: string, durationMinutes: number) {
-  const end = new Date(new Date(iso).getTime() + durationMinutes * 60_000);
+  const start = new Date(iso);
+  if (Number.isNaN(start.getTime())) return 'Horario no disponible';
+  const end = new Date(start.getTime() + durationMinutes * 60_000);
   const dateOnly = new Intl.DateTimeFormat('es-MX', {
     timeZone: 'America/Mexico_City',
     dateStyle: 'short',
   });
-  const sameDay = dateOnly.format(new Date(iso)) === dateOnly.format(end);
+  const sameDay = dateOnly.format(start) === dateOnly.format(end);
   const endLabel = sameDay
     ? new Intl.DateTimeFormat('es-MX', {
         timeZone: 'America/Mexico_City',

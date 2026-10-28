@@ -1,3 +1,7 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+
 import { appointmentStatusLabels } from '@/features/appointments';
 
 import AppointmentActions from './AppointmentActions';
@@ -9,60 +13,89 @@ import {
 
 export default function AppointmentDetail({
   appointment,
+  canManage = false,
 }: {
   appointment?: AppointmentView;
+  canManage?: boolean;
 }) {
+  const [current, setCurrent] = useState<AppointmentView | undefined>(
+    appointment,
+  );
+
+  useEffect(() => {
+    setCurrent(appointment);
+  }, [appointment]);
+
   return (
     <section className='appointments-state appointment-detail'>
       <h2>Detalle de la cita</h2>
-      {appointment ? (
+      {current ? (
         <span
-          className={`appointment-badge appointment-badge--${appointment.status}`}
+          className={`appointment-badge appointment-badge--${current.status}`}
         >
-          {appointmentStatusLabels[appointment.status]}
+          {appointmentStatusLabels[current.status]}
         </span>
       ) : (
         <p>
-          No se ha consultado ningún registro. El acceso y el servicio de citas
-          están pendientes de integración.
+          No se ha consultado ningún registro. Esta vista de propuesta no tiene
+          una cita seleccionada.
         </p>
       )}
       <dl>
         <div>
           <dt>Paciente</dt>
-          <dd>{appointment?.patient.displayName ?? 'Pendiente de conexión'}</dd>
+          <dd>{current?.patient.displayName ?? 'Sin datos'}</dd>
         </div>
         <div>
           <dt>Médico</dt>
-          <dd>
-            {appointment?.physician.displayName ?? 'Pendiente de conexión'}
-          </dd>
+          <dd>{current?.physician.displayName ?? 'Sin datos'}</dd>
         </div>
         <div>
           <dt>Inicio y fin</dt>
           <dd>
-            {appointment
+            {current
               ? formatAppointmentRange(
-                  appointment.scheduledAt,
-                  appointment.durationMinutes,
+                  current.scheduledAt,
+                  current.durationMinutes,
                 )
-              : 'Pendiente de conexión'}
+              : 'Sin datos'}
           </dd>
         </div>
         <div>
           <dt>Motivo</dt>
-          <dd>{appointment?.reason ?? 'Pendiente de conexión'}</dd>
+          <dd>{current?.reason ?? 'Sin datos'}</dd>
         </div>
+        {current?.status === 'cancelled' && (
+          <div>
+            <dt>Cancelación</dt>
+            <dd>
+              {current.cancelReason ?? 'Sin motivo registrado'}
+              {current.cancelledAt
+                ? ` · ${formatAppointmentDate(current.cancelledAt)}`
+                : ''}
+            </dd>
+          </div>
+        )}
+        {current?.confirmedAt && current.status !== 'cancelled' && (
+          <div>
+            <dt>Confirmación</dt>
+            <dd>{formatAppointmentDate(current.confirmedAt)}</dd>
+          </div>
+        )}
         <div>
           <dt>Auditoría</dt>
           <dd>
-            {appointment
-              ? `Creación: ${formatAppointmentDate(appointment.createdAt)} · Actualización: ${formatAppointmentDate(appointment.updatedAt)} · UTC−06:00`
-              : 'Pendiente de conexión'}
+            {current
+              ? `Creación: ${formatAppointmentDate(current.createdAt)} · Actualización: ${formatAppointmentDate(current.updatedAt)} · UTC−06:00`
+              : 'Sin datos'}
           </dd>
         </div>
       </dl>
-      <AppointmentActions />
+      <AppointmentActions
+        appointment={current}
+        canManage={canManage}
+        onUpdated={setCurrent}
+      />
     </section>
   );
 }
