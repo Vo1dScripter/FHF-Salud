@@ -5,8 +5,12 @@
 El código de RF-01 (registro), RF-02 (consulta de agenda), RF-03
 (reprogramación), RF-04 (cancelación), RF-05 (prevención de solapamientos) y
 RF-06 (confirmación) está implementado. Se verificó con pruebas automatizadas,
-lint estricto, typecheck, build de producción y pruebas SQL ejecutadas contra
-PostgreSQL 16.4 local.
+lint estricto, typecheck, build de producción, pruebas SQL y una corrida E2E de
+navegador ejecutada el **26 de octubre de 2026** contra PostgreSQL 18.4 real,
+PostgREST 16.5, autenticación local compatible con GoTrue y Chrome headless.
+Resultado: **14/14 comprobaciones PASS**, sin errores de consola de la
+aplicación. Guion, capturas y resultados: [`docs/demostracion.md`](demostracion.md)
+y [`evidencias/`](../evidencias/).
 
 La migración de base de datos está preparada y probada localmente, pero **no se
 aplicó contra el proyecto Supabase remoto** desde este entorno. La activación
@@ -16,9 +20,10 @@ usuarios, roles, pacientes ni médicos aprovisionados en un entorno accesible.
 La aplicación no usa datos ficticios como respaldo: sin configuración o sin
 sesión muestra un estado explícito.
 
-La prueba de navegador contra Supabase/PostgREST/GoTrue reales tampoco se
-ejecutó. Las pruebas Jest usan `fetch` y repositorios simulados; las pruebas SQL
-usan PostgreSQL real con reclamos JWT simulados y el rol `authenticated`.
+La prueba de navegador se ejecutó contra PostgreSQL/PostgREST/auth locales, no
+contra Supabase/GoTrue remotos. Las pruebas Jest usan `fetch` y repositorios
+simulados; las pruebas SQL usan PostgreSQL real con reclamos JWT simulados y el
+rol `authenticated`.
 
 ## Alcance funcional
 

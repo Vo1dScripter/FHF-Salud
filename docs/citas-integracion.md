@@ -1,10 +1,12 @@
 # Acuerdo de integración del módulo de citas · PRY05
 
-Estado actual: RF-01 a RF-06 están implementados en código y verificados
-localmente. Este documento conserva los límites acordados y registra cómo se
-resolvieron acceso, persistencia, acciones y concurrencia. La migración y la
-prueba E2E contra el proyecto Supabase remoto siguen pendientes de activación;
-la aplicación no presenta datos ficticios como si fueran productivos.
+Estado actual: RF-01 a RF-06 están implementados en código y verificados de
+extremo a extremo el 26 de octubre de 2026 contra PostgreSQL 18.4 local,
+PostgREST y autenticación compatible, con 14/14 comprobaciones PASS. Este
+documento conserva los límites acordados y registra cómo se resolvieron acceso,
+persistencia, acciones y concurrencia. La migración y la prueba E2E contra el
+proyecto Supabase remoto siguen pendientes de activación; la aplicación no
+presenta datos ficticios como si fueran productivos.
 
 ## Estado y componentes reutilizables
 

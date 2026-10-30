@@ -343,7 +343,8 @@ function AppointmentCreateForm() {
         <p className='appointment-form-note' role='status'>
           <AppointmentIcon name='info' />
           <span>
-            Cita registrada correctamente.{' '}
+            Cita registrada correctamente. ID:{' '}
+            <code className='appointment-id'>{created.id}</code>.{' '}
             <Link href={appointmentRoutes.detail(created.id)}>
               Ver detalle
             </Link>

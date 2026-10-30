@@ -5,6 +5,36 @@ de Software (SCD-1011). La portada conserva su interfaz y el módulo de Gestión
 de Citas Médicas está implementado de extremo a extremo en código: RF-01 a
 RF-06, sesión Supabase, persistencia PostgreSQL, RLS y auditoría.
 
+## Entrega verificada — 26 de octubre de 2026
+
+La corrida E2E final se ejecutó contra PostgreSQL 18.4 real, PostgREST 16.5,
+autenticación local compatible con GoTrue y Chrome headless. Resultado:
+**14/14 comprobaciones PASS**, sin errores de consola de la aplicación.
+Incluye RF-01 a RF-06, filtro por estado, negativo de cita cancelada, permisos
+de médico y agenda móvil a 390×844.
+
+- Informe: [evidencias/PRY05-Equipo.pdf](evidencias/PRY05-Equipo.pdf)
+- Guion y resultados: [docs/demostracion.md](docs/demostracion.md)
+- Capturas reales: [evidencias/capturas](evidencias/capturas)
+- Resultados y API: [evidencias/logs](evidencias/logs)
+
+Calidad: 75 pruebas Jest, 8 pruebas de multimedia, 4 de integración, lint
+estricto, typecheck y build de producción PASS.
+
+Esta evidencia es **local**: el proyecto Supabase remoto no se modificó porque
+esta copia no tiene URL, clave publicable, usuarios ni acceso al panel/CLI. La
+migración y la prueba E2E remotas siguen pendientes de activación.
+
+## Autoría
+
+| Autor | Aporte | Commits |
+| --- | --- | --- |
+| Rodrigo Ruiz Aguilar | Base del proyecto, portada, Supabase, temas e infraestructura | `bcf715e`, `6ad6eba`, `44fbfaa`, `c2a2e5d`, `5bc865b` |
+| Emilio Martinez | Borrador de modelo de citas y disponibilidad en rama | `7963f97` (`feature/base-datos-citas`) |
+| yaird meyer | Registro, consulta y validación de citas | `9b8ee79` |
+| jesus_ff | Estados y cambios de citas | `77bd031` |
+| Integrante de integración | Integración final, E2E, correcciones visuales, documentación y evidencias | Commit final previsto `fix: integrar modulo completo de citas` (pendiente de identidad) |
+
 ## Módulo de Gestión de Citas Médicas
 
 La aplicación conserva la ruta `/`, su contenido y las anclas anteriores. El
@@ -564,27 +594,36 @@ no cargar variables del pipeline local ni secretos que la aplicación no use.
 
 ## Estado del módulo de citas
 
-RF-01 a RF-06 están implementados y verificados localmente. La propuesta visual
-aprobada (versión 3) se conserva, excluyendo el selector de revisión y la guía de
-tamaños según autorización del integrante. Se añadió tema claro/oscuro con
-preferencia local persistente. La base de Supabase, el flujo de acceso, la
-autorización por registro y las operaciones médicas están integrados en código.
+RF-01 a RF-06 están implementados y verificados de extremo a extremo el 26 de
+octubre de 2026 contra PostgreSQL 18.4 local, PostgREST, autenticación
+compatible y Chrome headless. La propuesta visual aprobada (versión 3) se
+conserva, excluyendo el selector de revisión y la guía de tamaños según
+autorización del integrante. Se añadió tema claro/oscuro con preferencia local
+persistente. La base, el flujo de acceso, la autorización por registro y las
+operaciones médicas están integrados en código.
+
+La corrida final cubrió alta con ID visible, recarga de agenda, reprogramación,
+cancelación con historial y reutilización del horario, rechazo de solapamientos,
+confirmación, filtro por estado, negativo de cita cancelada, permisos de médico,
+respuestas 401/403/409/400 y móvil sin desbordamiento. Resultado: **14/14 PASS**;
+los detalles y capturas están en [docs/demostracion.md](docs/demostracion.md) y
+[evidencias/](evidencias/).
 
 La migración y la prueba E2E contra el proyecto Supabase remoto siguen pendientes
-de activación; esta copia de trabajo no incluye `.env.local`. Las pruebas SQL se
-ejecutaron contra PostgreSQL 16.4 local y las pruebas Jest usan dobles de prueba.
-La evidencia completa está en
-[docs/citas-implementacion.md](docs/citas-implementacion.md).
+de activación; esta copia de trabajo no incluye credenciales remotas. Las pruebas
+SQL se ejecutaron contra PostgreSQL 18.4 local y las pruebas Jest usan dobles de
+prueba.
 
-El integrante debe revisar y seleccionar sus archivos para un único commit
-auténtico desde su cuenta:
+El commit final previsto es único y usa el mensaje:
 
 ```text
-chore: preparar modulo de citas RF01-RF06
+fix: integrar modulo completo de citas
 ```
 
-No incluir capturas, documentos personales ni carpetas locales de herramientas
-por usar `git add .` sin revisar el estado.
+Queda pendiente de la identidad del quinto integrante; en esta entrega no se
+creó el commit. Cuando se confirme la identidad, revisar `git status`, incluir
+código, documentación y evidencias sanitizadas, y no agregar `.env.local`,
+`.demo-local/`, HAR crudos, `prompt5.txt` ni archivos personales.
 
 ## Temas y vista de desarrollo
 
@@ -648,9 +687,9 @@ callbacks adicionales se definirán al habilitar otros proveedores, sin comodine
 globales.
 
 Después de guardar variables en Vercel se necesita un despliegue nuevo. Los
-cambios locales no se publican automáticamente por configurar el entorno;
-el integrante debe crear y subir su commit auténtico para que el proyecto Git
-conectado lo despliegue.
+cambios locales no se publican automáticamente por configurar el entorno; el
+commit final `fix: integrar modulo completo de citas` debe subirse para que el
+proyecto Git conectado lo despliegue.
 
 Comprobar la conexión pública sin acceder a tablas: `npm run supabase:check`.
 

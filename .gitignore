@@ -48,6 +48,11 @@ __pycache__/
 /supabase/.temp/
 /supabase/.branches/
 
+# Harness local de demostración (binarios, datos y capturas temporales)
+/.demo-local/
+
 # Cualquier variante de entorno local; publicar solo plantillas sin valores reales
 .env.*
 !.env.example
+
+/evidencias/logs/*.har

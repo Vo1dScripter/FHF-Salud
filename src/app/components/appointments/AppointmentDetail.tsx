@@ -43,6 +43,16 @@ export default function AppointmentDetail({
       )}
       <dl>
         <div>
+          <dt>Identificador</dt>
+          <dd>
+            {current ? (
+              <code className='appointment-id'>{current.id}</code>
+            ) : (
+              'Sin datos'
+            )}
+          </dd>
+        </div>
+        <div>
           <dt>Paciente</dt>
           <dd>{current?.patient.displayName ?? 'Sin datos'}</dd>
         </div>

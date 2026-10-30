@@ -1,0 +1,91 @@
+{
+  "failed": 0,
+  "generatedAt": "2026-10-26T19:44:33.322Z",
+  "passed": 14,
+  "results": [
+    {
+      "name": "Portada y navegación al módulo de citas",
+      "pass": true,
+      "details": "Portada, agenda pública sin datos y API sin sesión (401) verificadas.",
+      "step": 1
+    },
+    {
+      "name": "Acceso con cuenta de recepción",
+      "pass": true,
+      "details": "Sesión de recepción iniciada; agenda con dos registros sembrados.",
+      "step": 2
+    },
+    {
+      "name": "RF-01 Registrar cita futura y mostrar ID",
+      "pass": true,
+      "details": "ID c9022603-3ac4-43a6-be6a-8dfafcd3d6f2; PostgreSQL: pending, 2030-02-05T15:00Z–15:45Z, 45 min.",
+      "step": 3
+    },
+    {
+      "name": "RF-02 Recargar agenda y consultar cita, médico, horario y estado",
+      "pass": true,
+      "details": "Tras recargar, la cita aparece con paciente, médico, horario, duración y estado.",
+      "step": 4
+    },
+    {
+      "name": "RF-03 Reprogramar cita y verificar cambio en PostgreSQL",
+      "pass": true,
+      "details": "PostgreSQL: 2030-02-06T16:30Z–17:00Z, 30 min, pending; updated_at cambió.",
+      "step": 5
+    },
+    {
+      "name": "RF-04 Cancelar cita, conservar historial y liberar horario",
+      "pass": true,
+      "details": "Cita cancelada conservada (bbbbbbbb-2222-4222-8222-222222222222); horario 11:00 reservado de nuevo (7f5c6410-e352-45aa-bf1d-8c737b00bd25).",
+      "step": 6
+    },
+    {
+      "name": "RF-05 Rechazar dos citas solapadas del mismo médico",
+      "pass": true,
+      "details": "La UI mostró el conflicto y PostgreSQL conservó una sola cita activa en el rango.",
+      "step": 7
+    },
+    {
+      "name": "RF-06 Confirmar otra cita pendiente y verla confirmada tras recargar",
+      "pass": true,
+      "details": "Cita 7f5c6410-e352-45aa-bf1d-8c737b00bd25: confirmed con confirmed_at persistido y visible tras recargar.",
+      "step": 8
+    },
+    {
+      "name": "Consulta por filtro de estado",
+      "pass": true,
+      "details": "Filtro Estado=Confirmada devolvió solamente citas confirmadas.",
+      "step": 9
+    },
+    {
+      "name": "Negativo: no se puede confirmar una cita cancelada ni alterar su historial",
+      "pass": true,
+      "details": "API 400 con mensaje claro; estado, confirmed_at y updated_at intactos.",
+      "step": 10
+    },
+    {
+      "name": "Respuestas HTTP esperadas registradas por el navegador",
+      "pass": true,
+      "details": "Failed to load resource: the server responded with a status of 401 (Unauthorized) | Failed to load resource: the server responded with a status of 401 (Unauthorized) | Failed to load resource: the server responded with a status of 401 (Unauthorized) | Failed to load resource: the server responded with a status of 409 (Conflict) | Failed to load resource: the server responded with a status of 400 (Bad Request)",
+      "step": 11
+    },
+    {
+      "name": "Errores de consola de aplicación",
+      "pass": true,
+      "details": "Sin errores de aplicación en consola.",
+      "step": 12
+    },
+    {
+      "name": "Permisos: médico solo consulta su propia agenda",
+      "pass": true,
+      "details": "Sin alta, sin acciones, 403 en API, cita ajena oculta y updated_at intacto.",
+      "step": 13
+    },
+    {
+      "name": "Compatibilidad móvil sin desbordamiento horizontal",
+      "pass": true,
+      "details": "Agenda, detalle, formulario y portada a 390×844 sin scroll horizontal.",
+      "step": 14
+    }
+  ]
+}

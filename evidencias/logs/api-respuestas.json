@@ -1,0 +1,200 @@
+[
+  {
+    "body": "{\"canCreate\":true,\"canManage\":true,\"patients\":[{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},{\"displayName\":\"María Fernanda López\",\"id\":\"11111111-1111-4111-8111-111111111113\"}],\"physicians\":[{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"},{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas/referencias"
+  },
+  {
+    "body": "{\"appointments\":[{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"createdAt\":\"2026-10-26T13:43:51.516066-06:00\",\"durationMinutes\":30,\"id\":\"bbbbbbbb-1111-4111-8111-111111111111\",\"patientId\":\"11111111-1111-4111-8111-111111111111\",\"physicianId\":\"22222222-2222-4222-8222-222222222222\",\"reason\":\"Control de seguimiento\",\"scheduledAt\":\"2030-01-10T10:00:00-06:00\",\"status\":\"confirmed\",\"updatedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"patient\":{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},\"physician\":{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}},{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:43:51.516066-06:00\",\"durationMinutes\":30,\"id\":\"bbbbbbbb-2222-4222-8222-222222222222\",\"patientId\":\"11111111-1111-4111-8111-111111111112\",\"physicianId\":\"33333333-3333-4333-8333-333333333333\",\"reason\":\"Valoración cardiológica\",\"scheduledAt\":\"2030-01-11T11:00:00-06:00\",\"status\":\"pending\",\"updatedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"patient\":{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},\"physician\":{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"}}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas?"
+  },
+  {
+    "body": "{\"canCreate\":true,\"canManage\":true,\"patients\":[{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},{\"displayName\":\"María Fernanda López\",\"id\":\"11111111-1111-4111-8111-111111111113\"}],\"physicians\":[{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"},{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas/referencias"
+  },
+  {
+    "body": "{\"appointment\":{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:44:05.548728-06:00\",\"durationMinutes\":45,\"id\":\"c9022603-3ac4-43a6-be6a-8dfafcd3d6f2\",\"patientId\":\"11111111-1111-4111-8111-111111111113\",\"physicianId\":\"22222222-2222-4222-8222-222222222222\",\"reason\":\"Consulta de control por dolor lumbar\",\"scheduledAt\":\"2030-02-05T09:00:00-06:00\",\"status\":\"pending\",\"updatedAt\":\"2026-10-26T13:44:05.548728-06:00\"}}",
+    "method": "POST",
+    "status": 201,
+    "url": "http://localhost:3100/api/citas"
+  },
+  {
+    "body": "{\"appointments\":[{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"createdAt\":\"2026-10-26T13:43:51.516066-06:00\",\"durationMinutes\":30,\"id\":\"bbbbbbbb-1111-4111-8111-111111111111\",\"patientId\":\"11111111-1111-4111-8111-111111111111\",\"physicianId\":\"22222222-2222-4222-8222-222222222222\",\"reason\":\"Control de seguimiento\",\"scheduledAt\":\"2030-01-10T10:00:00-06:00\",\"status\":\"confirmed\",\"updatedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"patient\":{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},\"physician\":{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}},{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:43:51.516066-06:00\",\"durationMinutes\":30,\"id\":\"bbbbbbbb-2222-4222-8222-222222222222\",\"patientId\":\"11111111-1111-4111-8111-111111111112\",\"physicianId\":\"33333333-3333-4333-8333-333333333333\",\"reason\":\"Valoración cardiológica\",\"scheduledAt\":\"2030-01-11T11:00:00-06:00\",\"status\":\"pending\",\"updatedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"patient\":{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},\"physician\":{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"}},{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:44:05.548728-06:00\",\"durationMinutes\":45,\"id\":\"c9022603-3ac4-43a6-be6a-8dfafcd3d6f2\",\"patientId\":\"11111111-1111-4111-8111-111111111113\",\"physicianId\":\"22222222-2222-4222-8222-222222222222\",\"reason\":\"Consulta de control por dolor lumbar\",\"scheduledAt\":\"2030-02-05T09:00:00-06:00\",\"status\":\"pending\",\"updatedAt\":\"2026-10-26T13:44:05.548728-06:00\",\"patient\":{\"displayName\":\"María Fernanda López\",\"id\":\"11111111-1111-4111-8111-111111111113\"},\"physician\":{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas?"
+  },
+  {
+    "body": "{\"canCreate\":true,\"canManage\":true,\"patients\":[{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},{\"displayName\":\"María Fernanda López\",\"id\":\"11111111-1111-4111-8111-111111111113\"}],\"physicians\":[{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"},{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas/referencias"
+  },
+  {
+    "body": "{\"canCreate\":true,\"canManage\":true,\"patients\":[{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},{\"displayName\":\"María Fernanda López\",\"id\":\"11111111-1111-4111-8111-111111111113\"}],\"physicians\":[{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"},{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas/referencias"
+  },
+  {
+    "body": "{\"appointments\":[{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"createdAt\":\"2026-10-26T13:43:51.516066-06:00\",\"durationMinutes\":30,\"id\":\"bbbbbbbb-1111-4111-8111-111111111111\",\"patientId\":\"11111111-1111-4111-8111-111111111111\",\"physicianId\":\"22222222-2222-4222-8222-222222222222\",\"reason\":\"Control de seguimiento\",\"scheduledAt\":\"2030-01-10T10:00:00-06:00\",\"status\":\"confirmed\",\"updatedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"patient\":{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},\"physician\":{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}},{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:43:51.516066-06:00\",\"durationMinutes\":30,\"id\":\"bbbbbbbb-2222-4222-8222-222222222222\",\"patientId\":\"11111111-1111-4111-8111-111111111112\",\"physicianId\":\"33333333-3333-4333-8333-333333333333\",\"reason\":\"Valoración cardiológica\",\"scheduledAt\":\"2030-01-11T11:00:00-06:00\",\"status\":\"pending\",\"updatedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"patient\":{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},\"physician\":{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"}},{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:44:05.548728-06:00\",\"durationMinutes\":45,\"id\":\"c9022603-3ac4-43a6-be6a-8dfafcd3d6f2\",\"patientId\":\"11111111-1111-4111-8111-111111111113\",\"physicianId\":\"22222222-2222-4222-8222-222222222222\",\"reason\":\"Consulta de control por dolor lumbar\",\"scheduledAt\":\"2030-02-05T09:00:00-06:00\",\"status\":\"pending\",\"updatedAt\":\"2026-10-26T13:44:05.548728-06:00\",\"patient\":{\"displayName\":\"María Fernanda López\",\"id\":\"11111111-1111-4111-8111-111111111113\"},\"physician\":{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas?"
+  },
+  {
+    "body": "{\"appointment\":{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:44:05.548728-06:00\",\"durationMinutes\":30,\"id\":\"c9022603-3ac4-43a6-be6a-8dfafcd3d6f2\",\"patientId\":\"11111111-1111-4111-8111-111111111113\",\"physicianId\":\"22222222-2222-4222-8222-222222222222\",\"reason\":\"Consulta de control por dolor lumbar\",\"scheduledAt\":\"2030-02-06T10:30:00-06:00\",\"status\":\"pending\",\"updatedAt\":\"2026-10-26T13:44:09.067888-06:00\",\"patient\":{\"displayName\":\"María Fernanda López\",\"id\":\"11111111-1111-4111-8111-111111111113\"},\"physician\":{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}}}",
+    "method": "PATCH",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas/c9022603-3ac4-43a6-be6a-8dfafcd3d6f2"
+  },
+  {
+    "body": "{\"canCreate\":true,\"canManage\":true,\"patients\":[{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},{\"displayName\":\"María Fernanda López\",\"id\":\"11111111-1111-4111-8111-111111111113\"}],\"physicians\":[{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"},{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas/referencias"
+  },
+  {
+    "body": "{\"appointments\":[{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"createdAt\":\"2026-10-26T13:43:51.516066-06:00\",\"durationMinutes\":30,\"id\":\"bbbbbbbb-1111-4111-8111-111111111111\",\"patientId\":\"11111111-1111-4111-8111-111111111111\",\"physicianId\":\"22222222-2222-4222-8222-222222222222\",\"reason\":\"Control de seguimiento\",\"scheduledAt\":\"2030-01-10T10:00:00-06:00\",\"status\":\"confirmed\",\"updatedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"patient\":{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},\"physician\":{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}},{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:43:51.516066-06:00\",\"durationMinutes\":30,\"id\":\"bbbbbbbb-2222-4222-8222-222222222222\",\"patientId\":\"11111111-1111-4111-8111-111111111112\",\"physicianId\":\"33333333-3333-4333-8333-333333333333\",\"reason\":\"Valoración cardiológica\",\"scheduledAt\":\"2030-01-11T11:00:00-06:00\",\"status\":\"pending\",\"updatedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"patient\":{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},\"physician\":{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"}},{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:44:05.548728-06:00\",\"durationMinutes\":30,\"id\":\"c9022603-3ac4-43a6-be6a-8dfafcd3d6f2\",\"patientId\":\"11111111-1111-4111-8111-111111111113\",\"physicianId\":\"22222222-2222-4222-8222-222222222222\",\"reason\":\"Consulta de control por dolor lumbar\",\"scheduledAt\":\"2030-02-06T10:30:00-06:00\",\"status\":\"pending\",\"updatedAt\":\"2026-10-26T13:44:09.067888-06:00\",\"patient\":{\"displayName\":\"María Fernanda López\",\"id\":\"11111111-1111-4111-8111-111111111113\"},\"physician\":{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas?"
+  },
+  {
+    "body": "{\"appointment\":{\"cancelReason\":\"El paciente reprogramó por viaje\",\"cancelledAt\":\"2026-10-26T13:44:10.724625-06:00\",\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:43:51.516066-06:00\",\"durationMinutes\":30,\"id\":\"bbbbbbbb-2222-4222-8222-222222222222\",\"patientId\":\"11111111-1111-4111-8111-111111111112\",\"physicianId\":\"33333333-3333-4333-8333-333333333333\",\"reason\":\"Valoración cardiológica\",\"scheduledAt\":\"2030-01-11T11:00:00-06:00\",\"status\":\"cancelled\",\"updatedAt\":\"2026-10-26T13:44:10.724625-06:00\",\"patient\":{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},\"physician\":{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"}}}",
+    "method": "PATCH",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas/bbbbbbbb-2222-4222-8222-222222222222"
+  },
+  {
+    "body": "{\"canCreate\":true,\"canManage\":true,\"patients\":[{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},{\"displayName\":\"María Fernanda López\",\"id\":\"11111111-1111-4111-8111-111111111113\"}],\"physicians\":[{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"},{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas/referencias"
+  },
+  {
+    "body": "{\"appointments\":[{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"createdAt\":\"2026-10-26T13:43:51.516066-06:00\",\"durationMinutes\":30,\"id\":\"bbbbbbbb-1111-4111-8111-111111111111\",\"patientId\":\"11111111-1111-4111-8111-111111111111\",\"physicianId\":\"22222222-2222-4222-8222-222222222222\",\"reason\":\"Control de seguimiento\",\"scheduledAt\":\"2030-01-10T10:00:00-06:00\",\"status\":\"confirmed\",\"updatedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"patient\":{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},\"physician\":{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}},{\"cancelReason\":\"El paciente reprogramó por viaje\",\"cancelledAt\":\"2026-10-26T13:44:10.724625-06:00\",\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:43:51.516066-06:00\",\"durationMinutes\":30,\"id\":\"bbbbbbbb-2222-4222-8222-222222222222\",\"patientId\":\"11111111-1111-4111-8111-111111111112\",\"physicianId\":\"33333333-3333-4333-8333-333333333333\",\"reason\":\"Valoración cardiológica\",\"scheduledAt\":\"2030-01-11T11:00:00-06:00\",\"status\":\"cancelled\",\"updatedAt\":\"2026-10-26T13:44:10.724625-06:00\",\"patient\":{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},\"physician\":{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"}},{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:44:05.548728-06:00\",\"durationMinutes\":30,\"id\":\"c9022603-3ac4-43a6-be6a-8dfafcd3d6f2\",\"patientId\":\"11111111-1111-4111-8111-111111111113\",\"physicianId\":\"22222222-2222-4222-8222-222222222222\",\"reason\":\"Consulta de control por dolor lumbar\",\"scheduledAt\":\"2030-02-06T10:30:00-06:00\",\"status\":\"pending\",\"updatedAt\":\"2026-10-26T13:44:09.067888-06:00\",\"patient\":{\"displayName\":\"María Fernanda López\",\"id\":\"11111111-1111-4111-8111-111111111113\"},\"physician\":{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas?"
+  },
+  {
+    "body": "{\"canCreate\":true,\"canManage\":true,\"patients\":[{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},{\"displayName\":\"María Fernanda López\",\"id\":\"11111111-1111-4111-8111-111111111113\"}],\"physicians\":[{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"},{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas/referencias"
+  },
+  {
+    "body": "{\"appointment\":{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:44:12.636235-06:00\",\"durationMinutes\":30,\"id\":\"7f5c6410-e352-45aa-bf1d-8c737b00bd25\",\"patientId\":\"11111111-1111-4111-8111-111111111111\",\"physicianId\":\"33333333-3333-4333-8333-333333333333\",\"reason\":\"Reposición del horario liberado\",\"scheduledAt\":\"2030-01-11T11:00:00-06:00\",\"status\":\"pending\",\"updatedAt\":\"2026-10-26T13:44:12.636235-06:00\"}}",
+    "method": "POST",
+    "status": 201,
+    "url": "http://localhost:3100/api/citas"
+  },
+  {
+    "body": "{\"canCreate\":true,\"canManage\":true,\"patients\":[{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},{\"displayName\":\"María Fernanda López\",\"id\":\"11111111-1111-4111-8111-111111111113\"}],\"physicians\":[{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"},{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas/referencias"
+  },
+  {
+    "body": "{\"appointments\":[{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"createdAt\":\"2026-10-26T13:43:51.516066-06:00\",\"durationMinutes\":30,\"id\":\"bbbbbbbb-1111-4111-8111-111111111111\",\"patientId\":\"11111111-1111-4111-8111-111111111111\",\"physicianId\":\"22222222-2222-4222-8222-222222222222\",\"reason\":\"Control de seguimiento\",\"scheduledAt\":\"2030-01-10T10:00:00-06:00\",\"status\":\"confirmed\",\"updatedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"patient\":{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},\"physician\":{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}},{\"cancelReason\":\"El paciente reprogramó por viaje\",\"cancelledAt\":\"2026-10-26T13:44:10.724625-06:00\",\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:43:51.516066-06:00\",\"durationMinutes\":30,\"id\":\"bbbbbbbb-2222-4222-8222-222222222222\",\"patientId\":\"11111111-1111-4111-8111-111111111112\",\"physicianId\":\"33333333-3333-4333-8333-333333333333\",\"reason\":\"Valoración cardiológica\",\"scheduledAt\":\"2030-01-11T11:00:00-06:00\",\"status\":\"cancelled\",\"updatedAt\":\"2026-10-26T13:44:10.724625-06:00\",\"patient\":{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},\"physician\":{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"}},{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:44:12.636235-06:00\",\"durationMinutes\":30,\"id\":\"7f5c6410-e352-45aa-bf1d-8c737b00bd25\",\"patientId\":\"11111111-1111-4111-8111-111111111111\",\"physicianId\":\"33333333-3333-4333-8333-333333333333\",\"reason\":\"Reposición del horario liberado\",\"scheduledAt\":\"2030-01-11T11:00:00-06:00\",\"status\":\"pending\",\"updatedAt\":\"2026-10-26T13:44:12.636235-06:00\",\"patient\":{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},\"physician\":{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"}},{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:44:05.548728-06:00\",\"durationMinutes\":30,\"id\":\"c9022603-3ac4-43a6-be6a-8dfafcd3d6f2\",\"patientId\":\"11111111-1111-4111-8111-111111111113\",\"physicianId\":\"22222222-2222-4222-8222-222222222222\",\"reason\":\"Consulta de control por dolor lumbar\",\"scheduledAt\":\"2030-02-06T10:30:00-06:00\",\"status\":\"pending\",\"updatedAt\":\"2026-10-26T13:44:09.067888-06:00\",\"patient\":{\"displayName\":\"María Fernanda López\",\"id\":\"11111111-1111-4111-8111-111111111113\"},\"physician\":{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas?"
+  },
+  {
+    "body": "{\"canCreate\":true,\"canManage\":true,\"patients\":[{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},{\"displayName\":\"María Fernanda López\",\"id\":\"11111111-1111-4111-8111-111111111113\"}],\"physicians\":[{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"},{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas/referencias"
+  },
+  {
+    "body": "{\"error\":{\"code\":\"conflict\",\"message\":\"El horario seleccionado ya está ocupado para este médico.\"}}",
+    "method": "POST",
+    "status": 409,
+    "url": "http://localhost:3100/api/citas"
+  },
+  {
+    "body": "{\"canCreate\":true,\"canManage\":true,\"patients\":[{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},{\"displayName\":\"María Fernanda López\",\"id\":\"11111111-1111-4111-8111-111111111113\"}],\"physicians\":[{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"},{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas/referencias"
+  },
+  {
+    "body": "{\"appointments\":[{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"createdAt\":\"2026-10-26T13:43:51.516066-06:00\",\"durationMinutes\":30,\"id\":\"bbbbbbbb-1111-4111-8111-111111111111\",\"patientId\":\"11111111-1111-4111-8111-111111111111\",\"physicianId\":\"22222222-2222-4222-8222-222222222222\",\"reason\":\"Control de seguimiento\",\"scheduledAt\":\"2030-01-10T10:00:00-06:00\",\"status\":\"confirmed\",\"updatedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"patient\":{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},\"physician\":{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}},{\"cancelReason\":\"El paciente reprogramó por viaje\",\"cancelledAt\":\"2026-10-26T13:44:10.724625-06:00\",\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:43:51.516066-06:00\",\"durationMinutes\":30,\"id\":\"bbbbbbbb-2222-4222-8222-222222222222\",\"patientId\":\"11111111-1111-4111-8111-111111111112\",\"physicianId\":\"33333333-3333-4333-8333-333333333333\",\"reason\":\"Valoración cardiológica\",\"scheduledAt\":\"2030-01-11T11:00:00-06:00\",\"status\":\"cancelled\",\"updatedAt\":\"2026-10-26T13:44:10.724625-06:00\",\"patient\":{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},\"physician\":{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"}},{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:44:12.636235-06:00\",\"durationMinutes\":30,\"id\":\"7f5c6410-e352-45aa-bf1d-8c737b00bd25\",\"patientId\":\"11111111-1111-4111-8111-111111111111\",\"physicianId\":\"33333333-3333-4333-8333-333333333333\",\"reason\":\"Reposición del horario liberado\",\"scheduledAt\":\"2030-01-11T11:00:00-06:00\",\"status\":\"pending\",\"updatedAt\":\"2026-10-26T13:44:12.636235-06:00\",\"patient\":{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},\"physician\":{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"}},{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:44:05.548728-06:00\",\"durationMinutes\":30,\"id\":\"c9022603-3ac4-43a6-be6a-8dfafcd3d6f2\",\"patientId\":\"11111111-1111-4111-8111-111111111113\",\"physicianId\":\"22222222-2222-4222-8222-222222222222\",\"reason\":\"Consulta de control por dolor lumbar\",\"scheduledAt\":\"2030-02-06T10:30:00-06:00\",\"status\":\"pending\",\"updatedAt\":\"2026-10-26T13:44:09.067888-06:00\",\"patient\":{\"displayName\":\"María Fernanda López\",\"id\":\"11111111-1111-4111-8111-111111111113\"},\"physician\":{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas?"
+  },
+  {
+    "body": "{\"appointment\":{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":\"2026-10-26T13:44:16.339179-06:00\",\"createdAt\":\"2026-10-26T13:44:12.636235-06:00\",\"durationMinutes\":30,\"id\":\"7f5c6410-e352-45aa-bf1d-8c737b00bd25\",\"patientId\":\"11111111-1111-4111-8111-111111111111\",\"physicianId\":\"33333333-3333-4333-8333-333333333333\",\"reason\":\"Reposición del horario liberado\",\"scheduledAt\":\"2030-01-11T11:00:00-06:00\",\"status\":\"confirmed\",\"updatedAt\":\"2026-10-26T13:44:16.339179-06:00\",\"patient\":{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},\"physician\":{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"}}}",
+    "method": "PATCH",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas/7f5c6410-e352-45aa-bf1d-8c737b00bd25"
+  },
+  {
+    "body": "{\"canCreate\":true,\"canManage\":true,\"patients\":[{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},{\"displayName\":\"María Fernanda López\",\"id\":\"11111111-1111-4111-8111-111111111113\"}],\"physicians\":[{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"},{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas/referencias"
+  },
+  {
+    "body": "{\"appointments\":[{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"createdAt\":\"2026-10-26T13:43:51.516066-06:00\",\"durationMinutes\":30,\"id\":\"bbbbbbbb-1111-4111-8111-111111111111\",\"patientId\":\"11111111-1111-4111-8111-111111111111\",\"physicianId\":\"22222222-2222-4222-8222-222222222222\",\"reason\":\"Control de seguimiento\",\"scheduledAt\":\"2030-01-10T10:00:00-06:00\",\"status\":\"confirmed\",\"updatedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"patient\":{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},\"physician\":{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}},{\"cancelReason\":\"El paciente reprogramó por viaje\",\"cancelledAt\":\"2026-10-26T13:44:10.724625-06:00\",\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:43:51.516066-06:00\",\"durationMinutes\":30,\"id\":\"bbbbbbbb-2222-4222-8222-222222222222\",\"patientId\":\"11111111-1111-4111-8111-111111111112\",\"physicianId\":\"33333333-3333-4333-8333-333333333333\",\"reason\":\"Valoración cardiológica\",\"scheduledAt\":\"2030-01-11T11:00:00-06:00\",\"status\":\"cancelled\",\"updatedAt\":\"2026-10-26T13:44:10.724625-06:00\",\"patient\":{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},\"physician\":{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"}},{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":\"2026-10-26T13:44:16.339179-06:00\",\"createdAt\":\"2026-10-26T13:44:12.636235-06:00\",\"durationMinutes\":30,\"id\":\"7f5c6410-e352-45aa-bf1d-8c737b00bd25\",\"patientId\":\"11111111-1111-4111-8111-111111111111\",\"physicianId\":\"33333333-3333-4333-8333-333333333333\",\"reason\":\"Reposición del horario liberado\",\"scheduledAt\":\"2030-01-11T11:00:00-06:00\",\"status\":\"confirmed\",\"updatedAt\":\"2026-10-26T13:44:16.339179-06:00\",\"patient\":{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},\"physician\":{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"}},{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:44:05.548728-06:00\",\"durationMinutes\":30,\"id\":\"c9022603-3ac4-43a6-be6a-8dfafcd3d6f2\",\"patientId\":\"11111111-1111-4111-8111-111111111113\",\"physicianId\":\"22222222-2222-4222-8222-222222222222\",\"reason\":\"Consulta de control por dolor lumbar\",\"scheduledAt\":\"2030-02-06T10:30:00-06:00\",\"status\":\"pending\",\"updatedAt\":\"2026-10-26T13:44:09.067888-06:00\",\"patient\":{\"displayName\":\"María Fernanda López\",\"id\":\"11111111-1111-4111-8111-111111111113\"},\"physician\":{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas?"
+  },
+  {
+    "body": "{\"appointments\":[{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"createdAt\":\"2026-10-26T13:43:51.516066-06:00\",\"durationMinutes\":30,\"id\":\"bbbbbbbb-1111-4111-8111-111111111111\",\"patientId\":\"11111111-1111-4111-8111-111111111111\",\"physicianId\":\"22222222-2222-4222-8222-222222222222\",\"reason\":\"Control de seguimiento\",\"scheduledAt\":\"2030-01-10T10:00:00-06:00\",\"status\":\"confirmed\",\"updatedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"patient\":{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},\"physician\":{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}},{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":\"2026-10-26T13:44:16.339179-06:00\",\"createdAt\":\"2026-10-26T13:44:12.636235-06:00\",\"durationMinutes\":30,\"id\":\"7f5c6410-e352-45aa-bf1d-8c737b00bd25\",\"patientId\":\"11111111-1111-4111-8111-111111111111\",\"physicianId\":\"33333333-3333-4333-8333-333333333333\",\"reason\":\"Reposición del horario liberado\",\"scheduledAt\":\"2030-01-11T11:00:00-06:00\",\"status\":\"confirmed\",\"updatedAt\":\"2026-10-26T13:44:16.339179-06:00\",\"patient\":{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},\"physician\":{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"}}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas?status=confirmed"
+  },
+  {
+    "body": "{\"canCreate\":true,\"canManage\":true,\"patients\":[{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},{\"displayName\":\"María Fernanda López\",\"id\":\"11111111-1111-4111-8111-111111111113\"}],\"physicians\":[{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"},{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas/referencias"
+  },
+  {
+    "body": "{\"canCreate\":true,\"canManage\":true,\"patients\":[{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},{\"displayName\":\"María Fernanda López\",\"id\":\"11111111-1111-4111-8111-111111111113\"}],\"physicians\":[{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"},{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas/referencias"
+  },
+  {
+    "body": "{\"appointments\":[{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"createdAt\":\"2026-10-26T13:43:51.516066-06:00\",\"durationMinutes\":30,\"id\":\"bbbbbbbb-1111-4111-8111-111111111111\",\"patientId\":\"11111111-1111-4111-8111-111111111111\",\"physicianId\":\"22222222-2222-4222-8222-222222222222\",\"reason\":\"Control de seguimiento\",\"scheduledAt\":\"2030-01-10T10:00:00-06:00\",\"status\":\"confirmed\",\"updatedAt\":\"2026-10-26T13:43:51.516066-06:00\",\"patient\":{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},\"physician\":{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}},{\"cancelReason\":\"El paciente reprogramó por viaje\",\"cancelledAt\":\"2026-10-26T13:44:10.724625-06:00\",\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:43:51.516066-06:00\",\"durationMinutes\":30,\"id\":\"bbbbbbbb-2222-4222-8222-222222222222\",\"patientId\":\"11111111-1111-4111-8111-111111111112\",\"physicianId\":\"33333333-3333-4333-8333-333333333333\",\"reason\":\"Valoración cardiológica\",\"scheduledAt\":\"2030-01-11T11:00:00-06:00\",\"status\":\"cancelled\",\"updatedAt\":\"2026-10-26T13:44:10.724625-06:00\",\"patient\":{\"displayName\":\"Luis Hernández\",\"id\":\"11111111-1111-4111-8111-111111111112\"},\"physician\":{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"}},{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":\"2026-10-26T13:44:16.339179-06:00\",\"createdAt\":\"2026-10-26T13:44:12.636235-06:00\",\"durationMinutes\":30,\"id\":\"7f5c6410-e352-45aa-bf1d-8c737b00bd25\",\"patientId\":\"11111111-1111-4111-8111-111111111111\",\"physicianId\":\"33333333-3333-4333-8333-333333333333\",\"reason\":\"Reposición del horario liberado\",\"scheduledAt\":\"2030-01-11T11:00:00-06:00\",\"status\":\"confirmed\",\"updatedAt\":\"2026-10-26T13:44:16.339179-06:00\",\"patient\":{\"displayName\":\"Ana Torres\",\"id\":\"11111111-1111-4111-8111-111111111111\"},\"physician\":{\"displayName\":\"Dr. Mateo Salinas\",\"id\":\"33333333-3333-4333-8333-333333333333\"}},{\"cancelReason\":null,\"cancelledAt\":null,\"confirmedAt\":null,\"createdAt\":\"2026-10-26T13:44:05.548728-06:00\",\"durationMinutes\":30,\"id\":\"c9022603-3ac4-43a6-be6a-8dfafcd3d6f2\",\"patientId\":\"11111111-1111-4111-8111-111111111113\",\"physicianId\":\"22222222-2222-4222-8222-222222222222\",\"reason\":\"Consulta de control por dolor lumbar\",\"scheduledAt\":\"2030-02-06T10:30:00-06:00\",\"status\":\"pending\",\"updatedAt\":\"2026-10-26T13:44:09.067888-06:00\",\"patient\":{\"displayName\":\"María Fernanda López\",\"id\":\"11111111-1111-4111-8111-111111111113\"},\"physician\":{\"displayName\":\"Dra. Valentina Ríos\",\"id\":\"22222222-2222-4222-8222-222222222222\"}}]}",
+    "method": "GET",
+    "status": 200,
+    "url": "http://localhost:3100/api/citas?"
+  },
+  {
+    "body": "{\"error\":{\"code\":\"validation\",\"fieldErrors\":{\"status\":\"La cita está cancelada.\"},\"message\":\"No se puede confirmar una cita cancelada.\"}}",
+    "method": "PATCH",
+    "status": 400,
+    "url": "http://localhost:3100/api/citas/bbbbbbbb-2222-4222-8222-222222222222"
+  },
+  {
+    "body": "",
+    "method": "GET",
+    "status": 401,
+    "url": "http://localhost:3100/api/citas/referencias"
+  },
+  {
+    "body": "",
+    "method": "GET",
+    "status": 401,
+    "url": "http://localhost:3100/api/citas?"
+  },
+  {
+    "body": "",
+    "method": "GET",
+    "status": 401,
+    "url": "http://localhost:3100/api/citas"
+  }
+]
