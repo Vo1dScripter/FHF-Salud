@@ -1,3 +1,18 @@
+# Cierre E2E real
+
+Estado final: 26 PASS autenticados en producción. `e2e-estado.json` resume el
+resultado; `e2e-tar05-1793949455394/resultados.json` identifica cada prueba,
+las citas y la limpieza. Sus 12 PNG son capturas reales con datos ficticios.
+`e2e-preparacion-remota.txt` confirma aprovisionamiento de referencias/roles;
+`e2e-limpieza-remota.txt` confirma cero cuentas/referencias/citas del fixture;
+`e2e-catalogo-final.txt` confirma también eventos y bloqueos en cero.
+`github-actions-verificado.json` registra verify/database aprobados en GitHub.
+
+El directorio `e2e-local-con-supabase-real/` es una ejecución intermedia FALLIDA
+en el propio test de cita ajena (ID escogido incorrectamente); se conserva para
+trazabilidad y no es la evidencia final PASS. El ejecutor corregido usa un ID
+verificado del otro médico y espera hidratación antes del login.
+
 # Actualización de evidencia remota
 
 El estado actual está en INFORME.md. El índice original al final de este archivo

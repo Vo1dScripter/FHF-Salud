@@ -40,11 +40,13 @@ const result = {
   checks: [],
   appointmentIds: [],
   blockIds: [],
+  otherPhysicianAppointmentIds: [],
   complete: false,
   cleanupRequired: true,
 };
 let phase = 'inicio';
 let browser;
+let lastPage;
 const reason = `TAR05 E2E ${fixture.runId}`;
 function save() {
   fs.writeFileSync(
@@ -66,7 +68,18 @@ async function detail(context, id) {
   return response.body.appointment;
 }
 async function login(page, role) {
-  await page.goto('/citas/acceso', { waitUntil: 'domcontentloaded' });
+  lastPage = page;
+  await page.goto('/citas/acceso', {
+    waitUntil: 'domcontentloaded',
+    timeout: 60000,
+  });
+  await page.waitForFunction(() => {
+    const form = document.querySelector('form');
+    const key =
+      form && Object.keys(form).find((k) => k.startsWith('__reactProps$'));
+    return Boolean(key && form[key]?.onSubmit);
+  });
+  await page.waitForTimeout(2500);
   await page
     .getByLabel('Correo electrónico', { exact: true })
     .fill(fixture.users[role].email);
@@ -76,7 +89,10 @@ async function login(page, role) {
   await page
     .getByRole('button', { name: 'Iniciar sesión', exact: true })
     .click();
-  await page.waitForURL('**/citas', { timeout: 30000 });
+  await page.waitForURL('**/citas', {
+    timeout: 60000,
+    waitUntil: 'domcontentloaded',
+  });
 }
 function remember(appointment) {
   if (appointment?.id && !result.appointmentIds.includes(appointment.id)) {
@@ -113,7 +129,10 @@ async function screenshot(page, filename) {
     assert.equal(references.status, 200);
     pass(`login real y referencias ${viewport.width}`);
     phase = `RF01-${viewport.width}`;
-    await page.goto('/citas/nueva', { waitUntil: 'domcontentloaded' });
+    await page.goto('/citas/nueva', {
+      waitUntil: 'domcontentloaded',
+      timeout: 60000,
+    });
     await page
       .getByLabel('Paciente', { exact: true })
       .selectOption(fixture.patientId);
@@ -150,7 +169,7 @@ async function screenshot(page, filename) {
     await page
       .getByRole('heading', { name: 'Detalle de la cita', exact: true })
       .waitFor();
-    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.reload({ waitUntil: 'domcontentloaded', timeout: 60000 });
     assert.equal((await detail(context, appointment.id)).status, 'pending');
     await page.getByText(fixture.patientName, { exact: true }).waitFor();
     await screenshot(page, `${viewport.width}-02-detalle-recargado.png`);
@@ -186,7 +205,7 @@ async function screenshot(page, filename) {
       .getByRole('button', { name: 'Sí, confirmar cita', exact: true })
       .click();
     assert.equal((await confirmation).status(), 200);
-    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.reload({ waitUntil: 'domcontentloaded', timeout: 60000 });
     current = await detail(context, appointment.id);
     assert.equal(current.status, 'confirmed');
     assert.ok(current.confirmedAt);
@@ -218,7 +237,7 @@ async function screenshot(page, filename) {
       .getByRole('button', { name: 'Sí, cancelar cita', exact: true })
       .click();
     assert.equal((await cancellation).status(), 200);
-    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.reload({ waitUntil: 'domcontentloaded', timeout: 60000 });
     current = await detail(context, appointment.id);
     assert.equal(current.status, 'cancelled');
     const impossible = await api(
@@ -290,6 +309,8 @@ async function screenshot(page, filename) {
       .single();
     assert.equal(simultaneous.error, null);
     remember(simultaneous.data);
+    result.otherPhysicianAppointmentIds.push(simultaneous.data.id);
+    save();
     pass(
       `concurrencia REST normal ${round + 1}: un ganador, EXCLUDE; otro medico aceptado`,
     );
@@ -375,7 +396,7 @@ async function screenshot(page, filename) {
         { action: 'confirm', expectedUpdatedAt: new Date().toISOString() },
       );
       assert.equal(mutate.status, 403);
-      const other = result.appointmentIds[result.appointmentIds.length - 1];
+      const other = result.otherPhysicianAppointmentIds[0];
       assert.equal(
         (await api(context, 'get', `/api/citas/${other}`)).status,
         404,
@@ -412,8 +433,25 @@ async function screenshot(page, filename) {
     `PASS E2E: ${result.checks.length} comprobaciones reales. Evidencia: ${directory}\n`,
   );
 })()
-  .catch(() => {
-    result.checks.push({ name: phase, status: 'FAIL' });
+  .catch(async (error) => {
+    if (lastPage) {
+      result.failurePage = {
+        url: lastPage.url(),
+        alerts: await lastPage
+          .getByRole('alert')
+          .allTextContents()
+          .catch(() => []),
+        button: await lastPage
+          .getByRole('button')
+          .allTextContents()
+          .catch(() => []),
+      };
+    }
+    result.checks.push({
+      name: phase,
+      status: 'FAIL',
+      diagnostic: String(error.message).split('Call log:')[0].slice(0, 350),
+    });
     save();
     process.stderr.write(
       `E2E FALLIDO en ${phase}. No se imprimieron credenciales. Revisar resultados y datos ficticios pendientes de limpieza.\n`,

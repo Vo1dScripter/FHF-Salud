@@ -1,0 +1,23 @@
+Results
+Chart
+
+1 row
+
+Export
+fixture_cleanup
+{"users":0,"patients":0,"physicians":0,"appointments":0}
+PREVIEW
+
+User growth
+
+Track how your user base is trending.
+
+select
+date_trunc('week', last_sign_in_at) as week,
+count(distinct id) as active_users
+
+Explorer & Notebooks
+
+New unified workspace for querying data and chatting with Assistant.
+
+Enable Explorer

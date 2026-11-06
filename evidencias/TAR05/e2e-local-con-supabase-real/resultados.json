@@ -1,0 +1,127 @@
+{
+  "runId": "tar05-1793949455394",
+  "baseURL": "http://localhost:3100",
+  "projectRef": "oafwyfntjddrtjoqkktf",
+  "startedAt": "2026-11-06T07:50:30.303Z",
+  "checks": [
+    {
+      "name": "login real y referencias 1440",
+      "status": "PASS"
+    },
+    {
+      "name": "RF01 registro UI 1440",
+      "status": "PASS",
+      "id": "dea29c51-facd-4f69-b330-e9b6e56bb67d"
+    },
+    {
+      "name": "RF02 lectura persistida y recarga 1440",
+      "status": "PASS"
+    },
+    {
+      "name": "RF03 reprogramacion UI 1440",
+      "status": "PASS"
+    },
+    {
+      "name": "RF06 confirmacion UI persistida 1440",
+      "status": "PASS"
+    },
+    {
+      "name": "RF05 traslape API rechazado 1440",
+      "status": "PASS"
+    },
+    {
+      "name": "RF04 cancelar, conservar, liberar; confirmar cancelada rechazado 1440",
+      "status": "PASS"
+    },
+    {
+      "name": "login real y referencias 390",
+      "status": "PASS"
+    },
+    {
+      "name": "RF01 registro UI 390",
+      "status": "PASS",
+      "id": "ebab8e92-2a54-402e-81bc-24b1f0f263bf"
+    },
+    {
+      "name": "RF02 lectura persistida y recarga 390",
+      "status": "PASS"
+    },
+    {
+      "name": "RF03 reprogramacion UI 390",
+      "status": "PASS"
+    },
+    {
+      "name": "RF06 confirmacion UI persistida 390",
+      "status": "PASS"
+    },
+    {
+      "name": "RF05 traslape API rechazado 390",
+      "status": "PASS"
+    },
+    {
+      "name": "RF04 cancelar, conservar, liberar; confirmar cancelada rechazado 390",
+      "status": "PASS"
+    },
+    {
+      "name": "recorrido movil con movimiento reducido",
+      "status": "PASS"
+    },
+    {
+      "name": "concurrencia REST normal 1: un ganador, EXCLUDE; otro medico aceptado",
+      "status": "PASS"
+    },
+    {
+      "name": "concurrencia REST normal 2: un ganador, EXCLUDE; otro medico aceptado",
+      "status": "PASS"
+    },
+    {
+      "name": "concurrencia REST normal 3: un ganador, EXCLUDE; otro medico aceptado",
+      "status": "PASS"
+    },
+    {
+      "name": "concurrencia REST normal 4: un ganador, EXCLUDE; otro medico aceptado",
+      "status": "PASS"
+    },
+    {
+      "name": "concurrencia REST normal 5: un ganador, EXCLUDE; otro medico aceptado",
+      "status": "PASS"
+    },
+    {
+      "name": "concurrencia remota bloqueo/reserva con usuario normal: un solo ganador",
+      "status": "PASS"
+    },
+    {
+      "name": "historial remoto conserva dos cancelaciones UI",
+      "status": "PASS"
+    },
+    {
+      "name": "escritura directa no autorizada rechazada incluso para staff",
+      "status": "PASS"
+    },
+    {
+      "name": "permisos-physician",
+      "status": "FAIL",
+      "diagnostic": "Expected values to be strictly equal:\n\n200 !== 404\n"
+    }
+  ],
+  "appointmentIds": [
+    "dea29c51-facd-4f69-b330-e9b6e56bb67d",
+    "b55e688d-7b85-4429-838c-4145269b6e45",
+    "ebab8e92-2a54-402e-81bc-24b1f0f263bf",
+    "2eb999b2-c2f3-4200-9c8a-0f103811383d",
+    "a8f4fd5b-1a29-4a79-8cee-e2caf626a48c",
+    "296704f0-ef9b-458c-87fc-ce4f5d59bbed",
+    "e716f46b-21bf-43b4-830a-b91b37da34c1",
+    "d4773de5-5866-4725-b118-d6b13c8295ab",
+    "585bcbe3-50db-4392-9da4-13ba4f4a263d",
+    "b0a2588c-311a-4881-aeb1-01721c00d575",
+    "0aad2f13-3bf2-44c6-b19b-cfdb787807a1",
+    "16278969-26f1-42dc-a168-cc196a3d99a6",
+    "c92f3a7a-75f8-4b19-8278-8adb32fe1fba",
+    "a91c347a-2903-4ad1-9f05-3f8facb25d4b",
+    "8f550553-f4c6-49be-b0c5-f088d39c2437"
+  ],
+  "blockIds": [],
+  "complete": false,
+  "cleanupRequired": true
+}

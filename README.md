@@ -751,7 +751,9 @@ publicar sus valores. Producción fue redesplegada y sus bundles confirman
 la configuración nueva. Auth público responde HTTP 200; datos médicos sin
 sesión responden 401.
 
-El informe actual detalla los pendientes: recorrido autenticado completo,
-concurrencia remota y revisión/publicación de la rama TAR05. El dominio antiguo
+El E2E final aprobó 26 comprobaciones en producción con usuarios normales:
+RF-01 a RF-06, escritorio/móvil, recargas, permisos y concurrencia remota.
+Los registros y las tres cuentas ficticias se limpiaron y verificaron. La rama
+TAR05 está publicada en el PR #2. Reproducción: [docs/tar05-e2e.md](docs/tar05-e2e.md). El dominio antiguo
 sigue pausado y no se borró. No repetir el bootstrap de instalación en el
 proyecto ya creado ni aplicar `auth-bootstrap.sql` a Supabase.

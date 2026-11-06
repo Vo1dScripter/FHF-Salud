@@ -1,14 +1,15 @@
 {
   "projectRef": "oafwyfntjddrtjoqkktf",
-  "status": "BLOCKED",
-  "authenticatedE2EExecuted": false,
-  "remoteConcurrencyExecuted": false,
-  "reason": "No hay sesion administrativa de la cuenta Pollo en las pestanas accesibles de Brave; se solicito al usuario abrirla.",
-  "preparedScripts": [
-    "scripts/tar05/prepare-e2e.mjs",
-    "scripts/tar05/verify-e2e.mjs",
-    "scripts/tar05/generate-e2e-cleanup.mjs"
+  "status": "PASS",
+  "authenticatedE2EExecuted": true,
+  "remoteConcurrencyExecuted": true,
+  "normalRolesTested": [
+    "receptionist",
+    "physician",
+    "no role"
   ],
-  "productionAuthQueriesChanged": false,
-  "credentialsCommitted": false
+  "checksPassed": 26,
+  "cleanupVerified": true,
+  "credentialsCommitted": false,
+  "results": "e2e-tar05-1793949455394/resultados.json"
 }

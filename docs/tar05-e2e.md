@@ -1,9 +1,15 @@
 # Cierre E2E real de TAR05
 
-Estado actual: **preparado, no ejecutado**. Falta la sesión administrativa de la
-organización Pollo para aprovisionar usuarios ficticios en el proyecto
-`oafwyfntjddrtjoqkktf`. La clave publicable no permite hacerlo. Los PASS SQL
-remotos anteriores no se presentan como login real ni como E2E autenticado.
+Estado actual: **26 comprobaciones PASS en producción y Supabase real**.
+Corrida `tar05-1793949455394`, con login de usuarios normales de recepción,
+médico y sin rol. Cinco carreras reserva/reserva y una bloqueo/reserva aprobaron.
+Resultados y capturas: `evidencias/TAR05/e2e-tar05-1793949455394/`.
+Limpieza verificada: `e2e-limpieza-remota.txt` y `e2e-catalogo-final.txt`; se
+eliminaron las tres cuentas y todos los registros ficticios.
+
+Los archivos locales privados de la corrida anterior ya no representan cuentas
+activas. Para repetir, crear una corrida nueva y aprovisionar nuevas cuentas;
+no reutilizar credenciales de cuentas eliminadas.
 
 El ejecutor utiliza la aplicación desplegada, Supabase Auth real, PostgREST real
 y cuentas normales. No intercepta peticiones, no sustituye datos y no utiliza

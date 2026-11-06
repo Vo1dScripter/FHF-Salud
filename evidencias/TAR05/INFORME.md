@@ -10,7 +10,7 @@ Se actualizaron NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY 
 
 Vercel redesplegó el código main e5299b5 con la nueva configuración: despliegue EX5SY1JEiqqWExEFgs6YyfzeG23c, estado Ready, producción. El sitio https://fhf-salud.vercel.app devuelve HTTP 200 y sus bundles contienen el nuevo dominio y la clave publicable local; no contienen el dominio Supabase anterior. Esto demuestra configuración efectiva en el navegador publicado, no solo variables guardadas en el panel.
 
-El recorrido completo autenticado RF-01 a RF-06 y la concurrencia contra Supabase remoto aún no quedaron certificados. Los tests SQL remotos usan SET ROLE y claims de prueba; no equivalen a iniciar sesión como usuario normal de GoTrue. No se declara TAR05 completamente terminado.
+Cierre E2E: 26 comprobaciones PASS contra https://fhf-salud.vercel.app y Supabase real con cuentas normales de recepción, médico y sin rol. RF-01 a RF-06 se recorrieron en escritorio (1440x1000) y móvil (390x844, movimiento reducido), con recargas y persistencia. Cinco carreras simultáneas de reservas y una carrera bloqueo/reserva tuvieron un único ganador. La limpieza remota dejó cero registros ficticios y eliminó las tres cuentas. Evidencia: e2e-tar05-1793949455394/resultados.json, capturas, e2e-limpieza-remota.txt y e2e-catalogo-final.txt. Los tests SQL con SET ROLE siguen diferenciados de este login real.
 
 ## B. Estado Git y contribuciones
 
@@ -28,7 +28,7 @@ Integración 4: 77bd0310762b91b0aa143356ed6721f05081193f (77bd031), jesus_ff, 20
 
 Integración 5: ef8a8bf4f86e1f857f260a02ab120fe410caf26a (ef8a8bf), Manuel Alvarez, 2026-10-30T15:08:38-06:00. fix: integrar módulo completo de citas. Merge final e5299b5 por Manuel Alvarez, 2026-10-30T15:37:35-06:00. Integra feature/base-datos-citas. Archivos de cada contribución: historial-git.txt; ramas existentes: ramas.txt. No se inventaron autores, firmas ni commits.
 
-Commits TAR05 anteriores: 0bf31a3d739f261bd2763bb18c3f5814bf85fa6d (correcciones y pruebas locales) y b2db8d7 (creación remota documentada). El último commit del trabajo se consulta con git log -1 --format=fuller. La rama TAR05 no se fusionó ni publicó en main; el redespliegue de producción utiliza el código e5299b5 y las correcciones SQL ya aplicadas a la base remota.
+Commits TAR05 anteriores: 0bf31a3d739f261bd2763bb18c3f5814bf85fa6d (correcciones y pruebas locales) y b2db8d7 (creación remota documentada). El último commit del trabajo se consulta con git log -1 --format=fuller. La rama TAR05 fue publicada con 9033f8754892daf6350b3ecbb435b55b950583a1 y PR #2. La evidencia autenticada se obtuvo sobre producción e5299b5 y la base ya corregida; los cambios posteriores del ejecutor y documentación no alteran el código de aplicación. El merge y despliegue posteriores se identifican en el cierre Git del PR, sin reconstruir ni atribuir commits previos.
 
 ## Stack efectivo y justificación
 
@@ -38,21 +38,21 @@ App Router y rutas API utilizan features/appointments para contratos, validació
 
 La combinación comparte tipos entre frontend y API, mantiene las convenciones existentes y reduce trabajo de infraestructura. PostgreSQL aporta integridad, intervalos, concurrencia y transacciones; Supabase integra Auth y PostgREST. Los índices y límites de consultas apoyan escalabilidad, pero no equivalen a certificar rendimiento bajo carga. Se utilizó el plan gratuito mostrado en el panel sin contratar ampliaciones ni afirmar precios o cuotas no comprobados.
 
-GitHub Actions mantiene npm ci y npm run verify; TAR05 añade un job con PostgreSQL aislado. El script fue probado localmente; no se afirma ejecución de Actions en GitHub. La infraestructura pg_cron/pg_net/Vault sí se creó ahora en Supabase: el catálogo confirma fhf-reminder-dispatch con active=false. No se habilitaron envíos ni se trasladaron secretos VAPID privados al proyecto nuevo.
+GitHub Actions mantiene npm ci y npm run verify; TAR05 añade un job con PostgreSQL aislado. El script y verify también aprobaron en GitHub Actions, corrida 42180958553: verify 1m32s y database 12s. Evidencia github-actions-verificado.json. La revisión final del PR se controla con sus checks actuales. La infraestructura pg_cron/pg_net/Vault sí se creó ahora en Supabase: el catálogo confirma fhf-reminder-dispatch con active=false. No se habilitaron envíos ni se trasladaron secretos VAPID privados al proyecto nuevo.
 
 ## C. Matriz RF-01 a RF-06
 
-RF-01 Registrar. Archivos: service.ts, validation.ts, supabase-repository.ts, API citas/route.ts y AppointmentForm.tsx. Pruebas appointments.sql y tar05-integrity.sql: alta válida, FK y duración. Resultado: SQL local y remoto PASS; Jest PASS. Alta desde navegador autenticado remoto pendiente.
+RF-01 Registrar. Archivos: service.ts, validation.ts, supabase-repository.ts, API citas/route.ts y AppointmentForm.tsx. Pruebas appointments.sql y tar05-integrity.sql: alta válida, FK y duración. Resultado: SQL local y remoto PASS; Jest PASS. Alta UI en producción con usuario normal: PASS escritorio y móvil (capturas 01-registro).
 
-RF-02 Consultar. Archivos: servicio, adaptador, AppointmentAgenda.tsx y AppointmentList.tsx. appointments.sql y appointment-actions.sql comprueban lecturas con permisos y relaciones. Resultado: SQL local/remoto y Jest PASS. El acceso público no expone pacientes ni citas. Recarga autenticada remota pendiente.
+RF-02 Consultar. Archivos: servicio, adaptador, AppointmentAgenda.tsx y AppointmentList.tsx. appointments.sql y appointment-actions.sql comprueban lecturas con permisos y relaciones. Resultado: SQL local/remoto y Jest PASS. El acceso público no expone pacientes ni citas. Recarga de detalle con nombre real del fixture y estado persistido: PASS escritorio/móvil (capturas 02-detalle-recargado).
 
-RF-03 Reprogramar. API citas/[id], RPC reschedule_appointment, servicio y AppointmentActionDialog.tsx. appointment-actions.sql: modificación válida, versión obsoleta, conflicto y rechazo de cita cancelada. Resultado: SQL local/remoto y Jest PASS. Navegador autenticado pendiente.
+RF-03 Reprogramar. API citas/[id], RPC reschedule_appointment, servicio y AppointmentActionDialog.tsx. appointment-actions.sql: modificación válida, versión obsoleta, conflicto y rechazo de cita cancelada. Resultado: SQL local/remoto y Jest PASS. Acción UI autenticada en producción: PASS escritorio/móvil (capturas de reprogramación y cancelación).
 
-RF-04 Cancelar. RPC cancel_appointment, servicio y diálogo. appointment-actions.sql: conserva fila e historial, libera horario e impide duplicar efectos de la cancelación repetida. Resultado: SQL local/remoto y Jest PASS. Navegador autenticado pendiente.
+RF-04 Cancelar. RPC cancel_appointment, servicio y diálogo. appointment-actions.sql: conserva fila e historial, libera horario e impide duplicar efectos de la cancelación repetida. Resultado: SQL local/remoto y Jest PASS. Acción UI autenticada en producción: PASS escritorio/móvil (capturas de reprogramación y cancelación).
 
-RF-05 Traslapes. availability.ts, adaptador, EXCLUDE appointments_no_overlap y trigger de bloqueos. appointments.sql prueba mismo médico rechazado y médicos diferentes aceptados; el ejecutor local prueba dos conexiones concurrentes. Resultado: integridad SQL local/remota PASS; concurrencia local PASS. Carrera remota aún no certificada.
+RF-05 Traslapes. availability.ts, adaptador, EXCLUDE appointments_no_overlap y trigger de bloqueos. appointments.sql prueba mismo médico rechazado y médicos diferentes aceptados; el ejecutor local prueba dos conexiones concurrentes. Resultado: integridad SQL local/remota PASS; concurrencia local PASS. Cinco carreras REST remotas con JWT normal: un ganador y SQLSTATE 23P01; médico diferente aceptado. Carrera bloqueo/reserva remota: un solo ganador. PASS.
 
-RF-06 Confirmar. RPC confirm_appointment y acciones. appointment-actions.sql y null-role.sql: estado guardado, cancelada rechazada, permisos y rol ausente rechazado. Resultado: SQL local/remoto y Jest PASS. Persistencia tras recarga autenticada remota pendiente.
+RF-06 Confirmar. RPC confirm_appointment y acciones. appointment-actions.sql y null-role.sql: estado guardado, cancelada rechazada, permisos y rol ausente rechazado. Resultado: SQL local/remoto y Jest PASS. Confirmación UI y estado confirmed/confirmedAt tras recargar: PASS escritorio/móvil (capturas 04-confirmada-recargada).
 
 Pruebas SQL remotas: supabase-pruebas-reales.txt. Mismos scripts versionados en supabase/tests. Pruebas locales: verificacion-bd-reproducible.log y validacion-conexion-nueva.log. Las capturas PRY05 continúan como evidencia histórica; no se recuentan como una ejecución autenticada nueva TAR05.
 
@@ -80,13 +80,13 @@ npm ci y npm run verify: PASS en el corte local. npm run verify se volvió a eje
 
 Cuatro suites SQL ejecutadas en Supabase real: appointments.sql, appointment-actions.sql, null-role.sql y tar05-integrity.sql. Resultado observado final: PASS: cuatro suites SQL en Supabase remoto. Comprueban inserciones válidas, PK duplicadas, referencias inexistentes, estado y duración inválidos, traslapes, médicos distintos, cancelación/historial/liberación, idempotencia, versión y RLS. Se usan datos ficticios y ROLLBACK. El catálogo posterior confirmó limpieza.
 
-Las pruebas remotas usan una conexión administrativa para preparar datos, seguida de SET LOCAL ROLE authenticated y claims de admin/médico/sin rol. Esto comprueba autorización SQL bajo permisos normales, pero no la emisión de JWT ni una sesión normal real. La concurrencia de dos reservas y la carrera ausencia/reserva aprobaron en PostgreSQL local aislado; no se presentan como concurrencia remota.
+Las pruebas remotas usan una conexión administrativa para preparar datos, seguida de SET LOCAL ROLE authenticated y claims de admin/médico/sin rol. Esto comprueba autorización SQL bajo permisos normales. Adicionalmente, el E2E final inició sesión mediante el formulario real y Auth emitió JWT normales; las APIs de la app y las consultas REST se probaron con esos permisos, sin service_role. La concurrencia remota se ejecutó cinco veces para reservas y una vez para bloqueo/reserva, con Promise.all y comprobación de errores 23P01.
 
 npm run supabase:check con la configuración nueva: Auth HTTP 200. Comprobación adicional: /auth/v1/settings 200; /rest/v1/patients y /rest/v1/appointments con clave publicable sin sesión responden 401. No se interpretó ese rechazo como base vacía ni como falla de conexión: es el resultado esperado para datos protegidos.
 
 Publicación verificada: redespliegue Vercel EX5SY1JEiqqWExEFgs6YyfzeG23c aparece Ready. El dominio de producción responde 200; vercel-bundle-verificado.json confirma dominio nuevo presente, antiguo ausente y clave coincidente con .env.local. La configuración guardada se verificó mediante UI sin extraer credenciales de sesión.
 
-Las capturas iniciales Playwright de escritorio/tablet/móvil, foco visible y movimiento reducido se conservan como evidencia local sin sesión. La revisión actual de producción terminó en Playwright: escritorio 1440x1000 y móvil 390x844, API 401, mensaje de sesión requerido, formulario de acceso presente y sin overflow. Evidencia: produccion-playwright.json y capturas produccion-1440.png/produccion-390.png. No se certifica flujo autenticado, contraste completo ni Axe; no se añadió una dependencia de accesibilidad para suplir esa ausencia.
+Las capturas iniciales Playwright de escritorio/tablet/móvil, foco visible y movimiento reducido se conservan como evidencia histórica local sin sesión. Las 12 capturas finales del directorio e2e-tar05-1793949455394 muestran producción autenticada, registros y estados reales del fixture. La revisión actual de producción terminó en Playwright: escritorio 1440x1000 y móvil 390x844, API 401, mensaje de sesión requerido, formulario de acceso presente y sin overflow. Evidencia: produccion-playwright.json y capturas produccion-1440.png/produccion-390.png. El flujo autenticado final sí aprobó. No se certifica una auditoría completa de contraste ni Axe; no se añadió una dependencia de accesibilidad para suplir esa ausencia.
 
 ## F. Auditoría crítica de IA
 
@@ -110,10 +110,12 @@ Evidencias y consultas: evidencias/TAR05; informe inicial archivado: INFORME-COR
 
 No se encontró TAR05 previo con portada, declaración o firmas en el directorio académico. No se inventaron firmas ni identidades legales; los nombres de portada proceden de Git. PRY05-Equipo.pdf permanece intacto.
 
-## H. Pendientes exactos
+## H. Cierre y límites de entrega
 
-Las conexiones local/Vercel y la base física remota ya están verificadas. Para cerrar todos los criterios originales faltan cuentas normales de prueba aprovisionadas en el nuevo proyecto, recorrido autenticado RF-01 a RF-06 con recarga desde navegador, y concurrencia remota. La sesión de incógnito administrativa no está disponible tras reiniciarse Brave; la conexión pública sigue funcionando y no permite crear cuentas administrativas de prueba.
+Los requisitos técnicos de base física, integridad, RLS, RF-01 a RF-06, persistencia y concurrencia remota quedaron comprobados. Se eliminaron únicamente las cuentas y registros ficticios con UUID y marcador de corrida; el catálogo posterior confirmó cero pacientes, médicos, citas, eventos y bloqueos. No se dejó una cuenta de prueba activa ni se enviaron correos. La agenda queda vacía hasta el aprovisionamiento de usuarios y referencias reales por el responsable.
 
-Falta revisar/publicar la rama TAR05 mediante PR; no se modificó main. Producción fue redesplegada desde el main existente con la base y configuración nuevas. Si existen portada y firmas TAR05 originales fuera del entorno, falta integrarlas preservándolas.
+El ejecutor necesitó correcciones de prueba: esperar hidratación de React antes de enviar el login y elegir una cita cuyo physicianId perteneciera al otro médico, en vez de usar el último ID de una lista que también incluía una carrera del propio médico. La ejecución intermedia local-con-supabase-real se conserva como diagnóstico FAIL; no se suma a los 26 PASS finales de producción. No fue necesario cambiar autenticación, lógica de negocio ni consultas para que el E2E aprobara.
 
-Conclusión de aceptación: configuración alineada y base remota creada/probada; auditoría integral aún no certificada como completa por los pendientes anteriores. No se transforma una verificación de variables o una suite SQL con SET ROLE en una ejecución autenticada normal del producto.
+La rama publicada y PR #2 conservan las correcciones y evidencias. Los checks de la revisión final y el eventual merge/despliegue se comprueban en GitHub y Vercel. No hay pendientes de acceso o ejecución E2E. La única limitación documental externa sigue siendo la ausencia de un TAR05 original con portada y firmas: no se inventaron ni generaron firmas. Si existe fuera del entorno, debe integrarse conservándolo antes de la entrega académica.
+
+El job de recordatorios permanece inactivo por diseño, fuera del alcance de RF-01 a RF-06. No se afirma una auditoría de penetración integral, de carga a gran escala ni de módulos no solicitados. El corte local y las notas cronológicas anteriores son históricos; este documento y el resultado final E2E contienen el estado vigente.

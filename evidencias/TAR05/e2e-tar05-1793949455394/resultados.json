@@ -1,0 +1,145 @@
+{
+  "runId": "tar05-1793949455394",
+  "baseURL": "https://fhf-salud.vercel.app",
+  "projectRef": "oafwyfntjddrtjoqkktf",
+  "startedAt": "2026-11-06T07:54:00.419Z",
+  "checks": [
+    {
+      "name": "login real y referencias 1440",
+      "status": "PASS"
+    },
+    {
+      "name": "RF01 registro UI 1440",
+      "status": "PASS",
+      "id": "a0c15521-2a47-4c5a-97fe-71e7eb31f0b9"
+    },
+    {
+      "name": "RF02 lectura persistida y recarga 1440",
+      "status": "PASS"
+    },
+    {
+      "name": "RF03 reprogramacion UI 1440",
+      "status": "PASS"
+    },
+    {
+      "name": "RF06 confirmacion UI persistida 1440",
+      "status": "PASS"
+    },
+    {
+      "name": "RF05 traslape API rechazado 1440",
+      "status": "PASS"
+    },
+    {
+      "name": "RF04 cancelar, conservar, liberar; confirmar cancelada rechazado 1440",
+      "status": "PASS"
+    },
+    {
+      "name": "login real y referencias 390",
+      "status": "PASS"
+    },
+    {
+      "name": "RF01 registro UI 390",
+      "status": "PASS",
+      "id": "85dd2ae6-bdf5-4a64-86e3-5d937e34c70d"
+    },
+    {
+      "name": "RF02 lectura persistida y recarga 390",
+      "status": "PASS"
+    },
+    {
+      "name": "RF03 reprogramacion UI 390",
+      "status": "PASS"
+    },
+    {
+      "name": "RF06 confirmacion UI persistida 390",
+      "status": "PASS"
+    },
+    {
+      "name": "RF05 traslape API rechazado 390",
+      "status": "PASS"
+    },
+    {
+      "name": "RF04 cancelar, conservar, liberar; confirmar cancelada rechazado 390",
+      "status": "PASS"
+    },
+    {
+      "name": "recorrido movil con movimiento reducido",
+      "status": "PASS"
+    },
+    {
+      "name": "concurrencia REST normal 1: un ganador, EXCLUDE; otro medico aceptado",
+      "status": "PASS"
+    },
+    {
+      "name": "concurrencia REST normal 2: un ganador, EXCLUDE; otro medico aceptado",
+      "status": "PASS"
+    },
+    {
+      "name": "concurrencia REST normal 3: un ganador, EXCLUDE; otro medico aceptado",
+      "status": "PASS"
+    },
+    {
+      "name": "concurrencia REST normal 4: un ganador, EXCLUDE; otro medico aceptado",
+      "status": "PASS"
+    },
+    {
+      "name": "concurrencia REST normal 5: un ganador, EXCLUDE; otro medico aceptado",
+      "status": "PASS"
+    },
+    {
+      "name": "concurrencia remota bloqueo/reserva con usuario normal: un solo ganador",
+      "status": "PASS"
+    },
+    {
+      "name": "historial remoto conserva dos cancelaciones UI",
+      "status": "PASS"
+    },
+    {
+      "name": "escritura directa no autorizada rechazada incluso para staff",
+      "status": "PASS"
+    },
+    {
+      "name": "sesion normal physician: limites de lectura y escritura",
+      "status": "PASS"
+    },
+    {
+      "name": "sesion normal noRole: limites de lectura y escritura",
+      "status": "PASS"
+    },
+    {
+      "name": "RLS y RPC probados con JWT normal sin rol: cero filas y 42501",
+      "status": "PASS"
+    }
+  ],
+  "appointmentIds": [
+    "a0c15521-2a47-4c5a-97fe-71e7eb31f0b9",
+    "60da561c-86e3-4adf-9ba2-cb18e6abba1a",
+    "85dd2ae6-bdf5-4a64-86e3-5d937e34c70d",
+    "a897d3aa-c5d4-4efc-81b3-6b5db59efb19",
+    "a30909ad-43d5-4e1c-af5a-2f8c282587d0",
+    "d2d05422-8f3e-4628-9f72-267d261e192f",
+    "8f9eddb7-ab5b-4ee0-be2e-c7056626af61",
+    "8dfbdae4-5d99-4135-bead-e5df3c5f406e",
+    "1220763c-1573-4856-b424-ef7a6a0f338a",
+    "0da6df59-67cf-4c2a-9fef-3d95a22ffc51",
+    "15a95bad-8e4a-47a0-b0d9-ee024dc100c1",
+    "7465484b-994c-46b7-aa7c-81015da8db82",
+    "54fa1e19-7c45-4cc3-9423-dcdad9fcc516",
+    "f31dcc5a-c15d-4bba-9ac6-8e83c641f156"
+  ],
+  "blockIds": [
+    "f9fd115f-f801-4cac-b97c-72586216bba6"
+  ],
+  "otherPhysicianAppointmentIds": [
+    "d2d05422-8f3e-4628-9f72-267d261e192f",
+    "8dfbdae4-5d99-4135-bead-e5df3c5f406e",
+    "0da6df59-67cf-4c2a-9fef-3d95a22ffc51",
+    "7465484b-994c-46b7-aa7c-81015da8db82",
+    "f31dcc5a-c15d-4bba-9ac6-8e83c641f156"
+  ],
+  "complete": true,
+  "cleanupRequired": false,
+  "completedAt": "2026-11-06T07:54:40.311Z",
+  "cleanupVerified": true,
+  "cleanupEvidence": "../e2e-limpieza-remota.txt"
+}
