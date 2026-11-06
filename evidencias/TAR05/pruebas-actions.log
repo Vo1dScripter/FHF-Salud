@@ -1,0 +1,21 @@
+BEGIN
+CREATE FUNCTION
+INSERT 0 1
+INSERT 0 2
+INSERT 0 5
+                                           set_config                                           
+------------------------------------------------------------------------------------------------
+ {"sub": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", "app_metadata": {"appointment_role": "admin"}}
+(1 row)
+
+SET
+DO
+RESET
+                                                                         set_config                                                                         
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"sub": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", "app_metadata": {"physician_id": "22222222-2222-4222-8222-222222222222", "appointment_role": "physician"}}
+(1 row)
+
+SET
+DO
+ROLLBACK

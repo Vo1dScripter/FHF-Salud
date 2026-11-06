@@ -1,0 +1,3 @@
+*.pdf binary
+# Conservar salida exacta de consola (psql alinea columnas con espacios).
+evidencias/TAR05/*.log -whitespace

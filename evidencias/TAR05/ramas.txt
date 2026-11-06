@@ -1,0 +1,8 @@
+* feature/tar05-consolidacion-bd           e5299b5 Merge remote-tracking branch 'origin/feature/base-datos-citas'
+  main                                     e5299b5 [origin/main] Merge remote-tracking branch 'origin/feature/base-datos-citas'
+  remotes/oficial/HEAD                     -> oficial/main
+  remotes/oficial/feature/base-datos-citas 698f436 Merge remote-tracking branch 'origin/main' into feature/base-datos-citas
+  remotes/oficial/main                     e5299b5 Merge remote-tracking branch 'origin/feature/base-datos-citas'
+  remotes/origin/HEAD                      -> origin/main
+  remotes/origin/feature/base-datos-citas  698f436 Merge remote-tracking branch 'origin/main' into feature/base-datos-citas
+  remotes/origin/main                      e5299b5 Merge remote-tracking branch 'origin/feature/base-datos-citas'

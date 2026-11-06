@@ -1,0 +1,145 @@
+
+> ts-nextjs-tailwind-starter@0.1.0 verify
+> npm run lint:strict && npm run typecheck && npm test -- --runInBand && npm run img:test && npm run integrations:test && npm run build
+
+
+> ts-nextjs-tailwind-starter@0.1.0 lint:strict
+> eslint . --max-warnings=0
+
+
+> ts-nextjs-tailwind-starter@0.1.0 typecheck
+> tsc --noEmit --incremental false
+
+
+> ts-nextjs-tailwind-starter@0.1.0 test
+> jest --runInBand
+
+
+Test Suites: 11 passed, 11 total
+Tests:       75 passed, 75 total
+Snapshots:   0 total
+Time:        1.858 s
+Ran all test suites.
+
+> ts-nextjs-tailwind-starter@0.1.0 img:test
+> python3 -m unittest discover -s tests -p "test_*.py"
+
+Aviso: Se detecto un manifest legado en imagenes.json; se migrara al nuevo formato.
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.220s
+
+OK
+
+> ts-nextjs-tailwind-starter@0.1.0 integrations:test
+> node --test scripts/tests/*.node-test.mjs
+
+TAP version 13
+# Subtest: reminder endpoint rejects missing configuration, missing and incorrect credentials
+ok 1 - reminder endpoint rejects missing configuration, missing and incorrect credentials
+  ---
+  duration_ms: 37.873299
+  type: 'test'
+  ...
+# Subtest: authorized infrastructure call reports unavailable and never fake dispatch success
+ok 2 - authorized infrastructure call reports unavailable and never fake dispatch success
+  ---
+  duration_ms: 2.630577
+  type: 'test'
+  ...
+# Subtest: unsupported methods cannot dispatch
+ok 3 - unsupported methods cannot dispatch
+  ---
+  duration_ms: 0.890093
+  type: 'test'
+  ...
+# Subtest: push worker never displays private payloads or follows supplied external URLs
+ok 4 - push worker never displays private payloads or follows supplied external URLs
+  ---
+  duration_ms: 0.891421
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 499.101603
+
+> ts-nextjs-tailwind-starter@0.1.0 prebuild
+> node scripts/reset-project-cache.mjs && gulp css
+
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[00:03:07] Using gulpfile ~/Escritorio/Program/Web/0Tareas/Software/FHF-Salud/gulpfile.js
+[00:03:07] Starting 'css'...
+✅ CSS compilado y optimizado.
+[00:03:08] Finished 'css' after 1.22 s
+
+> ts-nextjs-tailwind-starter@0.1.0 build
+> next build
+
+▲ Next.js 16.2.0 (Turbopack)
+- Environments: .env.local, .env
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 2.8s
+  Running TypeScript ...
+  Finished TypeScript in 3.5s ...
+  Collecting page data using 13 workers ...
+  Generating static pages using 13 workers (0/8) ...
+  Generating static pages using 13 workers (2/8) 
+  Generating static pages using 13 workers (4/8) 
+  Generating static pages using 13 workers (6/8) 
+✓ Generating static pages using 13 workers (8/8) in 477ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/citas
+├ ƒ /api/citas/[id]
+├ ƒ /api/citas/referencias
+├ ƒ /api/hello
+├ ○ /citas
+├ ƒ /citas/[id]
+├ ○ /citas/acceso
+├ ○ /citas/nueva
+└ ○ /citas/vista-previa
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+
+> ts-nextjs-tailwind-starter@0.1.0 postbuild
+> next-sitemap --config next-sitemap.config.js
+
+✨ [next-sitemap] Loading next-sitemap config: file:///home/voidscripter/Escritorio/Program/Web/0Tareas/Software/FHF-Salud/next-sitemap.config.js
+✅ [next-sitemap] Generation completed
+┌───────────────┬────────┐
+│ (index)       │ Values │
+├───────────────┼────────┤
+│ indexSitemaps │ 1      │
+│ sitemaps      │ 1      │
+└───────────────┴────────┘
+-----------------------------------------------------
+ SITEMAP INDICES 
+-----------------------------------------------------
+
+   ○ https://fhf-salud.vercel.app/sitemap.xml
+
+
+-----------------------------------------------------
+ SITEMAPS 
+-----------------------------------------------------
+
+   ○ https://fhf-salud.vercel.app/sitemap-0.xml
+
+

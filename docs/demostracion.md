@@ -22,17 +22,19 @@ PostgREST 16.5, Chrome headless. La zona horaria de la agenda es
 
 ## Autores e historial
 
-| Autor | Aporte | Commits |
-| --- | --- | --- |
-| Rodrigo Ruiz Aguilar | Base del proyecto, portada, Supabase, temas e infraestructura | `bcf715e`, `6ad6eba`, `44fbfaa`, `c2a2e5d`, `5bc865b` |
-| Emilio Martinez | Borrador de modelo de citas y disponibilidad en rama | `7963f97` (`feature/base-datos-citas`) |
-| yaird meyer | Registro, consulta y validación de citas | `9b8ee79` |
-| jesus_ff | Estados y cambios de citas | `77bd031` |
-| Integrante de integración | Integración final, E2E, correcciones visuales, documentación y evidencias | Commit final previsto `fix: integrar modulo completo de citas` (pendiente de identidad) |
+| Autor                     | Aporte                                                                    | Commits                                               |
+| ------------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------- |
+| Rodrigo Ruiz Aguilar      | Base del proyecto, portada, Supabase, temas e infraestructura             | `bcf715e`, `6ad6eba`, `44fbfaa`, `c2a2e5d`, `5bc865b` |
+| Emilio Martinez           | Borrador de modelo de citas y disponibilidad en rama                      | `7963f97` (`feature/base-datos-citas`)                |
+| yaird meyer               | Registro, consulta y validación de citas                                  | `9b8ee79`                                             |
+| jesus_ff                  | Estados y cambios de citas                                                | `77bd031`                                             |
+| Integrante de integración | Integración final, E2E, correcciones visuales, documentación y evidencias | `ef8a8bf` por Manuel Alvarez, integrado en `e5299b5`  |
 
-El commit de Emilio no se fusionó: su borrador duplicaba tipos y tablas que ya
-quedaron resueltos por las migraciones `202610250002_appointments.sql` y
-`202610260003_appointment_actions.sql`. Se conserva en la rama para el historial.
+Corrección TAR05 (2026-11-06): el merge `e5299b5` sí incorporó la rama de
+Emilio y la migración duplicada `202610260001`. `git merge-base --is-ancestor
+7963f97 oficial/main` termina con código 0. La descripción anterior de PRY05
+correspondía a un estado previo al merge y no describe el árbol actual.
+La auditoría y su corrección están en `../evidencias/TAR05/INFORME.md`.
 
 ## Guion de demostración
 
@@ -64,21 +66,21 @@ quedaron resueltos por las migraciones `202610250002_appointments.sql` y
 
 ## Resultados de la corrida
 
-| Comprobación | Resultado |
-| --- | --- |
-| RF-01 alta con ID visible y persistencia en PostgreSQL | PASS |
-| RF-02 recarga con paciente, médico, horario y estado | PASS |
-| RF-03 reprogramación y verificación en base | PASS |
-| RF-04 cancelación, historial y reutilización del horario | PASS |
-| RF-05 rechazo de solapamiento sin fila duplicada | PASS |
-| RF-06 confirmación visible tras recargar | PASS |
-| Filtro por estado | PASS |
-| Negativo: confirmar una cita cancelada | PASS |
-| Permisos de médico y respuesta `403` | PASS |
-| Compatibilidad móvil sin desbordamiento | PASS |
-| Respuestas HTTP esperadas (401/409/400) | PASS |
-| Errores de consola de la aplicación | PASS |
-| Total | **14/14** |
+| Comprobación                                             | Resultado |
+| -------------------------------------------------------- | --------- |
+| RF-01 alta con ID visible y persistencia en PostgreSQL   | PASS      |
+| RF-02 recarga con paciente, médico, horario y estado     | PASS      |
+| RF-03 reprogramación y verificación en base              | PASS      |
+| RF-04 cancelación, historial y reutilización del horario | PASS      |
+| RF-05 rechazo de solapamiento sin fila duplicada         | PASS      |
+| RF-06 confirmación visible tras recargar                 | PASS      |
+| Filtro por estado                                        | PASS      |
+| Negativo: confirmar una cita cancelada                   | PASS      |
+| Permisos de médico y respuesta `403`                     | PASS      |
+| Compatibilidad móvil sin desbordamiento                  | PASS      |
+| Respuestas HTTP esperadas (401/409/400)                  | PASS      |
+| Errores de consola de la aplicación                      | PASS      |
+| Total                                                    | **14/14** |
 
 También pasaron los dos tests SQL (`appointments.sql` y
 `appointment-actions.sql`), las 75 pruebas Jest, las 8 pruebas de multimedia,
@@ -142,13 +144,12 @@ cookies ni tokens en el repositorio, el PDF o las capturas.
 - No se encontraron claves privadas reales en el historial revisado.
 - El repositorio es público; el acceso de lectura queda cubierto sin agregar
   colaboradores.
-- El commit final previsto es único y usa el mensaje exacto
-  `fix: integrar modulo completo de citas`; queda pendiente de confirmar la
-  identidad del quinto integrante y no se creó en esta entrega.
+- TAR05 verificó el commit final `ef8a8bf` por Manuel Alvarez y su integración
+  en `e5299b5`; la afirmación anterior de commit pendiente quedó obsoleta.
 
 ## Pendientes explícitos
 
 - Activar y verificar el proyecto Supabase remoto (migraciones, usuarios,
   pacientes/médicos y E2E) cuando existan credenciales.
-- Confirmar la identidad del quinto integrante para el commit final.
-- Publicar el commit en `main` para que GitHub y el despliegue lo reflejen.
+- Identidad Git verificada en TAR05: Manuel Alvarez (`ef8a8bf`); no inferir nombres legales ni firmas.
+- La integración anterior ya existe en `main` (`e5299b5`); las correcciones TAR05 se revisan en su propia rama.

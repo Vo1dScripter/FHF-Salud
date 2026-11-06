@@ -1,0 +1,16 @@
+{
+  "host": "hvrkrycxbrnqpvyywpql.supabase.co",
+  "checkedAt": "2026-11-06T06:10:22.661Z",
+  "credentials": "not logged",
+  "checks": [
+    {
+      "path": "/auth/v1/settings",
+      "error": "ENOTFOUND"
+    },
+    {
+      "path": "/rest/v1/",
+      "error": "ENOTFOUND"
+    }
+  ],
+  "dns": "ENOTFOUND"
+}

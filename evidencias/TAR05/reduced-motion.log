@@ -1,0 +1,10 @@
+### Ran Playwright code
+```js
+await (async page => {await page.emulateMedia({reducedMotion:"reduce"});await page.goto("http://localhost:3000/citas");await page.evaluate(()=>document.fonts.ready); await page.screenshot({path:"evidencias/TAR05/citas-reduced-motion.png"}); console.log({reduced:await page.evaluate(()=>matchMedia("(prefers-reduced-motion: reduce)").matches),overflow:await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)});})(page);
+```
+### Page
+- Page URL: http://localhost:3000/citas
+- Page Title: Citas médicas | FHF Salud
+- Console: 2 errors, 0 warnings
+### Events
+- New console entries: .playwright-cli/console-2026-11-06T06-06-12-483Z.log#L1-L2

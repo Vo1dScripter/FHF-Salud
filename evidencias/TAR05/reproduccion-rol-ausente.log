@@ -1,0 +1,11 @@
+BEGIN
+                            set_config                            
+------------------------------------------------------------------
+ {"sub":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa","app_metadata":{}}
+(1 row)
+
+SET
+ERROR:  La cita no existe.
+CONTEXT:  PL/pgSQL function confirm_appointment(uuid,timestamp with time zone) line 25 at RAISE
+SQL statement "SELECT public.confirm_appointment('aaaaaaaa-1111-4111-8111-111111111111',now())"
+PL/pgSQL function inline_code_block line 4 at PERFORM

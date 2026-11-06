@@ -1,0 +1,93 @@
+CREATE ROLE
+CREATE ROLE
+CREATE SCHEMA
+CREATE SCHEMA
+GRANT
+CREATE FUNCTION
+CREATE FUNCTION
+
+PASS migracion 202610250002_appointments.sql
+PASS migracion 202610260001_citas_medicas_schema.sql
+PASS migracion 202610260003_appointment_actions.sql
+PASS migracion 202611060001_authorization_null_role.sql
+PASS migracion 202611060002_physician_schedule_blocks.sql
+PASS prueba appointment-actions.sql ------------------
+ {"sub": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", "app_metadata": {"physician_id": "22222222-2222-4222-8222-222222222222", "appointment_role": "physician"}}
+(1 row)
+
+SET
+DO
+ROLLBACK
+ 
+PASS prueba appointments.sql BEGIN
+INSERT 0 1
+INSERT 0 2
+INSERT 0 1
+DO
+DO
+INSERT 0 1
+UPDATE 1
+INSERT 0 1
+ROLLBACK
+ 
+PASS prueba null-role.sql    set_config                            
+------------------------------------------------------------------
+ {"sub":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa","app_metadata":{}}
+(1 row)
+
+SET
+DO
+ROLLBACK
+ NOTICE:  PASS: tres RPC rechazan authenticated sin rol con SQLSTATE 42501
+
+PASS prueba tar05-integrity.sql ET
+                         resultado                         
+-----------------------------------------------------------
+ PASS: cinco tablas, PK, FK, CHECK, bloqueos y RLS sin rol
+(1 row)
+
+ROLLBACK
+ 
+PASS concurrencia dos reservas: una confirma y otra rechazada por EXCLUDE
+PASS concurrencia ausencia/reserva: exactamente una aceptada
+                                         version                                          
+------------------------------------------------------------------------------------------
+ PostgreSQL 17.11 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+(1 row)
+
+         tablename         | rowsecurity 
+---------------------------+-------------
+ appointments              | t
+ patients                  | t
+ physicians                | t
+ appointment_events        | t
+ physician_schedule_blocks | t
+(5 rows)
+
+         conrelid          |                   conname                   |                                                                                                                                                                pg_get_constraintdef                                                                                                                                                                
+---------------------------+---------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ patients                  | patients_display_name_check                 | CHECK (((char_length(btrim(display_name)) >= 1) AND (char_length(btrim(display_name)) <= 200)))
+ patients                  | patients_pkey                               | PRIMARY KEY (id)
+ physicians                | physicians_display_name_check               | CHECK (((char_length(btrim(display_name)) >= 1) AND (char_length(btrim(display_name)) <= 200)))
+ physicians                | physicians_pkey                             | PRIMARY KEY (id)
+ appointments              | appointments_cancellation_fields_check      | CHECK ((((status = 'cancelled'::text) AND (cancelled_at IS NOT NULL) AND (cancellation_reason IS NOT NULL) AND ((char_length(btrim(cancellation_reason)) >= 1) AND (char_length(btrim(cancellation_reason)) <= 500))) OR ((status <> 'cancelled'::text) AND (cancelled_at IS NULL) AND (cancelled_by IS NULL) AND (cancellation_reason IS NULL))))
+ appointments              | appointments_duration_check                 | CHECK ((duration_minutes = ANY (ARRAY[15, 30, 45, 60])))
+ appointments              | appointments_ends_at_check                  | CHECK ((ends_at > starts_at))
+ appointments              | appointments_no_overlap                     | EXCLUDE USING gist (physician_id WITH =, tstzrange(starts_at, ends_at, '[)'::text) WITH &&) WHERE ((status <> 'cancelled'::text))
+ appointments              | appointments_patient_id_fkey                | FOREIGN KEY (patient_id) REFERENCES patients(id) ON UPDATE RESTRICT ON DELETE RESTRICT
+ appointments              | appointments_physician_id_fkey              | FOREIGN KEY (physician_id) REFERENCES physicians(id) ON UPDATE RESTRICT ON DELETE RESTRICT
+ appointments              | appointments_pkey                           | PRIMARY KEY (id)
+ appointments              | appointments_reason_check                   | CHECK (((char_length(btrim(reason)) >= 1) AND (char_length(btrim(reason)) <= 500)))
+ appointments              | appointments_status_check                   | CHECK ((status = ANY (ARRAY['pending'::text, 'confirmed'::text, 'cancelled'::text])))
+ appointment_events        | appointment_events_appointment_id_fkey      | FOREIGN KEY (appointment_id) REFERENCES appointments(id) ON UPDATE RESTRICT ON DELETE RESTRICT
+ appointment_events        | appointment_events_pkey                     | PRIMARY KEY (id)
+ appointment_events        | appointment_events_type_check               | CHECK ((event_type = ANY (ARRAY['created'::text, 'confirmed'::text, 'rescheduled'::text, 'cancelled'::text, 'updated'::text])))
+ physician_schedule_blocks | physician_schedule_blocks_interval_check    | CHECK ((ends_at > starts_at))
+ physician_schedule_blocks | physician_schedule_blocks_no_overlap        | EXCLUDE USING gist (physician_id WITH =, tstzrange(starts_at, ends_at, '[)'::text) WITH &&)
+ physician_schedule_blocks | physician_schedule_blocks_physician_id_fkey | FOREIGN KEY (physician_id) REFERENCES physicians(id) ON UPDATE RESTRICT ON DELETE RESTRICT
+ physician_schedule_blocks | physician_schedule_blocks_pkey              | PRIMARY KEY (id)
+ physician_schedule_blocks | physician_schedule_blocks_reason_check      | CHECK (((char_length(btrim(reason)) >= 1) AND (char_length(btrim(reason)) <= 500)))
+(21 rows)
+
+
+PASS FINAL: PostgreSQL local. Supabase remoto NO verificado.
