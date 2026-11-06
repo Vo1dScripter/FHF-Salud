@@ -1,0 +1,101 @@
+BEGIN
+CREATE FUNCTION
+INSERT 0 1
+INSERT 0 2
+INSERT 0 1
+INSERT 0 1
+DO
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+                            set_config                            
+------------------------------------------------------------------
+ {"sub":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa","app_metadata":{}}
+(1 row)
+
+SET
+DO
+ expect_error 
+--------------
+ 
+(1 row)
+
+RESET
+                         resultado                         
+-----------------------------------------------------------
+ PASS: cinco tablas, PK, FK, CHECK, bloqueos y RLS sin rol
+(1 row)
+
+ROLLBACK

@@ -1,0 +1,22 @@
+### Result
+{
+  "viewport": 390,
+  "scroll": 390,
+  "apiStatus": 401,
+  "body": {
+    "error": {
+      "code": "unauthenticated",
+      "message": "Inicia sesión para consultar o registrar citas."
+    }
+  }
+}
+### Ran Playwright code
+```js
+await page.evaluate('async () => {await document.fonts.ready; const r=await fetch("/api/citas");return {viewport:innerWidth,scroll:document.documentElement.scrollWidth,apiStatus:r.status,body:await r.json()}}');
+```
+### Page
+- Page URL: http://localhost:3000/citas
+- Page Title: Citas médicas | FHF Salud
+- Console: 3 errors, 0 warnings
+### Events
+- New console entries: .playwright-cli/console-2026-11-06T06-05-17-481Z.log#L3

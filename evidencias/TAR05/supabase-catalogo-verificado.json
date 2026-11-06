@@ -1,0 +1,235 @@
+{
+  "tables": [
+    {
+      "rls": true,
+      "table": "patients"
+    },
+    {
+      "rls": true,
+      "table": "physicians"
+    },
+    {
+      "rls": true,
+      "table": "appointments"
+    },
+    {
+      "rls": true,
+      "table": "appointment_events"
+    },
+    {
+      "rls": true,
+      "table": "physician_schedule_blocks"
+    }
+  ],
+  "version": "PostgreSQL 17.11 on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 15.2.0, 64-bit",
+  "policies": [
+    {
+      "roles": [
+        "authenticated"
+      ],
+      "table": "patients",
+      "policy": "patients_select_physician_own_appointments",
+      "command": "SELECT"
+    },
+    {
+      "roles": [
+        "authenticated"
+      ],
+      "table": "patients",
+      "policy": "patients_select_staff",
+      "command": "SELECT"
+    },
+    {
+      "roles": [
+        "authenticated"
+      ],
+      "table": "physicians",
+      "policy": "physicians_select_self",
+      "command": "SELECT"
+    },
+    {
+      "roles": [
+        "authenticated"
+      ],
+      "table": "physicians",
+      "policy": "physicians_select_staff",
+      "command": "SELECT"
+    },
+    {
+      "roles": [
+        "authenticated"
+      ],
+      "table": "appointments",
+      "policy": "appointments_insert_staff",
+      "command": "INSERT"
+    },
+    {
+      "roles": [
+        "authenticated"
+      ],
+      "table": "appointments",
+      "policy": "appointments_select_staff",
+      "command": "SELECT"
+    },
+    {
+      "roles": [
+        "authenticated"
+      ],
+      "table": "appointment_events",
+      "policy": "appointment_events_select_physician",
+      "command": "SELECT"
+    },
+    {
+      "roles": [
+        "authenticated"
+      ],
+      "table": "appointment_events",
+      "policy": "appointment_events_select_staff",
+      "command": "SELECT"
+    },
+    {
+      "roles": [
+        "authenticated"
+      ],
+      "table": "physician_schedule_blocks",
+      "policy": "physician_schedule_blocks_self",
+      "command": "SELECT"
+    },
+    {
+      "roles": [
+        "authenticated"
+      ],
+      "table": "physician_schedule_blocks",
+      "policy": "physician_schedule_blocks_staff",
+      "command": "ALL"
+    }
+  ],
+  "constraints": [
+    {
+      "name": "appointment_events_appointment_id_fkey",
+      "table": "appointment_events",
+      "definition": "FOREIGN KEY (appointment_id) REFERENCES appointments(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "name": "appointment_events_pkey",
+      "table": "appointment_events",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "appointment_events_type_check",
+      "table": "appointment_events",
+      "definition": "CHECK ((event_type = ANY (ARRAY['created'::text, 'confirmed'::text, 'rescheduled'::text, 'cancelled'::text, 'updated'::text])))"
+    },
+    {
+      "name": "appointments_cancellation_fields_check",
+      "table": "appointments",
+      "definition": "CHECK ((((status = 'cancelled'::text) AND (cancelled_at IS NOT NULL) AND (cancellation_reason IS NOT NULL) AND ((char_length(btrim(cancellation_reason)) >= 1) AND (char_length(btrim(cancellation_reason)) <= 500))) OR ((status <> 'cancelled'::text) AND (cancelled_at IS NULL) AND (cancelled_by IS NULL) AND (cancellation_reason IS NULL))))"
+    },
+    {
+      "name": "appointments_duration_check",
+      "table": "appointments",
+      "definition": "CHECK ((duration_minutes = ANY (ARRAY[15, 30, 45, 60])))"
+    },
+    {
+      "name": "appointments_ends_at_check",
+      "table": "appointments",
+      "definition": "CHECK ((ends_at > starts_at))"
+    },
+    {
+      "name": "appointments_no_overlap",
+      "table": "appointments",
+      "definition": "EXCLUDE USING gist (physician_id WITH =, tstzrange(starts_at, ends_at, '[)'::text) WITH &&) WHERE ((status <> 'cancelled'::text))"
+    },
+    {
+      "name": "appointments_patient_id_fkey",
+      "table": "appointments",
+      "definition": "FOREIGN KEY (patient_id) REFERENCES patients(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "name": "appointments_physician_id_fkey",
+      "table": "appointments",
+      "definition": "FOREIGN KEY (physician_id) REFERENCES physicians(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "name": "appointments_pkey",
+      "table": "appointments",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "appointments_reason_check",
+      "table": "appointments",
+      "definition": "CHECK (((char_length(btrim(reason)) >= 1) AND (char_length(btrim(reason)) <= 500)))"
+    },
+    {
+      "name": "appointments_status_check",
+      "table": "appointments",
+      "definition": "CHECK ((status = ANY (ARRAY['pending'::text, 'confirmed'::text, 'cancelled'::text])))"
+    },
+    {
+      "name": "patients_display_name_check",
+      "table": "patients",
+      "definition": "CHECK (((char_length(btrim(display_name)) >= 1) AND (char_length(btrim(display_name)) <= 200)))"
+    },
+    {
+      "name": "patients_pkey",
+      "table": "patients",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "physician_schedule_blocks_interval_check",
+      "table": "physician_schedule_blocks",
+      "definition": "CHECK ((ends_at > starts_at))"
+    },
+    {
+      "name": "physician_schedule_blocks_no_overlap",
+      "table": "physician_schedule_blocks",
+      "definition": "EXCLUDE USING gist (physician_id WITH =, tstzrange(starts_at, ends_at, '[)'::text) WITH &&)"
+    },
+    {
+      "name": "physician_schedule_blocks_physician_id_fkey",
+      "table": "physician_schedule_blocks",
+      "definition": "FOREIGN KEY (physician_id) REFERENCES physicians(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+    },
+    {
+      "name": "physician_schedule_blocks_pkey",
+      "table": "physician_schedule_blocks",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "physician_schedule_blocks_reason_check",
+      "table": "physician_schedule_blocks",
+      "definition": "CHECK (((char_length(btrim(reason)) >= 1) AND (char_length(btrim(reason)) <= 500)))"
+    },
+    {
+      "name": "physicians_display_name_check",
+      "table": "physicians",
+      "definition": "CHECK (((char_length(btrim(display_name)) >= 1) AND (char_length(btrim(display_name)) <= 200)))"
+    },
+    {
+      "name": "physicians_pkey",
+      "table": "physicians",
+      "definition": "PRIMARY KEY (id)"
+    }
+  ],
+  "reminder_job": [
+    {
+      "name": "fhf-reminder-dispatch",
+      "active": false
+    }
+  ],
+  "test_cleanup": {
+    "blocks": 0,
+    "events": 0,
+    "patients": 0,
+    "physicians": 0,
+    "appointments": 0
+  },
+  "migration_versions": [
+    "202610250001",
+    "202610250002",
+    "202610260001",
+    "202610260003",
+    "202611060001",
+    "202611060002"
+  ]
+}

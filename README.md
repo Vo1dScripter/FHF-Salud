@@ -27,13 +27,13 @@ migración y la prueba E2E remotas siguen pendientes de activación.
 
 ## Autoría
 
-| Autor | Aporte | Commits |
-| --- | --- | --- |
-| Rodrigo Ruiz Aguilar | Base del proyecto, portada, Supabase, temas e infraestructura | `bcf715e`, `6ad6eba`, `44fbfaa`, `c2a2e5d`, `5bc865b` |
-| Emilio Martinez | Borrador de modelo de citas y disponibilidad en rama | `7963f97` (`feature/base-datos-citas`) |
-| yaird meyer | Registro, consulta y validación de citas | `9b8ee79` |
-| jesus_ff | Estados y cambios de citas | `77bd031` |
-| Integrante de integración | Integración final, E2E, correcciones visuales, documentación y evidencias | Commit final previsto `fix: integrar modulo completo de citas` (pendiente de identidad) |
+| Autor                     | Aporte                                                                    | Commits                                               |
+| ------------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------- |
+| Rodrigo Ruiz Aguilar      | Base del proyecto, portada, Supabase, temas e infraestructura             | `bcf715e`, `6ad6eba`, `44fbfaa`, `c2a2e5d`, `5bc865b` |
+| Emilio Martinez           | Borrador de modelo de citas y disponibilidad en rama                      | `7963f97` (`feature/base-datos-citas`)                |
+| yaird meyer               | Registro, consulta y validación de citas                                  | `9b8ee79`                                             |
+| jesus_ff                  | Estados y cambios de citas                                                | `77bd031`                                             |
+| Integrante de integración | Integración final, E2E, correcciones visuales, documentación y evidencias | `ef8a8bf`, Manuel Alvarez; merge `e5299b5`            |
 
 ## Módulo de Gestión de Citas Médicas
 
@@ -614,16 +614,10 @@ de activación; esta copia de trabajo no incluye credenciales remotas. Las prueb
 SQL se ejecutaron contra PostgreSQL 18.4 local y las pruebas Jest usan dobles de
 prueba.
 
-El commit final previsto es único y usa el mensaje:
-
-```text
-fix: integrar modulo completo de citas
-```
-
-Queda pendiente de la identidad del quinto integrante; en esta entrega no se
-creó el commit. Cuando se confirme la identidad, revisar `git status`, incluir
-código, documentación y evidencias sanitizadas, y no agregar `.env.local`,
-`.demo-local/`, HAR crudos, `prompt5.txt` ni archivos personales.
+Actualización TAR05: el commit de integración existe como `ef8a8bf`, por
+Manuel Alvarez, y el merge `e5299b5` incorporó la rama del modelo de datos.
+El historial verificable y las correcciones están en el informe TAR05.
+No agregar `.env.local`, `.demo-local/`, HAR crudos ni archivos personales.
 
 ## Temas y vista de desarrollo
 
@@ -729,3 +723,37 @@ La infraestructura SQL de esta preparación se aplicó desde el Dashboard de Sup
 el archivo de migración conserva su definición idempotente. No se registró con
 `supabase db push`: al incorporar un flujo CLI, conciliar primero el historial
 de migraciones. Los envíos y el job permanecen desactivados.
+
+## Auditoría TAR05 (6 de noviembre de 2026)
+
+Informe confirmado y limitaciones: [evidencias/TAR05/INFORME.md](evidencias/TAR05/INFORME.md).
+PDF: [TAR05-Amarillo.pdf](evidencias/TAR05/TAR05-Amarillo.pdf).
+
+Pruebas de migraciones, RLS y concurrencia sobre PostgreSQL real aislado:
+
+```bash
+podman pull docker.io/library/postgres:17-alpine
+python scripts/tar05/verify-database.py
+# Alternativa Docker (también usada en CI):
+CONTAINER_ENGINE=docker python scripts/tar05/verify-database.py
+```
+
+El ejecutor destruye solo su contenedor temporal y no conecta al remoto.
+`auth-bootstrap.sql` es exclusivo de esa prueba: nunca aplicarlo a Supabase.
+La infraestructura pg_cron/pg_net/Vault requiere el entorno Supabase y no
+se valida con la imagen PostgreSQL estándar.
+
+Actualización remota TAR05: el proyecto nuevo `fhf-salud-tar05`
+(`oafwyfntjddrtjoqkktf`) tiene cinco tablas con RLS y seis migraciones aplicadas.
+Las cuatro suites SQL aprobaron en Supabase real. `.env.local` y Vercel
+(All Environments) usan la misma URL y clave publicable, verificadas sin
+publicar sus valores. Producción fue redesplegada y sus bundles confirman
+la configuración nueva. Auth público responde HTTP 200; datos médicos sin
+sesión responden 401.
+
+El E2E final aprobó 26 comprobaciones en producción con usuarios normales:
+RF-01 a RF-06, escritorio/móvil, recargas, permisos y concurrencia remota.
+Los registros y las tres cuentas ficticias se limpiaron y verificaron. La rama
+TAR05 está publicada en el PR #2. Reproducción: [docs/tar05-e2e.md](docs/tar05-e2e.md). El dominio antiguo
+sigue pausado y no se borró. No repetir el bootstrap de instalación en el
+proyecto ya creado ni aplicar `auth-bootstrap.sql` a Supabase.

@@ -1,0 +1,4 @@
+NOTICE:  extension "btree_gist" already exists, skipping
+CREATE EXTENSION
+CREATE TYPE
+ERROR:  relation "patients" already exists

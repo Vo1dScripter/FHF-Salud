@@ -1,0 +1,10 @@
+### Result
+{
+  "tag": "A",
+  "text": "FHF Salud",
+  "outline": "solid"
+}
+### Ran Playwright code
+```js
+await page.evaluate('() => (({tag:document.activeElement.tagName,text:document.activeElement.textContent,outline:getComputedStyle(document.activeElement).outlineStyle}))');
+```

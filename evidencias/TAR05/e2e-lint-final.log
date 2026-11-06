@@ -1,0 +1,4 @@
+
+> ts-nextjs-tailwind-starter@0.1.0 lint:strict
+> eslint . --max-warnings=0
+

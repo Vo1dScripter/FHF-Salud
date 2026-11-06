@@ -1,0 +1,3 @@
+NEXT_PUBLIC_SUPABASE_URL actualizada para los entornos existentes
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY actualizada para los entornos existentes
+Sin cambios en VAPID; no se leyeron claves privadas

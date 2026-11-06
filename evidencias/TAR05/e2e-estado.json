@@ -1,0 +1,15 @@
+{
+  "projectRef": "oafwyfntjddrtjoqkktf",
+  "status": "PASS",
+  "authenticatedE2EExecuted": true,
+  "remoteConcurrencyExecuted": true,
+  "normalRolesTested": [
+    "receptionist",
+    "physician",
+    "no role"
+  ],
+  "checksPassed": 26,
+  "cleanupVerified": true,
+  "credentialsCommitted": false,
+  "results": "e2e-tar05-1793949455394/resultados.json"
+}

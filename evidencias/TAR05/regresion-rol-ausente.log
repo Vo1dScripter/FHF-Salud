@@ -1,0 +1,10 @@
+BEGIN
+                            set_config                            
+------------------------------------------------------------------
+ {"sub":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa","app_metadata":{}}
+(1 row)
+
+SET
+DO
+NOTICE:  PASS: tres RPC rechazan authenticated sin rol con SQLSTATE 42501
+ROLLBACK

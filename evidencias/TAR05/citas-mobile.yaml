@@ -1,0 +1,59 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - navigation "Navegación principal" [ref=e5]:
+        - link "FHF Salud" [ref=e6] [cursor=pointer]:
+          - /url: /
+        - switch "Modo oscuro" [ref=e14] [cursor=pointer]:
+          - generic [ref=e18]: Claro
+        - button "Abrir menú" [ref=e73]
+    - main [ref=e19]:
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - paragraph [ref=e22]: Gestión de Agenda
+          - heading "Citas médicas" [level=1] [ref=e23]
+          - paragraph [ref=e24]: Agenda conectada a Supabase cuando el entorno y la sesión están configurados. La escritura requiere personal autorizado y las citas se validan en servidor.
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - form "Filtros de agenda" [ref=e27]:
+              - generic [ref=e28]:
+                - generic [ref=e29]: Fecha
+                - textbox "Fecha" [ref=e30]
+              - generic [ref=e31]:
+                - generic [ref=e32]: Médico
+                - combobox "Médico" [ref=e33]:
+                  - option "Todos los médicos" [selected]
+              - generic [ref=e34]:
+                - generic [ref=e35]: Estado
+                - combobox "Estado" [ref=e36]:
+                  - option "Todos los estados" [selected]
+                  - option "Cancelada"
+                  - option "Confirmada"
+                  - option "Pendiente"
+              - generic [ref=e37]:
+                - button "Limpiar" [ref=e38] [cursor=pointer]
+                - button "Aplicar filtros" [ref=e39] [cursor=pointer]
+            - region "Listado de citas" [ref=e40]:
+              - heading "Agenda médica" [level=2] [ref=e42]
+              - generic [ref=e44]:
+                - heading "Inicia sesión para consultar la agenda" [level=2] [ref=e68]
+                - paragraph [ref=e69]: No se muestran datos médicos sin una sesión verificada. El acceso se comprueba en el servidor.
+                - link "Iniciar sesión" [ref=e71] [cursor=pointer]:
+                  - /url: /citas/acceso
+          - complementary "Contexto del módulo" [ref=e50]:
+            - heading "Contexto del Módulo" [level=3] [ref=e51]
+            - paragraph [ref=e52]: La agenda aplica validación de servidor, referencias activas y una restricción de base de datos contra solapamientos.
+            - list [ref=e53]:
+              - listitem [ref=e54]:
+                - generic [ref=e56]:
+                  - heading "Reglas de servidor" [level=4] [ref=e57]
+                  - paragraph [ref=e58]: Editar y confirmar revalidan la versión y el estado. Cancelar conserva la fila, guarda el motivo y libera el horario.
+              - listitem [ref=e59]:
+                - generic [ref=e61]:
+                  - heading "Acceso por Rol" [level=4] [ref=e62]
+                  - paragraph [ref=e63]: Administración y recepción gestionan la agenda; cada médico consulta la suya. Las políticas RLS se aplican en la base.
+    - contentinfo [ref=e64]:
+      - generic [ref=e65]:
+        - paragraph [ref=e66]: © 2026 FHF Salud
+        - paragraph [ref=e67]: Proyecto académico · Ingeniería de Software SCD-1011
+  - alert [ref=e72]
