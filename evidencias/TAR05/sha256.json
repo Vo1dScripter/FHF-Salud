@@ -59,5 +59,6 @@
   "supabase/tests/appointment-actions.sql": "e674196299ebfda490b620dc564db549696b3611fbe89a5ba42f393cd01452d7",
   "supabase/tests/appointments.sql": "3ad4050fc4bfaa8a0828457d869f596c22ef2cfc2fbc64709aab2aa6eff7dfef",
   "supabase/tests/null-role.sql": "5374f0b4bc0bad296152ad853939aaf6e9363237c705c8efeea9d0d45bd11ea4",
-  "supabase/tests/tar05-integrity.sql": "2a6a6eea35eeb2779fcc349d6bc2229626a082fc3521099650e5d6bdef8243f5"
+  "supabase/tests/tar05-integrity.sql": "2a6a6eea35eeb2779fcc349d6bc2229626a082fc3521099650e5d6bdef8243f5",
+  "evidencias/TAR05/e2e-estado.json": "e90224068225ed307ec81af7f28a3392babe9a3721fa76f307eb9d023b9582f2"
 }
