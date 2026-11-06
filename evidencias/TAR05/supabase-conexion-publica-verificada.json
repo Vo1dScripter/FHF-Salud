@@ -1,0 +1,18 @@
+{
+  "host": "oafwyfntjddrtjoqkktf.supabase.co",
+  "checkedAt": "2026-11-06T07:06:57.508Z",
+  "checks": [
+    {
+      "path": "/auth/v1/settings",
+      "status": 200
+    },
+    {
+      "path": "/rest/v1/patients?select=id&limit=1",
+      "status": 401
+    },
+    {
+      "path": "/rest/v1/appointments?select=id&limit=1",
+      "status": 401
+    }
+  ]
+}

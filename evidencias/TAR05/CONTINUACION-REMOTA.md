@@ -1,3 +1,9 @@
+# Nota histórica de continuación
+
+El contenido siguiente describe el corte previo a recuperar la sesión. El
+estado ACTUAL está en INFORME.md: base remota probada, .env.local y Vercel
+actualizados, redespliegue Ready y pruebas públicas de producción aprobadas.
+
 # Continuación remota TAR05 - 6 de noviembre de 2026
 
 Esta nota actualiza el estado inicial de INFORME.md y del PDF, que describían

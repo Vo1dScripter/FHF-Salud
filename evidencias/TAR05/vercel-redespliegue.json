@@ -1,0 +1,10 @@
+{
+  "project": "fhf-salud",
+  "deploymentId": "EX5SY1JEiqqWExEFgs6YyfzeG23c",
+  "dashboardUrl": "https://vercel.com/rodrigos-projects-75303c8d/fhf-salud/EX5SY1JEiqqWExEFgs6YyfzeG23c",
+  "sourceCommit": "e5299b5144d84723bd9ab77e904a54a72f4efc39",
+  "environment": "Production",
+  "statusObserved": "Ready",
+  "redeployOf": "7GvLRywbDwWRqJDkanUToCJjqr7p",
+  "productionUrl": "https://fhf-salud.vercel.app"
+}

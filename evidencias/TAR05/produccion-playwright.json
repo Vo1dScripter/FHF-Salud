@@ -1,0 +1,30 @@
+{
+  "productionUrl": "https://fhf-salud.vercel.app",
+  "testedAt": "2026-11-06T07:08:20.959Z",
+  "checks": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "apiStatus": 401,
+      "errorCode": "unauthenticated",
+      "overflow": false,
+      "sessionRequired": true
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "apiStatus": 401,
+      "errorCode": "unauthenticated",
+      "overflow": false,
+      "sessionRequired": true
+    },
+    {
+      "accessForm": true
+    }
+  ],
+  "authenticatedFlow": "No rechecked: no normal test account provisioned"
+}

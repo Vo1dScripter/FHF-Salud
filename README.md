@@ -743,10 +743,15 @@ El ejecutor destruye solo su contenedor temporal y no conecta al remoto.
 La infraestructura pg_cron/pg_net/Vault requiere el entorno Supabase y no
 se valida con la imagen PostgreSQL estándar.
 
-La base remota sigue pendiente: el dominio configurado devuelve ENOTFOUND y
-no hay sesión administrativa CLI. Antes de aplicar, confirmar el proyecto,
-consultar catálogo e historial con `evidencias/TAR05/consultas-remotas.sql`,
-y revisar migraciones y datos existentes. No reparar historial a ciegas.
-La propuesta incompatible original de `202610260001` se conserva en
-`docs/sql-historico/`; el archivo de migración ahora exige el contrato canónico.
-Si el remoto tiene otro modelo, se necesita conversión revisada y respaldo.
+Actualización remota TAR05: el proyecto nuevo `fhf-salud-tar05`
+(`oafwyfntjddrtjoqkktf`) tiene cinco tablas con RLS y seis migraciones aplicadas.
+Las cuatro suites SQL aprobaron en Supabase real. `.env.local` y Vercel
+(All Environments) usan la misma URL y clave publicable, verificadas sin
+publicar sus valores. Producción fue redesplegada y sus bundles confirman
+la configuración nueva. Auth público responde HTTP 200; datos médicos sin
+sesión responden 401.
+
+El informe actual detalla los pendientes: recorrido autenticado completo,
+concurrencia remota y revisión/publicación de la rama TAR05. El dominio antiguo
+sigue pausado y no se borró. No repetir el bootstrap de instalación en el
+proyecto ya creado ni aplicar `auth-bootstrap.sql` a Supabase.

@@ -1,0 +1,5 @@
+
+> ts-nextjs-tailwind-starter@0.1.0 supabase:check
+> node scripts/check-supabase.mjs
+
+Supabase Auth: conexión pública verificada (HTTP 200). No se leyeron ni escribieron registros médicos.

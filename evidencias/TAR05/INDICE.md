@@ -1,3 +1,27 @@
+# Actualización de evidencia remota
+
+El estado actual está en INFORME.md. El índice original al final de este archivo
+corresponde al corte local y conserva su contexto histórico.
+
+| Archivos nuevos | Ejecución y resultado |
+| --- | --- |
+| supabase-migraciones.txt | SQL Editor: seis versiones verificadas; ledger protegido |
+| supabase-pruebas-reales.txt | Cuatro suites versionadas: PASS en PostgreSQL remoto |
+| supabase-catalogo-verificado.txt / .json | Catálogo: cinco tablas, 21 constraints, 10 políticas, RLS, limpieza y job inactivo |
+| catalogo-remoto-verificacion.sql | Consulta real usada para la evidencia anterior |
+| configuracion-local-nueva.json | URL nueva, huella de clave pública y respaldo; sin valores privados |
+| vercel-actualizacion.log | Guardado de dos variables; VAPID preservado |
+| vercel-configuracion-verificada.json | Lectura de UI posterior: iguales a .env.local y All Environments |
+| vercel-bundle-verificado.json | Producción HTTP 200, dominio nuevo y clave coincidente; dominio antiguo ausente |
+| vercel-redespliegue.json | Dashboard: redespliegue de main Ready en producción |
+| supabase-conexion-publica-verificada.json | Auth 200 y tablas protegidas sin sesión 401 |
+| validacion-conexion-nueva.log | npm run verify con entorno nuevo: PASS |
+| produccion-playwright.json y produccion-1440.png / produccion-390.png | Playwright real de producción, escritorio/móvil, 401 esperado y sin overflow |
+| INFORME-CORTE-LOCAL.md y CONTINUACION-REMOTA.md | Cortes históricos, no estado final |
+
+La evidencia SQL remota usa SET ROLE y claims de prueba. No acredita login real
+ni concurrencia remota. No contiene contraseñas, cookies ni claves privadas.
+
 # Índice de evidencia TAR05
 
 Todas las capturas son de la aplicación local real, sin sesión. Los logs SQL

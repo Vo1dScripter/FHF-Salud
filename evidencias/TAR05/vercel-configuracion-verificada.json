@@ -1,0 +1,19 @@
+{
+  "project": "fhf-salud",
+  "supabaseRef": "oafwyfntjddrtjoqkktf",
+  "verifiedAt": "2026-11-06T06:52:54.755Z",
+  "results": [
+    {
+      "name": "NEXT_PUBLIC_SUPABASE_URL",
+      "equalsLocal": true,
+      "allEnvironments": true,
+      "valueFingerprint": "de12e82432ce1fb2ae1e47a7819e38add1aafbe75f72e4c096b51d79e1df9091"
+    },
+    {
+      "name": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "equalsLocal": true,
+      "allEnvironments": true,
+      "valueFingerprint": "e2e069344f543e757fd6bdeab6a8ae03a45f02af3686e7cb136f394411814f43"
+    }
+  ]
+}
