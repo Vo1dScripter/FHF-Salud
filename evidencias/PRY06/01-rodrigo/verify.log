@@ -1,0 +1,142 @@
+npm warn Unknown project config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> ts-nextjs-tailwind-starter@0.1.0 verify
+> npm run lint:strict && npm run typecheck && npm test -- --runInBand && npm run img:test && npm run integrations:test && npm run build
+
+npm warn Unknown env config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown project config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> ts-nextjs-tailwind-starter@0.1.0 lint:strict
+> eslint . --max-warnings=0
+
+npm warn Unknown env config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown project config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> ts-nextjs-tailwind-starter@0.1.0 typecheck
+> tsc --noEmit --incremental false
+
+npm warn Unknown env config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown project config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> ts-nextjs-tailwind-starter@0.1.0 test
+> jest --runInBand
+
+(node:192883) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+Test Suites: 16 passed, 16 total
+Tests:       122 passed, 122 total
+Snapshots:   0 total
+Time:        2.241 s
+Ran all test suites.
+npm warn Unknown env config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown project config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> ts-nextjs-tailwind-starter@0.1.0 img:test
+> python3 -m unittest discover -s tests -p "test_*.py"
+
+Aviso: Se detecto un manifest legado en imagenes.json; se migrara al nuevo formato.
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.207s
+
+OK
+npm warn Unknown env config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown project config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> ts-nextjs-tailwind-starter@0.1.0 integrations:test
+> node --test scripts/tests/*.node-test.mjs
+
+✔ reminder endpoint rejects missing configuration, missing and incorrect credentials (35.604792ms)
+✔ authorized infrastructure call reports unavailable and never fake dispatch success (3.052807ms)
+✔ unsupported methods cannot dispatch (1.270388ms)
+✔ push worker never displays private payloads or follows supplied external URLs (1.39337ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 375.278994
+npm warn Unknown env config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown project config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> ts-nextjs-tailwind-starter@0.1.0 prebuild
+> node scripts/reset-project-cache.mjs && gulp css
+
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[23:34:18] Using gulpfile ~/Escritorio/Program/Web/0Tareas/Software/FHF-Salud/gulpfile.js
+[23:34:18] Starting 'css'...
+✅ CSS compilado y optimizado.
+[23:34:19] Finished 'css' after 1.34 s
+
+> ts-nextjs-tailwind-starter@0.1.0 build
+> next build
+
+▲ Next.js 16.2.0 (Turbopack)
+- Environments: .env.local, .env
+
+  Creating an optimized production build ...
+(node:193128) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+✓ Compiled successfully in 3.3s
+  Running TypeScript ...
+  Finished TypeScript in 4.0s ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/9) ...
+  Generating static pages using 15 workers (2/9) 
+  Generating static pages using 15 workers (4/9) 
+  Generating static pages using 15 workers (6/9) 
+✓ Generating static pages using 15 workers (9/9) in 517ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/citas
+├ ƒ /api/citas/[id]
+├ ƒ /api/citas/referencias
+├ ƒ /api/hello
+├ ƒ /api/pacientes
+├ ○ /citas
+├ ƒ /citas/[id]
+├ ○ /citas/acceso
+├ ○ /citas/nueva
+├ ○ /citas/vista-previa
+└ ○ /pacientes
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+
+> ts-nextjs-tailwind-starter@0.1.0 postbuild
+> next-sitemap --config next-sitemap.config.js
+
+✨ [next-sitemap] Loading next-sitemap config: file:///home/voidscripter/Escritorio/Program/Web/0Tareas/Software/FHF-Salud/next-sitemap.config.js
+✅ [next-sitemap] Generation completed
+┌───────────────┬────────┐
+│ (index)       │ Values │
+├───────────────┼────────┤
+│ indexSitemaps │ 1      │
+│ sitemaps      │ 1      │
+└───────────────┴────────┘
+-----------------------------------------------------
+ SITEMAP INDICES 
+-----------------------------------------------------
+
+   ○ https://fhf-salud.vercel.app/sitemap.xml
+
+
+-----------------------------------------------------
+ SITEMAPS 
+-----------------------------------------------------
+
+   ○ https://fhf-salud.vercel.app/sitemap-0.xml
+
+
