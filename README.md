@@ -5,6 +5,20 @@ de Software (SCD-1011). La portada conserva su interfaz y el módulo de Gestión
 de Citas Médicas está implementado de extremo a extremo en código: RF-01 a
 RF-06, sesión Supabase, persistencia PostgreSQL, RLS y auditoría.
 
+## PRY06 · pacientes (base de integración)
+
+Navegación y consulta protegida `/pacientes`, API SSR `/api/pacientes`, contratos
+Zod/TypeScript y pruebas disponibles. Solo médicos activos; RLS conserva el alcance
+por citas. Alta y expediente clínico necesitan las migraciones y PR del equipo;
+RF-07 a RF-12 todavía no están completos. Contratos y límites:
+[docs/pry06/contratos-y-plan.md](docs/pry06/contratos-y-plan.md). Reproducción y
+resultados: [handoff de Rodrigo](docs/pry06/01-rodrigo-handoff.md).
+
+**Lectura de la evidencia histórica:** los párrafos siguientes de octubre que dicen
+«remoto pendiente» quedaron superados por la corrida TAR05 del 6 de noviembre
+incorporada en el PR #2: 26 PASS versionados en [docs/tar05-e2e.md](docs/tar05-e2e.md).
+No constituyen una nueva verificación remota de PRY06.
+
 ## Entrega verificada — 26 de octubre de 2026
 
 La corrida E2E final se ejecutó contra PostgreSQL 18.4 real, PostgREST 16.5,
