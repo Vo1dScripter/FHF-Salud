@@ -87,9 +87,9 @@ Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
   Finished TypeScript in 4.0s ...
   Collecting page data using 15 workers ...
   Generating static pages using 15 workers (0/9) ...
-  Generating static pages using 15 workers (2/9) 
-  Generating static pages using 15 workers (4/9) 
-  Generating static pages using 15 workers (6/9) 
+  Generating static pages using 15 workers (2/9)
+  Generating static pages using 15 workers (4/9)
+  Generating static pages using 15 workers (6/9)
 ✓ Generating static pages using 15 workers (9/9) in 517ms
   Finalizing page optimization ...
 
@@ -127,16 +127,14 @@ Route (app)
 │ sitemaps      │ 1      │
 └───────────────┴────────┘
 -----------------------------------------------------
- SITEMAP INDICES 
+ SITEMAP INDICES
 -----------------------------------------------------
 
    ○ https://fhf-salud.vercel.app/sitemap.xml
 
 
 -----------------------------------------------------
- SITEMAPS 
+ SITEMAPS
 -----------------------------------------------------
 
    ○ https://fhf-salud.vercel.app/sitemap-0.xml
-
-

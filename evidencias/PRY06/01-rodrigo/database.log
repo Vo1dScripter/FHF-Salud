@@ -18,7 +18,7 @@ PASS prueba appointment-actions.sql ------------------
 SET
 DO
 ROLLBACK
- 
+
 PASS prueba appointments.sql BEGIN
 INSERT 0 1
 INSERT 0 2
@@ -29,8 +29,8 @@ INSERT 0 1
 UPDATE 1
 INSERT 0 1
 ROLLBACK
- 
-PASS prueba null-role.sql    set_config                            
+
+PASS prueba null-role.sql    set_config
 ------------------------------------------------------------------
  {"sub":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa","app_metadata":{}}
 (1 row)
@@ -50,23 +50,23 @@ RESET
 SET
 DO
 ROLLBACK
- 
+
 PASS prueba tar05-integrity.sql ET
-                         resultado                         
+                         resultado
 -----------------------------------------------------------
  PASS: cinco tablas, PK, FK, CHECK, bloqueos y RLS sin rol
 (1 row)
 
 ROLLBACK
- 
+
 PASS concurrencia dos reservas: una confirma y otra rechazada por EXCLUDE
 PASS concurrencia ausencia/reserva: exactamente una aceptada
-                                         version                                          
+                                         version
 ------------------------------------------------------------------------------------------
  PostgreSQL 17.11 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
 (1 row)
 
-         tablename         | rowsecurity 
+         tablename         | rowsecurity
 ---------------------------+-------------
  appointments              | t
  patients                  | t
@@ -75,7 +75,7 @@ PASS concurrencia ausencia/reserva: exactamente una aceptada
  physician_schedule_blocks | t
 (5 rows)
 
-         conrelid          |                   conname                   |                                                                                                                                                                pg_get_constraintdef                                                                                                                                                                
+         conrelid          |                   conname                   |                                                                                                                                                                pg_get_constraintdef
 ---------------------------+---------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  patients                  | patients_display_name_check                 | CHECK (((char_length(btrim(display_name)) >= 1) AND (char_length(btrim(display_name)) <= 200)))
  patients                  | patients_pkey                               | PRIMARY KEY (id)

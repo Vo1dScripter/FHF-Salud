@@ -30,3 +30,6 @@ No se aplicó ninguna migración remota ni se ejecutó SQL administrativo en Sup
 
 Reproducción y limitaciones: docs/pry06/01-rodrigo-handoff.md. No se guardaron
 cookies, storageState, contraseñas, tokens, HAR ni datos clínicos reales.
+
+Los logs versionados normalizan únicamente espacios finales y saltos de línea;
+los comandos, resultados y mensajes se conservan.
