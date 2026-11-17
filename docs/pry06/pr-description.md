@@ -17,3 +17,12 @@ No hubo E2E remoto, migraciones Supabase ni despliegue manual.
 
 Evidencia, comandos, archivos exactos y límites: docs/pry06/01-rodrigo-handoff.md.
 Solicitar revisión real a Emilio u otro compañero; no fusionar sin revisión y CI.
+
+CI remoto confirmado: [44032713795](https://github.com/Vo1dScripter/FHF-Salud/actions/runs/44032713795)
+aprobó `verify` y `database` sobre `3585582`. Los checks del último HEAD quedan
+visibles en este PR. Revisión solicitada a Manuel (`Maquendo2512`); aprobación y
+merge pendientes. Main no tiene protección clásica de rama según la consulta
+GitHub realizada; no se cambiaron ajustes administrativos.
+
+GitHub registró previews automáticos de Vercel de esta rama; no se inició un
+despliegue manual ni se verificó producción. No se aplicaron migraciones remotas.

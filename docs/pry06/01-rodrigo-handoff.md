@@ -15,9 +15,16 @@ Revisión solicitada y confirmada por GitHub: Manuel (`Maquendo2512`).
 Aprobación y merge: pendientes; no se autoaprueba ni se sustituye la revisión humana.
 No basar las ramas del equipo en esta versión hasta revisión real y merge.
 
-CI del PR: [ejecución 44032609913](https://github.com/Vo1dScripter/FHF-Salud/actions/runs/44032609913).
-El job `database` aprobó; `verify` estaba en ejecución al registrar esta actualización.
-Consultar los checks del PR para su estado vigente y las ejecuciones posteriores.
+CI remoto confirmado sobre `3585582c893bc72135d71e5077e186b16a16c879`:
+[ejecución 44032713795](https://github.com/Vo1dScripter/FHF-Salud/actions/runs/44032713795),
+conclusión **success**; jobs `verify` y `database` **success**. La ejecución inicial
+44032609913 fue cancelada automáticamente al subir la actualización documental;
+no se presenta como aprobada. Las ejecuciones siguientes, incluidas las de cambios
+solo documentales, se verifican en [los checks actuales del PR](https://github.com/Vo1dScripter/FHF-Salud/pull/3/checks).
+
+Protección clásica de `main`: consulta autenticada a GitHub devolvió HTTP 404
+`Branch not protected`. No se activaron protecciones ni se modificaron permisos.
+Se mantiene la regla del encargo: no fusionar sin aprobación de otro integrante.
 
 GitHub registró un preview automático de Vercel exitoso asociado a la rama.
 No se ejecutó un comando de despliegue manual ni se modificó configuración
@@ -74,17 +81,17 @@ habilitados. No se requiere ni se debe usar clave administrativa en la app.
 
 ## Resultados auténticos
 
-| Comprobación                                      | Resultado local                                                                           |
-| ------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| npm run verify (final, variables públicas vacías) | PASS: lint estricto, tipos, 122 Jest, 8 multimedia, 4 infraestructura y build             |
-| npm run test:patients                             | PASS: 47 pruebas en cinco suites                                                          |
-| python3 scripts/tar05/verify-database.py          | PASS: cinco migraciones médicas, cinco suites SQL y dos carreras                          |
-| scripts/pry06/verify-ui.mjs                       | PASS: 27 comprobaciones en escritorio/tableta/móvil; fixtures UI + 503 real               |
-| Contraste Buscar, claro/oscuro                    | PASS: 4.71:1 / 4.66:1; alcance puntual, sin auditoría WCAG completa                       |
-| npm run supabase:check con variables vacías       | Exit 1 esperado: configuración ausente; no valida remoto                                  |
-| git diff --check                                  | PASS                                                                                      |
-| CI GitHub                                         | PR #3: database PASS; verify en curso en ejecución 44032609913; consultar checks vigentes |
-| E2E autenticado en Supabase/Vercel                | No ejecutado: reservado Prompt 6; TAR05 es evidencia histórica distinta                   |
+| Comprobación                                      | Resultado local                                                                                                    |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| npm run verify (final, variables públicas vacías) | PASS: lint estricto, tipos, 122 Jest, 8 multimedia, 4 infraestructura y build                                      |
+| npm run test:patients                             | PASS: 47 pruebas en cinco suites                                                                                   |
+| python3 scripts/tar05/verify-database.py          | PASS: cinco migraciones médicas, cinco suites SQL y dos carreras                                                   |
+| scripts/pry06/verify-ui.mjs                       | PASS: 27 comprobaciones en escritorio/tableta/móvil; fixtures UI + 503 real                                        |
+| Contraste Buscar, claro/oscuro                    | PASS: 4.71:1 / 4.66:1; alcance puntual, sin auditoría WCAG completa                                                |
+| npm run supabase:check con variables vacías       | Exit 1 esperado: configuración ausente; no valida remoto                                                           |
+| git diff --check                                  | PASS                                                                                                               |
+| CI GitHub                                         | PASS remoto en 3585582: jobs verify y database, ejecución 44032713795; checks del HEAD documental vigente en PR #3 |
+| E2E autenticado en Supabase/Vercel                | No ejecutado: reservado Prompt 6; TAR05 es evidencia histórica distinta                                            |
 
 Runtime usado: Node 26.13.0, Python 3.14.10; CI conserva Node 24/Python 3.12.
 Evidencia: [logs y capturas](../../evidencias/PRY06/01-rodrigo/README.md).
