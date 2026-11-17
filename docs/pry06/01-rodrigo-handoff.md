@@ -8,15 +8,28 @@ Rama publicada: `feature/pry06-arquitectura-pacientes` en
 https://github.com/Vo1dScripter/FHF-Salud/tree/feature/pry06-arquitectura-pacientes.
 El commit posterior de documentación/evidencia se consulta con `git log -1`.
 
-PR: pendiente de creación autenticada. El push SSH está confirmado, pero GitHub
-CLI no tiene sesión y no hay navegador conectado. Enlace de creación (NO es un PR
-existente): https://github.com/Vo1dScripter/FHF-Salud/pull/new/feature/pry06-arquitectura-pacientes.
-Descripción lista: [pr-description.md](pr-description.md).
-Revisor asignado: ninguno. Propuesto: Manuel (`Maquendo2512`, cuenta identificada
-mediante el commit ef8a8bf); Emilio es la primera opción si confirma su usuario.
-No existe revisión aprobada ni merge acreditado de esta entrega. No basar las ramas
-del equipo en esta versión hasta cumplir ambos. La condición completa del Prompt 1
-sigue pendiente de ese paso humano; no se simula ni se autoaprueba.
+PR abierto: [#3](https://github.com/Vo1dScripter/FHF-Salud/pull/3), hacia `main`.
+La autenticación de GitHub CLI se completó mediante el dispositivo autorizado
+por el usuario con la cuenta `Vo1dScripter`; no se copiaron tokens al repositorio.
+Revisión solicitada y confirmada por GitHub: Manuel (`Maquendo2512`).
+Aprobación y merge: pendientes; no se autoaprueba ni se sustituye la revisión humana.
+No basar las ramas del equipo en esta versión hasta revisión real y merge.
+
+CI del PR: [ejecución 44032609913](https://github.com/Vo1dScripter/FHF-Salud/actions/runs/44032609913).
+El job `database` aprobó; `verify` estaba en ejecución al registrar esta actualización.
+Consultar los checks del PR para su estado vigente y las ejecuciones posteriores.
+
+GitHub registró un preview automático de Vercel exitoso asociado a la rama.
+No se ejecutó un comando de despliegue manual ni se modificó configuración
+administrativa. Ese preview automático no acredita un despliegue a producción
+ni E2E clínico remoto. La aplicación de migraciones remotas sigue reservada al Prompt 6.
+
+Revalidación del cierre: `origin` es el repositorio oficial, `main` sigue en
+`474acf0bff4be32c094f711227f725dda83a106d`, rama local/remota sincronizada en
+`e333da60427f47313664e7f9afcaa7c79a7f56df` antes de esta actualización documental.
+Se corrigió únicamente el upstream local de `main` y la rama TAR05 a `origin`,
+que todavía señalaba al fork preservado; no se cambiaron sus commits.
+Los cambios preexistentes del PDF y los directorios locales siguen preservados.
 
 ## Reproducción desde copia propia
 
@@ -37,7 +50,7 @@ python3 scripts/tar05/verify-database.py
 ```
 
 Para verificar presentación sin emplear configuración remota, construir y arrancar
-con variables explícitamente vacías (Next incorpora NEXT*PUBLIC*\* al construir):
+con variables explícitamente vacías (Next incorpora `NEXT_PUBLIC_*` al construir):
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL= NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY= npm run build
@@ -61,17 +74,17 @@ habilitados. No se requiere ni se debe usar clave administrativa en la app.
 
 ## Resultados auténticos
 
-| Comprobación                                      | Resultado local                                                               |
-| ------------------------------------------------- | ----------------------------------------------------------------------------- |
-| npm run verify (final, variables públicas vacías) | PASS: lint estricto, tipos, 122 Jest, 8 multimedia, 4 infraestructura y build |
-| npm run test:patients                             | PASS: 47 pruebas en cinco suites                                              |
-| python3 scripts/tar05/verify-database.py          | PASS: cinco migraciones médicas, cinco suites SQL y dos carreras              |
-| scripts/pry06/verify-ui.mjs                       | PASS: 27 comprobaciones en escritorio/tableta/móvil; fixtures UI + 503 real   |
-| Contraste Buscar, claro/oscuro                    | PASS: 4.71:1 / 4.66:1; alcance puntual, sin auditoría WCAG completa           |
-| npm run supabase:check con variables vacías       | Exit 1 esperado: configuración ausente; no valida remoto                      |
-| git diff --check                                  | PASS                                                                          |
-| CI GitHub                                         | Pendiente apertura del PR; no confundir checks locales con ejecución remota   |
-| E2E autenticado en Supabase/Vercel                | No ejecutado: reservado Prompt 6; TAR05 es evidencia histórica distinta       |
+| Comprobación                                      | Resultado local                                                                           |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| npm run verify (final, variables públicas vacías) | PASS: lint estricto, tipos, 122 Jest, 8 multimedia, 4 infraestructura y build             |
+| npm run test:patients                             | PASS: 47 pruebas en cinco suites                                                          |
+| python3 scripts/tar05/verify-database.py          | PASS: cinco migraciones médicas, cinco suites SQL y dos carreras                          |
+| scripts/pry06/verify-ui.mjs                       | PASS: 27 comprobaciones en escritorio/tableta/móvil; fixtures UI + 503 real               |
+| Contraste Buscar, claro/oscuro                    | PASS: 4.71:1 / 4.66:1; alcance puntual, sin auditoría WCAG completa                       |
+| npm run supabase:check con variables vacías       | Exit 1 esperado: configuración ausente; no valida remoto                                  |
+| git diff --check                                  | PASS                                                                                      |
+| CI GitHub                                         | PR #3: database PASS; verify en curso en ejecución 44032609913; consultar checks vigentes |
+| E2E autenticado en Supabase/Vercel                | No ejecutado: reservado Prompt 6; TAR05 es evidencia histórica distinta                   |
 
 Runtime usado: Node 26.13.0, Python 3.14.10; CI conserva Node 24/Python 3.12.
 Evidencia: [logs y capturas](../../evidencias/PRY06/01-rodrigo/README.md).
@@ -127,11 +140,10 @@ PDF TAR05 y los directorios locales preexistentes, excluidos de estos commits.
 
 ## Pendientes y secuencia de integración
 
-1. Autenticar GitHub CLI en esta cuenta, abrir PR a main y pedir revisión real.
-   No compartir tokens ni usar credenciales de compañeros. Comando preparado:
-   `gh pr create --repo Vo1dScripter/FHF-Salud --base main --head feature/pry06-arquitectura-pacientes --title "feat: integrar consulta protegida de pacientes para PRY06" --body-file docs/pry06/pr-description.md`.
-2. Solicitar revisión a un compañero con cuenta confirmada, por ejemplo Manuel;
-   registrar URL, cuenta, revisión, checks remotos y merge real en este handoff.
+1. PR #3 abierto y revisión solicitada a Manuel. Esperar la aprobación auténtica
+   de un compañero y resolver sus observaciones sin autoaprobar.
+2. Confirmar los checks del HEAD vigente, registrar revisión y merge reales y
+   actualizar este handoff. No fusionar antes de la revisión exigida.
 3. Emilio/Yaird: acordar asociación médico-paciente y alta transaccional. RLS actual
    depende de citas y no resuelve un expediente nuevo sin cita.
 4. Emilio/Jesús: acordar esquema clínico y auditoría versionada con fecha e identidad

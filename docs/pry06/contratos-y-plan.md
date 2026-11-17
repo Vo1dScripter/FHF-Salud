@@ -170,13 +170,13 @@ aprovisionamiento ficticio, E2E normal y limpieza durante Prompt 6.
 
 ## Evidencias pendientes para el hito
 
-| Evidencia                                   | Situación/condición de cierre                                  |
-| ------------------------------------------- | -------------------------------------------------------------- |
-| Código y pruebas del acceso/búsqueda        | Disponibles en esta rama; resultados en handoff                |
-| Revisión y merge Prompt 1                   | Requiere compañero real; no acreditado por generar el PR       |
-| Alta conectada + asociación médico-paciente | Pendiente PR Emilio/Yaird                                      |
-| Historial y revisiones persistidas          | Pendiente contrato y PR Emilio/Jesús                           |
-| RF-12 negativo integral                     | Pruebas parciales locales disponibles; completar con historial |
-| Happy Path RF-07–12 con BD                  | Pendiente integración de las operaciones anteriores            |
-| E2E autenticado Supabase remoto             | Reservado a Prompt 6; no ejecutado aquí                        |
-| Protecciones de rama                        | Recomendación; sin cambios administrativos                     |
+| Evidencia                                   | Situación/condición de cierre                                                    |
+| ------------------------------------------- | -------------------------------------------------------------------------------- |
+| Código y pruebas del acceso/búsqueda        | Disponibles en esta rama; resultados en handoff                                  |
+| Revisión y merge Prompt 1                   | PR #3 abierto, revisión solicitada a Maquendo2512; aprobación y merge pendientes |
+| Alta conectada + asociación médico-paciente | Pendiente PR Emilio/Yaird                                                        |
+| Historial y revisiones persistidas          | Pendiente contrato y PR Emilio/Jesús                                             |
+| RF-12 negativo integral                     | Pruebas parciales locales disponibles; completar con historial                   |
+| Happy Path RF-07–12 con BD                  | Pendiente integración de las operaciones anteriores                              |
+| E2E autenticado Supabase remoto             | Reservado a Prompt 6; no ejecutado aquí                                          |
+| Protecciones de rama                        | Recomendación; sin cambios administrativos                                       |
