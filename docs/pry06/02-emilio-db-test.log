@@ -14,6 +14,7 @@ PASS migracion 202611060002_physician_schedule_blocks.sql
 PASS migracion 202611170001_clinical_records_core.sql
 PASS migracion 202611170002_clinical_records_security.sql
 PASS migracion 202611170003_open_existing_patient_record.sql
+PASS migracion 202611170004_open_record_ignore_cancelled.sql
 PASS prueba appointment-actions.sql ------------------
  {"sub": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", "app_metadata": {"physician_id": "22222222-2222-4222-8222-222222222222", "appointment_role": "physician"}}
 (1 row)
@@ -33,6 +34,15 @@ UPDATE 1
 INSERT 0 1
 ROLLBACK
  
+PASS prueba clinical-records-cancelled.sql ----------------------
+ {"sub":"f4000000-0000-4000-8000-000000000002","app_metadata":{"appointment_role":"physician","physician_id":"f1000000-0000-4000-8000-000000000001"}}
+(1 row)
+
+DO
+RESET
+ROLLBACK
+ NOTICE:  PASS: una cita cancelada no permite abrir el expediente
+
 PASS prueba clinical-records.sql FUNCTION
 SET
 DO

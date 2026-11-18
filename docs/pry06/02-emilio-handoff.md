@@ -14,9 +14,9 @@ Solo hay SQL y pruebas: no hay cambios de interfaz ni de TypeScript.
 | Último PR requerido | #2 (fusionado). El #3 de Rodrigo (Prompt 1) sigue **abierto** |
 | Bloqueo | PR #3 pendiente de revisión (Maquendo2512) y de merge |
 | Rama de trabajo | `feature/pry06-esquema-expedientes` (creada el 17/11/2026 desde `main` en `474acf0`, sin esperar el merge del #3; el trabajo es solo SQL y no depende de su código) |
-| Hash de commit | PENDIENTE |
-| URL del PR | PENDIENTE |
-| Revisor asignado | PENDIENTE |
+| Hash de commit | `3c1af77` (primer commit; los posteriores están en el PR) |
+| URL del PR | https://github.com/Vo1dScripter/FHF-Salud/pull/4 |
+| Revisor asignado | REEMPLAZA_AQUI |
 
 No existían `clinical_records` ni otras tablas clínicas (verificado con `grep` en las migraciones).
 
@@ -30,6 +30,10 @@ No existían `clinical_records` ni otras tablas clínicas (verificado con `grep`
    políticas de lectura y las funciones `register_patient` y `save_clinical_revision`.
 3. `202611170003_open_existing_patient_record.sql`: `open_clinical_record`,
    para pacientes creados por el módulo de citas.
+4. `202611170004_open_record_ignore_cancelled.sql`: una cita cancelada no concede
+   acceso al expediente; `open_clinical_record` exige una cita con
+   `status <> 'cancelled'`. Regresión en
+   `supabase/tests/clinical-records-cancelled.sql`.
 
 ## Contrato para Yaird (RF-07 y RF-10) y Jesús (RF-08, RF-09 y RF-11)
 
@@ -38,7 +42,7 @@ Todo se invoca con la sesión SSR del médico (RPC). Nunca service_role en front
 | Función | Uso | Devuelve |
 | --- | --- | --- |
 | `register_patient(p_display_name, p_birth_date, p_sex, p_phone)` | RF-07 | `new_patient_id`, `new_record_id` |
-| `open_clinical_record(p_patient_id)` | paciente existente con cita | `out_patient_id`, `out_record_id`, `was_created` |
+| `open_clinical_record(p_patient_id)` | paciente existente con cita no cancelada | `out_patient_id`, `out_record_id`, `was_created` |
 | `save_clinical_revision(p_patient_id, p_expected_revision, p_background, p_allergies_status, p_allergies, p_diagnosis, p_treatment, p_change_reason)` | RF-09 y RF-11 | fila de `clinical_record_revisions` |
 
 Lectura (RF-08 y RF-10): `select` sobre `patients`, `clinical_records`,
@@ -81,11 +85,16 @@ Lectura (RF-08 y RF-10): `select` sobre `patients`, `clinical_records`,
 Comando: `CONTAINER_ENGINE=docker python scripts/tar05/verify-database.py`
 Log completo: `docs/pry06/02-emilio-db-test.log`
 
-- PASS: ocho migraciones (las cinco previas y las tres nuevas).
-- PASS: cinco archivos de prueba, incluido `supabase/tests/clinical-records.sql`
-  (integridad, atomicidad del alta, revisiones y auditoría, aislamiento entre médicos,
-  pacientes preexistentes, roles no autorizados y `anon`).
-- PASS: las pruebas de citas siguen pasando. PASS FINAL.
+- PASS: nueve migraciones (las cinco previas y las cuatro nuevas).
+- PASS: seis archivos de prueba: `appointment-actions.sql`, `appointments.sql`,
+  `clinical-records-cancelled.sql`, `clinical-records.sql`, `null-role.sql` y
+  `tar05-integrity.sql`.
+- PASS: `clinical-records-cancelled.sql` confirma que una cita cancelada no permite
+  abrir el expediente (SQLSTATE `42501`).
+- PASS: `clinical-records.sql` cubre integridad, atomicidad del alta, revisiones y
+  auditoría, aislamiento entre médicos, pacientes preexistentes, roles no
+  autorizados y `anon`.
+- PASS: las pruebas de citas y de concurrencia siguen pasando. PASS FINAL.
 
 No ejecutado: `supabase/fixtures/clinical-dev-fixtures.sql` ni
 `supabase/rollback/202611170001-0003-clinical-records-rollback.sql`
@@ -94,8 +103,9 @@ No ejecutado: `supabase/fixtures/clinical-dev-fixtures.sql` ni
 ## Comandos exclusivos para Rodrigo (Prompt 6)
 
 1. Respaldo de la base remota y revisión del historial de migraciones.
-2. Aplicar en orden `202611170001`, `202611170002` y `202611170003`, solo tras
-   el merge del PR. Nunca aplicar el rollback ni los fixtures en remoto.
+2. Aplicar en orden `202611170001`, `202611170002`, `202611170003` y
+   `202611170004`, solo tras el merge del PR. Nunca aplicar el rollback ni los
+   fixtures en remoto.
 3. Verificar (sin credenciales ni datos reales):
 
 ```sql
