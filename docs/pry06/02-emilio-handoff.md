@@ -16,7 +16,7 @@ Solo hay SQL y pruebas: no hay cambios de interfaz ni de TypeScript.
 | Rama de trabajo | `feature/pry06-esquema-expedientes` (creada el 17/11/2026 desde `main` en `474acf0`, sin esperar el merge del #3; el trabajo es solo SQL y no depende de su código) |
 | Hash de commit | `3c1af77` (primer commit; los posteriores están en el PR) |
 | URL del PR | https://github.com/Vo1dScripter/FHF-Salud/pull/4 |
-| Revisor asignado | REEMPLAZA_AQUI |
+| Revisor asignado | @Vo1dScripter |
 
 No existían `clinical_records` ni otras tablas clínicas (verificado con `grep` en las migraciones).
 
