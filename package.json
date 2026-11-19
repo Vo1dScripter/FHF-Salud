@@ -26,7 +26,8 @@
     "postbuild": "next-sitemap --config next-sitemap.config.js",
     "prepare": "husky",
     "supabase:check": "node scripts/check-supabase.mjs",
-    "integrations:test": "node --test scripts/tests/*.node-test.mjs"
+    "integrations:test": "node --test scripts/tests/*.node-test.mjs",
+    "test:patients": "jest --runInBand patients"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
