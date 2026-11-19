@@ -1,0 +1,177 @@
+       tabla        | registros
+--------------------+-----------
+ physicians         |         3
+ patients           |         3
+ patient_physicians |         1
+ clinical_records   |         1
+ appointments       |         1
+(5 rows)
+
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+BEGIN
+LOCK TABLE
+ERROR:  Rollback detenido: 0 revisiones, 1 expedientes, 1 asociaciones y 2 pacientes con datos personales.
+CONTEXT:  PL/pgSQL function inline_code_block line 28 at RAISE
+       tabla        | registros
+--------------------+-----------
+ physicians         |         3
+ patients           |         3
+ patient_physicians |         1
+ clinical_records   |         1
+ appointments       |         1
+(5 rows)
+
+Verificando despues del rollback: appointments.sql
+BEGIN
+INSERT 0 1
+INSERT 0 2
+INSERT 0 1
+DO
+DO
+INSERT 0 1
+UPDATE 1
+INSERT 0 1
+ROLLBACK
+PASS: appointments.sql
+Verificando despues del rollback: appointment-actions.sql
+BEGIN
+CREATE FUNCTION
+INSERT 0 1
+INSERT 0 2
+INSERT 0 5
+                                           set_config
+------------------------------------------------------------------------------------------------
+ {"sub": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", "app_metadata": {"appointment_role": "admin"}}
+(1 row)
+
+SET
+DO
+RESET
+                                                                         set_config
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"sub": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", "app_metadata": {"physician_id": "22222222-2222-4222-8222-222222222222", "appointment_role": "physician"}}
+(1 row)
+
+SET
+DO
+ROLLBACK
+PASS: appointment-actions.sql
+Verificando despues del rollback: null-role.sql
+BEGIN
+                            set_config
+------------------------------------------------------------------
+ {"sub":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa","app_metadata":{}}
+(1 row)
+
+SET
+DO
+NOTICE:  PASS: tres RPC rechazan authenticated sin rol con SQLSTATE 42501
+ROLLBACK
+PASS: null-role.sql
+Verificando despues del rollback: tar05-integrity.sql
+BEGIN
+CREATE FUNCTION
+INSERT 0 1
+INSERT 0 2
+INSERT 0 1
+INSERT 0 1
+DO
+ expect_error
+--------------
+
+(1 row)
+
+ expect_error
+--------------
+
+(1 row)
+
+ expect_error
+--------------
+
+(1 row)
+
+ expect_error
+--------------
+
+(1 row)
+
+ expect_error
+--------------
+
+(1 row)
+
+ expect_error
+--------------
+
+(1 row)
+
+ expect_error
+--------------
+
+(1 row)
+
+ expect_error
+--------------
+
+(1 row)
+
+ expect_error
+--------------
+
+(1 row)
+
+ expect_error
+--------------
+
+(1 row)
+
+ expect_error
+--------------
+
+(1 row)
+
+ expect_error
+--------------
+
+(1 row)
+
+ expect_error
+--------------
+
+(1 row)
+
+ expect_error
+--------------
+
+(1 row)
+
+ expect_error
+--------------
+
+(1 row)
+
+                            set_config
+------------------------------------------------------------------
+ {"sub":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa","app_metadata":{}}
+(1 row)
+
+SET
+DO
+ expect_error
+--------------
+
+(1 row)
+
+RESET
+                         resultado
+-----------------------------------------------------------
+ PASS: cinco tablas, PK, FK, CHECK, bloqueos y RLS sin rol
+(1 row)
+
+ROLLBACK
+PASS: tar05-integrity.sql
