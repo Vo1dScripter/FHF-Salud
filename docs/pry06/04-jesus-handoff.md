@@ -16,9 +16,9 @@ RF-13 a RF-16.
 | PR previos al iniciar | #3, #4 y #5 abiertos y sin fusionar |
 | Rama de trabajo | `feature/pry06-historial-clinico` |
 | Commit de código | `3cef600161e7a355b4a575c9cc00db4b0af92638` |
-| Commit de evidencia | Se consulta con `git log -1`; este documento se actualiza en el commit documental |
-| PR | Pendiente de publicar al escribir este documento; se registra en la actualización posterior |
-| Revisor solicitado | `Maquendo2512` (Manuel), integrante distinto de Jesús |
+| Commit de evidencia | `47ac7137bd3589068bcb3bdbf8414b2648c3317e`; la actualización final se consulta con `git log -1` |
+| PR | [#6](https://github.com/Vo1dScripter/FHF-Salud/pull/6), base `feature/pry06-registro-busqueda-pacientes`, head `feature/pry06-historial-clinico` |
+| Revisor solicitado | `Maquendo2512` (Manuel), confirmado por GitHub; integrante distinto de Jesús |
 | Bloqueo | PR #3, #4 y #5 sin fusionar. Este PR es apilado sobre el #5; reapuntar a `main` cuando el #5 se fusione |
 | Acciones protegidas | No ejecutadas; corresponden a Rodrigo durante el Prompt 6 |
 
