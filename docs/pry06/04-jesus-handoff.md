@@ -155,6 +155,7 @@ Log completo: [`04-jesus-test.log`](04-jesus-test.log).
 | `npm run verify` con variables públicas vacías | PASS: lint estricto, tipos, 22 suites/180 pruebas Jest, 8 pruebas multimedia, 4 pruebas de integración y build |
 | `git diff --check` | PASS, sin errores |
 | `python scripts/tar05/verify-database.py` | No ejecutado: Docker no está instalado en este equipo |
+| CI GitHub | PASS: [run 44648391161](https://github.com/Vo1dScripter/FHF-Salud/actions/runs/44648391161), jobs `verify` y `database` success, head `20d3cfb` |
 | E2E autenticado en Supabase remoto | No ejecutado: reservado a Rodrigo/Prompt 6 |
 
 Runtime local: Node v24.22.1, npm 11.19.1, Python 3.14.3 con Pillow 13.0.0.

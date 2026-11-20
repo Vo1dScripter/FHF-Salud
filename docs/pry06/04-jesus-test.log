@@ -53,6 +53,11 @@ Comandos y resultados observados
    NO EJECUTADO: Docker no esta instalado en este equipo. No se uso la base
    remota, credenciales de Rodrigo ni infraestructura de produccion.
 
+6) CI GitHub: workflow "Verificar proyecto", run 44648391161
+   URL: https://github.com/Vo1dScripter/FHF-Salud/actions/runs/44648391161
+   Head: 20d3cfb9f1fd75050f5f14884ccd9b3ee613bd80
+   Resultado: PASS (job verify success, job database success).
+
 Incidencias reales y correcciones
 ---------------------------------
 - El primer npm run verify fallo en img:test porque el python3 del PATH
