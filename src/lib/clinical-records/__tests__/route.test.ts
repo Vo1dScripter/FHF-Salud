@@ -56,21 +56,18 @@ it.each([
   ['stale', 409],
   ['configuration', 503],
   ['unavailable', 503],
-] as const)(
-  'GET conserva %s con HTTP %s y no-store',
-  async (code, status) => {
-    context.mockRejectedValue(new ClinicalError(code));
-    const response = await GET(
-      new Request(`http://localhost/api/pacientes/${patientId}/expediente`),
-      routeContext,
-    );
-    expect(response.status).toBe(status);
-    expect(response.headers.get('cache-control')).toBe('private, no-store');
-    expect(await response.json()).toEqual({
-      error: { code, message: new ClinicalError(code).message },
-    });
-  },
-);
+] as const)('GET conserva %s con HTTP %s y no-store', async (code, status) => {
+  context.mockRejectedValue(new ClinicalError(code));
+  const response = await GET(
+    new Request(`http://localhost/api/pacientes/${patientId}/expediente`),
+    routeContext,
+  );
+  expect(response.status).toBe(status);
+  expect(response.headers.get('cache-control')).toBe('private, no-store');
+  expect(await response.json()).toEqual({
+    error: { code, message: new ClinicalError(code).message },
+  });
+});
 
 it('GET no filtra excepciones internas', async () => {
   context.mockRejectedValue(new Error('private SQL or credential'));
@@ -154,7 +151,29 @@ it('POST responde 200 al actualizar con una nueva revisión', async () => {
   expect(response.status).toBe(200);
 });
 
-it('POST rechaza JSON inválido sin consultar la sesión', async () => {
+it('POST sin sesión responde 401 antes de interpretar el JSON', async () => {
+  context.mockRejectedValue(new ClinicalError('unauthenticated'));
+  const response = await POST(
+    new Request(`http://localhost/api/pacientes/${patientId}/expediente`, {
+      body: '{',
+      headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
+    }),
+    routeContext,
+  );
+
+  expect(response.status).toBe(401);
+  expect(context).toHaveBeenCalledTimes(1);
+  expect(await response.json()).toMatchObject({
+    error: { code: 'unauthenticated' },
+  });
+});
+
+it('POST rechaza JSON inválido después de verificar la sesión', async () => {
+  context.mockResolvedValue({
+    actor,
+    service: { saveRevision: jest.fn() },
+  } as unknown as Awaited<ReturnType<typeof getClinicalRequestContext>>);
   const response = await POST(
     new Request(`http://localhost/api/pacientes/${patientId}/expediente`, {
       body: '{',
@@ -165,23 +184,49 @@ it('POST rechaza JSON inválido sin consultar la sesión', async () => {
   );
 
   expect(response.status).toBe(400);
-  expect(context).not.toHaveBeenCalled();
   expect(await response.json()).toMatchObject({
     error: { code: 'validation' },
   });
 });
 
+it.each(['unauthenticated', 'forbidden', 'not_found'] as const)(
+  'GET responde %s sin filtrar datos clínicos ni personales',
+  async (code) => {
+    context.mockRejectedValue(new ClinicalError(code));
+    const response = await GET(
+      new Request(`http://localhost/api/pacientes/${patientId}/expediente`),
+      routeContext,
+    );
+    const serialized = JSON.stringify(await response.json());
+
+    expect(response.status).toBe(
+      { forbidden: 403, not_found: 404, unauthenticated: 401 }[code],
+    );
+    for (const forbidden of [
+      'Paciente ficticio',
+      'Antecedente ficticio',
+      'Diagnóstico ficticio',
+      'Tratamiento ficticio',
+      'Alergia ficticia',
+      'background',
+      'diagnosis',
+      'treatment',
+      'allergies',
+    ]) {
+      expect(serialized).not.toContain(forbidden);
+    }
+  },
+);
+
 it('POST conserva 409 y errores por campo sin datos internos', async () => {
   context.mockResolvedValue({
     actor,
     service: {
-      saveRevision: jest
-        .fn()
-        .mockRejectedValue(
-          new ClinicalError('stale', 'El expediente cambió.', {
-            changeReason: 'Indica el motivo.',
-          }),
-        ),
+      saveRevision: jest.fn().mockRejectedValue(
+        new ClinicalError('stale', 'El expediente cambió.', {
+          changeReason: 'Indica el motivo.',
+        }),
+      ),
     },
   } as unknown as Awaited<ReturnType<typeof getClinicalRequestContext>>);
 

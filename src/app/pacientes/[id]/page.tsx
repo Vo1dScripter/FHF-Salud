@@ -54,7 +54,13 @@ export default async function ClinicalHistoryPage({
         );
       }
       if (result.error.code === 'forbidden') {
-        return <ClinicalState kind='forbidden' />;
+        return (
+          <ClinicalState
+            actionHref={appointmentRoutes.list}
+            actionLabel='Ir a Citas médicas'
+            kind='forbidden'
+          />
+        );
       }
       if (
         result.error.code === 'not_found' ||

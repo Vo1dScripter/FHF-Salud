@@ -1,4 +1,7 @@
-import { clinicalErrorResponse, clinicalJsonResponse } from '@/lib/clinical-records/http';
+import {
+  clinicalErrorResponse,
+  clinicalJsonResponse,
+} from '@/lib/clinical-records/http';
 import { getClinicalRequestContext } from '@/lib/clinical-records/server';
 
 import { ClinicalError } from '@/features/clinical-records/errors';
@@ -34,8 +37,10 @@ export async function GET(_request: Request, context: RouteContext) {
 export async function POST(request: Request, context: RouteContext) {
   try {
     const { id } = await context.params;
-    const body = await readBody(request);
+    // RF-12: la sesión se verifica antes de interpretar el cuerpo. Una
+    // petición anónima recibe 401 aunque su JSON sea inválido.
     const { actor, service } = await getClinicalRequestContext();
+    const body = await readBody(request);
     const result = await service.saveRevision(actor, id, body);
     return clinicalJsonResponse(
       result,

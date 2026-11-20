@@ -1,4 +1,9 @@
 export {
+  canOpenClinicalHistory,
+  type ClinicalAccessDecision,
+  evaluateClinicalAccess,
+} from './access';
+export {
   ALLERGY_STATUSES,
   type AllergyStatus,
   CLINICAL_SEXES,

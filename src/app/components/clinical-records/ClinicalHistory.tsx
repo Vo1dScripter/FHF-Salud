@@ -425,7 +425,11 @@ export default function ClinicalHistory({
           para simular una modificación.
         </p>
         {history.canRegister ? (
-          <form className='appointment-form' onSubmit={handleSubmit}>
+          <form
+            aria-busy={saving}
+            className='appointment-form'
+            onSubmit={handleSubmit}
+          >
             <div className='appointment-field appointment-field--wide'>
               <label htmlFor='clinical-background'>Antecedentes</label>
               <textarea
