@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import { appointmentStatusLabels } from '@/features/appointments';
@@ -14,9 +15,11 @@ import {
 export default function AppointmentDetail({
   appointment,
   canManage = false,
+  patientRecordHref,
 }: {
   appointment?: AppointmentView;
   canManage?: boolean;
+  patientRecordHref?: string;
 }) {
   const [current, setCurrent] = useState<AppointmentView | undefined>(
     appointment,
@@ -101,6 +104,13 @@ export default function AppointmentDetail({
           </dd>
         </div>
       </dl>
+      {current && patientRecordHref ? (
+        <div className='appointment-actions'>
+          <Link className='appointment-new' href={patientRecordHref}>
+            Ver expediente del paciente
+          </Link>
+        </div>
+      ) : null}
       <AppointmentActions
         appointment={current}
         canManage={canManage}

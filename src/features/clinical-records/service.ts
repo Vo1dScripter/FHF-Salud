@@ -1,5 +1,6 @@
 import type { AppointmentActor } from '@/features/appointments/contracts';
 
+import { evaluateClinicalAccess } from './access';
 import type {
   ClinicalActor,
   ClinicalHistory,
@@ -16,9 +17,9 @@ import {
 export function requireClinicalPhysician(
   actor: AppointmentActor | null,
 ): ClinicalActor {
-  if (!actor) throw new ClinicalError('unauthenticated');
-  if (actor.role !== 'physician') throw new ClinicalError('forbidden');
-  return actor;
+  const decision = evaluateClinicalAccess(actor);
+  if (!decision.allowed) throw new ClinicalError(decision.code);
+  return decision.actor;
 }
 
 /**
@@ -55,10 +56,7 @@ export class ClinicalRecordService {
       id,
       parsed satisfies SaveClinicalRevisionInput,
     );
-    const history = await this.repository.getHistory(
-      id,
-      physician.physicianId,
-    );
+    const history = await this.repository.getHistory(id, physician.physicianId);
     return { history, revision };
   }
 }

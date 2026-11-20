@@ -23,10 +23,11 @@ it('carga, busca y pagina sin sustituir los registros recibidos', async () => {
   render(<PatientDirectory />);
   expect(screen.getByRole('status')).toHaveTextContent('Cargando');
   expect(await screen.findByText(patient.displayName)).toBeVisible();
-  expect(screen.getByRole('link', { name: 'Ver expediente' })).toHaveAttribute(
-    'href',
-    `/pacientes/${patient.id}`,
-  );
+  expect(
+    screen.getByRole('link', {
+      name: `Ver expediente de ${patient.displayName}`,
+    }),
+  ).toHaveAttribute('href', `/pacientes/${patient.id}`);
   fireEvent.change(screen.getByLabelText('Nombre del paciente'), {
     target: { value: ' Ana ' },
   });
@@ -59,6 +60,9 @@ it.each(['forbidden', 'unauthenticated', 'unavailable', 'validation'])(
       'Mensaje seguro',
     );
     expect(screen.queryByText(patient.displayName)).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: 'Ver expediente' }),
+    ).not.toBeInTheDocument();
     if (code === 'unauthenticated')
       expect(
         screen.getByRole('link', { name: 'Iniciar sesión' }),
@@ -81,6 +85,21 @@ it('vacío conserva búsqueda y vínculo hacia citas', async () => {
     screen.getByRole('link', { name: 'Ir a Citas médicas' }),
   ).toHaveAttribute('href', '/citas');
 });
+it('no presenta una respuesta inválida como éxito ni como vacío', async () => {
+  global.fetch = jest
+    .fn()
+    .mockResolvedValue(reply({ patients: 'no-es-una-lista', hasMore: 'no' }));
+  render(<PatientDirectory />);
+
+  expect(await screen.findByRole('alert')).toHaveTextContent(
+    'La respuesta de pacientes no es válida',
+  );
+  expect(screen.queryByText('Sin pacientes visibles')).not.toBeInTheDocument();
+  expect(
+    screen.queryByRole('link', { name: 'Ver expediente' }),
+  ).not.toBeInTheDocument();
+});
+
 it('permite reintentar tras fallo de transporte', async () => {
   const fetchMock = jest
     .fn()

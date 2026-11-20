@@ -10,6 +10,25 @@ type State =
   | { kind: 'loading' }
   | { kind: 'ready'; data: PatientPage }
   | { kind: 'error'; code: string; message: string };
+
+function isPatientPage(value: unknown): value is PatientPage {
+  if (typeof value !== 'object' || value === null) return false;
+  const page = value as { hasMore?: unknown; patients?: unknown };
+  return (
+    typeof page.hasMore === 'boolean' &&
+    Array.isArray(page.patients) &&
+    page.patients.every(
+      (patient) =>
+        typeof patient === 'object' &&
+        patient !== null &&
+        typeof (patient as { active?: unknown }).active === 'boolean' &&
+        typeof (patient as { createdAt?: unknown }).createdAt === 'string' &&
+        typeof (patient as { displayName?: unknown }).displayName ===
+          'string' &&
+        typeof (patient as { id?: unknown }).id === 'string',
+    )
+  );
+}
 export default function PatientDirectory() {
   const [search, setSearch] = useState('');
   const [query, setQuery] = useState({ search: '', page: 1 });
@@ -40,6 +59,13 @@ export default function PatientDirectory() {
             code: body.error?.code ?? 'unavailable',
             message: body.error?.message ?? 'No se pudo consultar pacientes.',
           });
+        } else if (!isPatientPage(body)) {
+          setState({
+            kind: 'error',
+            code: 'unavailable',
+            message:
+              'La respuesta de pacientes no es válida. Inténtalo de nuevo.',
+          });
         } else {
           setState({ kind: 'ready', data: body });
         }
@@ -62,8 +88,8 @@ export default function PatientDirectory() {
     >
       <h2>Buscar pacientes</h2>
       <p className='appointment-form-note'>
-        Busca por nombre entre los pacientes disponibles para tu cuenta. Abre
-        el expediente para consultar antecedentes, alergias, diagnósticos y
+        Busca por nombre entre los pacientes disponibles para tu cuenta. Abre el
+        expediente para consultar antecedentes, alergias, diagnósticos y
         tratamientos autorizados. El alta de pacientes conserva su propio
         contrato y no se simula desde esta pantalla.
       </p>
@@ -168,7 +194,10 @@ export default function PatientDirectory() {
                       </td>
                       <td>{patient.active ? 'Activo' : 'Inactivo'}</td>
                       <td>
-                        <Link href={patientRoutes.record(patient.id)}>
+                        <Link
+                          aria-label={`Ver expediente de ${patient.displayName}`}
+                          href={patientRoutes.record(patient.id)}
+                        >
                           Ver expediente
                         </Link>
                       </td>
