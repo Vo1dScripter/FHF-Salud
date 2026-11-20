@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-import type { PatientPage } from '@/features/patients';
+import { type PatientPage, patientRoutes } from '@/features/patients';
 
 // Cada consulta limpia los datos previos; abortar impide mostrar respuestas obsoletas.
 type State =
@@ -62,9 +62,10 @@ export default function PatientDirectory() {
     >
       <h2>Buscar pacientes</h2>
       <p className='appointment-form-note'>
-        Busca por nombre entre los pacientes disponibles para tu cuenta. Por
-        ahora, este módulo ofrece consulta; el alta y el historial clínico aún
-        no están disponibles.
+        Busca por nombre entre los pacientes disponibles para tu cuenta. Abre
+        el expediente para consultar antecedentes, alergias, diagnósticos y
+        tratamientos autorizados. El alta de pacientes conserva su propio
+        contrato y no se simula desde esta pantalla.
       </p>
       <form
         className='appointment-form'
@@ -153,6 +154,7 @@ export default function PatientDirectory() {
                   <tr>
                     <th scope='col'>Paciente</th>
                     <th scope='col'>Estado</th>
+                    <th scope='col'>Expediente</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -165,6 +167,11 @@ export default function PatientDirectory() {
                         <p className='appointment-reason'>ID: {patient.id}</p>
                       </td>
                       <td>{patient.active ? 'Activo' : 'Inactivo'}</td>
+                      <td>
+                        <Link href={patientRoutes.record(patient.id)}>
+                          Ver expediente
+                        </Link>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

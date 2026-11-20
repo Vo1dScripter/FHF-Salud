@@ -23,6 +23,10 @@ it('carga, busca y pagina sin sustituir los registros recibidos', async () => {
   render(<PatientDirectory />);
   expect(screen.getByRole('status')).toHaveTextContent('Cargando');
   expect(await screen.findByText(patient.displayName)).toBeVisible();
+  expect(screen.getByRole('link', { name: 'Ver expediente' })).toHaveAttribute(
+    'href',
+    `/pacientes/${patient.id}`,
+  );
   fireEvent.change(screen.getByLabelText('Nombre del paciente'), {
     target: { value: ' Ana ' },
   });
