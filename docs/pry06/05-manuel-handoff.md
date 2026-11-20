@@ -1,12 +1,13 @@
 # PRY06 · Traspaso del Prompt 5 (Manuel Álvarez Puentes)
 
 RF-12 en capas (navegación, servidor/API y RLS/funciones), pruebas de
-autorización negativa y verificación local del historial clínico. No se
-declaran terminados RF-13 a RF-16.
+autorización negativa y verificación del historial clínico. No se declaran
+terminados RF-13 a RF-16.
 
-Los cambios de esta entrega quedan **sin commit, sin push y sin PR** porque así
-se indicó para esta sesión. Por tanto no existe todavía CI ni revisión de este
-conjunto de cambios; las cifras de abajo son ejecuciones locales reales.
+Los cambios de esta entrega están en la rama `feature/pry06-pruebas-seguridad`
+(commits `19dbf60` y `2730dc7`) y en el [PR #7](https://github.com/Vo1dScripter/FHF-Salud/pull/7).
+Las cifras de Jest, typecheck, lint y build son ejecuciones locales. La prueba
+SQL RF-12 y el CI se verificaron en GitHub Actions.
 
 ## Identificadores y estado
 
@@ -20,11 +21,12 @@ conjunto de cambios; las cifras de abajo son ejecuciones locales reales.
 | Sincronización con la base | 0 adelante / 0 atrás tras `git fetch origin --prune` |
 | Cómo se actualizó la copia | Solo `git fetch origin --prune`; no hubo pull, merge, reset ni recreación de rama |
 | Rama de trabajo | `feature/pry06-pruebas-seguridad` |
-| Upstream actual | `origin/feature/pry06-historial-clinico`; la rama propia aún no existe en el remoto |
+| Upstream actual | `origin/feature/pry06-pruebas-seguridad` |
+| Commits de esta entrega | `19dbf60` (RF-12 y pruebas) y `2730dc7` (corrección de la prueba SQL) |
 | PR del que depende | [#6](https://github.com/Vo1dScripter/FHF-Salud/pull/6), base `feature/pry06-registro-busqueda-pacientes`; ese PR depende del #5, y el #5 integra el #3 y el #4 |
-| PR de esta entrega | No creado: sin commit ni push por instrucción |
-| Revisor de esta entrega | No asignado (no hay PR nuevo) |
-| PR abiertos comprobados | #3, #4, #5 y #6 abiertos y sin fusionar (consulta GitHub API del 2026-11-19) |
+| PR de esta entrega | [#7](https://github.com/Vo1dScripter/FHF-Salud/pull/7), base `feature/pry06-historial-clinico` |
+| Revisor de esta entrega | Vo1dScripter (revisión pendiente) |
+| PR abiertos comprobados | #3, #4, #5, #6 y #7 abiertos y sin fusionar |
 | Acciones protegidas | No ejecutadas; corresponden a Rodrigo/Prompt 6 |
 
 No se usó la computadora, sesión, credenciales, base remota ni despliegue de
@@ -74,8 +76,12 @@ datos de las pruebas son ficticios.
   médico inactivo, cita cancelada sin asociación y anónimo. Espera cero filas o
   error `42501` en las lecturas según el rol, y error `42501` en
   `open_clinical_record`/`save_clinical_revision` cuando no hay autorización.
-- La prueba SQL **no se ejecutó en este equipo** porque no hay Docker, Podman ni
-  psql instalados. Queda para CI o para el entorno autorizado de Rodrigo.
+- La prueba SQL **no se ejecutó en el equipo local** porque no hay Docker,
+  Podman ni psql instalados. Se ejecutó en el job `database` del CI de GitHub
+  Actions: la primera corrida falló por un error de la propia prueba (ver
+  «Correcciones reales») y, tras corregirla en `2730dc7`, pasó.
+- Validar RLS/RPC contra el Supabase remoto con usuarios ficticios de cada rol
+  queda para Rodrigo.
 
 ## Matriz RF → pruebas
 
@@ -91,7 +97,7 @@ pruebas). Un mismo archivo puede cubrir más de un RF.
 | RF-11 (actualización/auditoría) | `ClinicalHistory` conserva 409, exige motivo y recarga; `route` conserva 409; `repository`/`service` cubren revisiones | PASS |
 | RF-12 navegación | `AppointmentDetail` (enlace condicionado), `AppointmentDetailPage` (médico vs admin/recepción), `PatientDirectory` (errores sin enlaces) | 14 PASS |
 | RF-12 servicio/API | `access` (matriz 401/403/médico), `service` (ausente/rol/inactivo), `route` (401/403/404 sin datos; POST 401 antes del JSON), `ClinicalHistoryPage` (estados de servidor) | PASS |
-| RF-12 base de datos | `supabase/tests/clinical-records-rf12.sql` | No ejecutada localmente; pendiente CI/Rodrigo |
+| RF-12 base de datos | `supabase/tests/clinical-records-rf12.sql` | PASS en CI (job `database`); no ejecutada localmente |
 
 Pruebas nuevas o ampliadas destacadas:
 
@@ -150,9 +156,14 @@ Runtime local: Windows, Node v26.12.1, npm 11.20.0, Python 3.15.1.
 | `npm.cmd run lint:strict` (`--max-warnings=0`) | **PASS**: salida 0 |
 | `npm.cmd run build` con variables públicas vacías | **PASS**: compilación, TypeScript, generación estática 9/9 y 15 rutas; `/pacientes/[id]` y `/api/pacientes/[id]/expediente` dinámicas |
 | `git diff --check` | **PASS**: sin errores de espacio |
-| `supabase/tests/clinical-records-rf12.sql` | **No ejecutada**: sin Docker/Podman/psql en este equipo |
-| CI de este changeset | **No ejecutado**: no hay commit ni push |
+| `supabase/tests/clinical-records-rf12.sql` | **PASS en CI** (job `database`, GitHub Actions). No se ejecutó en el equipo local |
+| CI del PR #7 | **PASS**: `verify` y `database` en verde (corrida #22, repetida con Re-run tras una cancelación); Vercel en verde |
 | E2E autenticado en Supabase remoto | **No ejecutado**: reservado a Rodrigo |
+
+Historial del CI del PR #7: la corrida #21 (commit `19dbf60`) falló en
+`database` por un error de la prueba SQL y `verify` pasó. La corrida #22
+(commit `2730dc7`) quedó con `verify` cancelado y se repitió con «Re-run all
+jobs»; el resultado final fue éxito en ambos jobs.
 
 Avisos no bloqueantes del build: Next.js detectó un `package-lock.json`
 adicional en `C:\Users\Usuario` y Browserslist informa datos de 8 meses. No se
@@ -186,7 +197,7 @@ Pruebas:
 - `src/__tests__/clinical-records/ClinicalHistoryPage.test.tsx` (nuevo)
 - `src/__tests__/patients/PatientDirectory.test.tsx`
 - `src/lib/clinical-records/__tests__/route.test.ts`
-- `supabase/tests/clinical-records-rf12.sql` (nuevo)
+- `supabase/tests/clinical-records-rf12.sql` (nuevo; corregido en `2730dc7`)
 
 Documentación:
 
@@ -207,10 +218,16 @@ Documentación:
 - El estado «Acceso restringido» del expediente no ofrecía salida; ahora enlaza
   a Citas médicas y se prueba en la página de servidor.
 - El formulario clínico no anunciaba el estado ocupado; se añadió `aria-busy`.
+- Fallo real de la IA detectado por el CI: la prueba SQL
+  `clinical-records-rf12.sql`, generada sin poder ejecutarse localmente,
+  insertaba una cita ficticia con `status = 'cancelled'` sin los campos de
+  cancelación y violaba `appointments_cancellation_fields_check`. El job
+  `database` lo detectó (corrida #21) y se corrigió agregando
+  `cancellation_reason` y `cancelled_at` (commit `2730dc7`).
 
 ## Evidencias pendientes (no capturadas)
 
-No se fabricaron capturas. Tras commit y PR harían falta:
+No se fabricaron capturas. Hacen falta:
 
 1. `/pacientes` con sesión médica real de prueba y enlace por paciente.
 2. `/pacientes/[id]` autorizado con historial y autoría.
@@ -218,26 +235,27 @@ No se fabricaron capturas. Tras commit y PR harían falta:
 4. Acceso con recepción/administración mostrando «Acceso restringido».
 5. Paciente sin asociación/cita vigente mostrando «Expediente no disponible».
 6. Pestaña de red con 401/403/404 de la API sin datos clínicos.
-7. Salida del job `database` con `clinical-records-rf12.sql` en PASS.
-8. CI del commit final con jobs `verify` y `database` en verde.
+
+Ya disponibles en GitHub Actions: salida del job `database` con
+`clinical-records-rf12.sql` en PASS y CI del PR #7 con `verify` y `database` en
+verde.
 
 ## Riesgos y tareas remotas
 
-- Este changeset no está confirmado ni publicado: no hay CI, PR ni revisor
-  todavía. Al autorizar commit/push, abrir PR hacia
-  `feature/pry06-historial-clinico` mientras el #6 siga sin fusionar (o `main`
-  si los PR previos ya se fusionaron) y pedir revisión a un integrante distinto
-  de Manuel.
-- PR #3, #4 y #5 siguen abiertos; el PR #6 está apilado sobre el #5. Reapuntar y
-  repetir la verificación cuando se fusionen.
-- La prueba SQL de RF-12 no se ejecutó localmente. Rodrigo/Prompt 6 debe
-  ejecutarla en un PostgreSQL aislado o esperar el job `database` del CI.
-- Rodrigo debe aplicar/verificar las migraciones `202611170001` a
-  `202611170004` en el entorno autorizado, validar RLS/RPC con usuarios
-  ficticios de cada rol y comprobar el despliegue de Vercel. No se usaron datos
-  clínicos reales.
+- El PR #7 está abierto con CI en verde, pero falta la revisión de
+  Vo1dScripter. No debe fusionarse hasta que la revise un integrante distinto de
+  Manuel.
+- El PR #7 apunta a `feature/pry06-historial-clinico` porque el #6 sigue sin
+  fusionar. PR #3, #4 y #5 siguen abiertos; el PR #6 está apilado sobre el #5.
+  Reapuntar a `main` y repetir la verificación cuando se fusionen.
+- La prueba SQL de RF-12 pasó en CI, pero no contra el Supabase remoto. Rodrigo
+  debe aplicar/verificar las migraciones `202611170001` a `202611170004` en el
+  entorno autorizado, validar RLS/RPC con usuarios ficticios de cada rol y
+  comprobar el despliegue de Vercel. No se usaron datos clínicos reales.
 - La política preexistente `patients_select_staff` permite a recepción y
   administración leer datos personales de `patients`; su alcance sigue pendiente
   de decisión y no se modificó aquí.
 - El límite de 500 revisiones y la paginación del historial siguen como riesgo
   heredado del Prompt 4.
+- En este repositorio algunas corridas de `verify` salen canceladas sin motivo
+  aparente (también ocurrió en el PR #6); se resolvieron repitiendo el job.
