@@ -40,11 +40,13 @@ insert into public.physicians (id, display_name, active) values
 insert into public.patients (id, display_name) values
   ('a2000000-0000-4000-8000-000000000001', 'Paciente RF12 Ficticio');
 insert into public.appointments
-  (id, patient_id, physician_id, starts_at, duration_minutes, reason, status) values
+  (id, patient_id, physician_id, starts_at, duration_minutes, reason, status,
+   cancellation_reason, cancelled_at) values
   ('a3000000-0000-4000-8000-000000000001',
    'a2000000-0000-4000-8000-000000000001',
    'a1000000-0000-4000-8000-000000000001',
-   '2036-09-01 15:00Z', 30, 'Cita RF12 cancelada ficticia', 'cancelled');
+   '2036-09-01 15:00Z', 30, 'Cita RF12 cancelada ficticia', 'cancelled',
+   'Cancelacion ficticia RF12', '2036-08-31 10:00Z');
 
 -- La preparacion de filas clinicas se hace como administrador para probar
 -- despues que RLS las oculta a quien no tiene association.
