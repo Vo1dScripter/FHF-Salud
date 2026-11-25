@@ -1,9 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { type FormEvent, useEffect, useRef, useState } from 'react';
 
-import { type PatientPage, patientRoutes } from '@/features/patients';
+import {
+  type PatientPage,
+  patientIdSchema,
+  patientRoutes,
+} from '@/features/patients';
 
 // Cada consulta limpia los datos previos; abortar impide mostrar respuestas obsoletas.
 type State =
@@ -30,6 +35,47 @@ function isPatientPage(value: unknown): value is PatientPage {
   );
 }
 export default function PatientDirectory() {
+  const router = useRouter();
+  const [name, setName] = useState('');
+  const [registrationError, setRegistrationError] = useState('');
+  const [saving, setSaving] = useState(false);
+  const registrationPending = useRef(false);
+
+  async function register(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (registrationPending.current || !name.trim()) return;
+    registrationPending.current = true;
+    setSaving(true);
+    setRegistrationError('');
+    try {
+      const response = await fetch('/api/pacientes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ displayName: name.trim() }),
+      });
+      const body = await response.json();
+      if (
+        !response.ok ||
+        response.status !== 201 ||
+        !patientIdSchema.safeParse(body.patientId).success
+      ) {
+        throw new Error(
+          body.error?.message ?? 'No se pudo confirmar el alta del paciente.',
+        );
+      }
+      router.push(patientRoutes.record(body.patientId));
+    } catch (error) {
+      setRegistrationError(
+        error instanceof Error
+          ? error.message
+          : 'No se pudo confirmar el alta del paciente.',
+      );
+    } finally {
+      registrationPending.current = false;
+      setSaving(false);
+    }
+  }
+
   const [search, setSearch] = useState('');
   const [query, setQuery] = useState({ search: '', page: 1 });
   const [attempt, setAttempt] = useState(0);
@@ -90,8 +136,7 @@ export default function PatientDirectory() {
       <p className='appointment-form-note'>
         Busca por nombre entre los pacientes disponibles para tu cuenta. Abre el
         expediente para consultar antecedentes, alergias, diagnósticos y
-        tratamientos autorizados. El alta de pacientes conserva su propio
-        contrato y no se simula desde esta pantalla.
+        tratamientos autorizados.
       </p>
       <form
         className='appointment-form'
@@ -161,6 +206,33 @@ export default function PatientDirectory() {
       )}
       {state.kind === 'ready' && (
         <>
+          <form
+            className='appointment-form'
+            onSubmit={register}
+            aria-busy={saving}
+          >
+            <div className='appointment-field appointment-field--wide'>
+              <label htmlFor='patient-register-name'>
+                Nombre completo para el alta
+              </label>
+              <input
+                id='patient-register-name'
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                required
+                maxLength={200}
+                disabled={saving}
+              />
+            </div>
+            <button
+              className='appointment-new'
+              type='submit'
+              disabled={saving || !name.trim()}
+            >
+              {saving ? 'Registrando…' : 'Registrar paciente y expediente'}
+            </button>
+            {registrationError && <p role='alert'>{registrationError}</p>}
+          </form>
           <p role='status'>
             Página {query.page} · {state.data.patients.length} pacientes
           </p>

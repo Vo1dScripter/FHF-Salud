@@ -2,6 +2,9 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import PatientDirectory from '@/app/components/patients/PatientDirectory';
 
+const push = jest.fn();
+jest.mock('next/navigation', () => ({ useRouter: () => ({ push }) }));
+
 const original = global.fetch;
 afterEach(() => {
   global.fetch = original;
@@ -140,4 +143,35 @@ it('retira resultados durante la búsqueda e ignora una respuesta anterior', asy
     expect(screen.getByText('Sin pacientes visibles')).toBeVisible(),
   );
   expect(screen.queryByText(patient.displayName)).not.toBeInTheDocument();
+});
+
+it('abre el expediente solo después de confirmar el alta', async () => {
+  const fetchMock = jest
+    .fn()
+    .mockResolvedValueOnce(reply({ patients: [], hasMore: false }))
+    .mockResolvedValueOnce({
+      ...reply({ patientId: patient.id }),
+      status: 201,
+    });
+  global.fetch = fetchMock;
+  render(<PatientDirectory />);
+  fireEvent.change(
+    await screen.findByLabelText('Nombre completo para el alta'),
+    {
+      target: { value: patient.displayName },
+    },
+  );
+  fireEvent.click(
+    screen.getByRole('button', { name: 'Registrar paciente y expediente' }),
+  );
+  await waitFor(() =>
+    expect(push).toHaveBeenCalledWith(`/pacientes/${patient.id}`),
+  );
+  expect(fetchMock).toHaveBeenLastCalledWith(
+    '/api/pacientes',
+    expect.objectContaining({
+      method: 'POST',
+      body: JSON.stringify({ displayName: patient.displayName }),
+    }),
+  );
 });
