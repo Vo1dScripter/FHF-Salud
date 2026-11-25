@@ -14,6 +14,7 @@ const physician = {
   physicianId: '33333333-3333-4333-8333-333333333333',
 };
 const repository = (): jest.Mocked<PatientRepository> => ({
+  register: jest.fn(),
   isActivePhysician: jest.fn().mockResolvedValue(true),
   list: jest.fn().mockResolvedValue({ patients: [], hasMore: false }),
 });

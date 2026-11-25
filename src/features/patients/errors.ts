@@ -12,8 +12,11 @@ const messages: Record<PatientErrorCode, string> = {
   unavailable: 'No se pudo consultar pacientes. Inténtalo de nuevo.',
 };
 export class PatientError extends Error {
-  constructor(readonly code: PatientErrorCode) {
-    super(messages[code]);
+  constructor(
+    readonly code: PatientErrorCode,
+    message = messages[code],
+  ) {
+    super(message);
     this.name = 'PatientError';
   }
 }
