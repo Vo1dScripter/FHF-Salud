@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import { type FormEvent, useEffect, useRef, useState } from 'react';
 
 import {
-  type PatientPage,
   patientIdSchema,
+  type PatientPage,
   patientRoutes,
 } from '@/features/patients';
 

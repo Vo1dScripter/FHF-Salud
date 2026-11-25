@@ -3,7 +3,6 @@ import { NextResponse } from 'next/server';
 import { getPatientRequestContext } from '@/lib/patients/server';
 
 import { PatientError, patientHttpStatus } from '@/features/patients/errors';
-
 import { requirePatientPhysician } from '@/features/patients/service';
 
 export const dynamic = 'force-dynamic';
