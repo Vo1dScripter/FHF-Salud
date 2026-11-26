@@ -153,6 +153,181 @@ try {
         assert.equal((await reply.json()).appointments.length, count);
       },
     );
+async function updateAppointment(button, submit, status, prepare) {
+      await page.getByRole('button', {
+        name: button,
+        exact: true,
+      }).click();
+
+      const dialog = page.getByRole('dialog');
+
+      if (prepare) await prepare(dialog);
+
+      const response = page.waitForResponse(
+        (r) =>
+          r.url().endsWith(`/api/citas/${appointment.id}`) &&
+          r.request().method() === 'PATCH',
+      );
+
+      await dialog.getByRole('button', {
+        name: submit,
+        exact: true,
+      }).click();
+
+      const reply = await response;
+      assert.equal(reply.status(), 200);
+
+      const updated = (await reply.json()).appointment;
+      assert.equal(updated.id, appointment.id);
+      assert.equal(updated.status, status);
+
+      await dialog.waitFor({ state: 'hidden' });
+      await page.reload();
+
+      const persisted = await context.request.get(
+        `/api/citas/${appointment.id}`,
+      );
+
+      assert.equal(persisted.status(), 200);
+
+      const stored = (await persisted.json()).appointment;
+
+      assert.equal(stored.id, updated.id);
+      assert.equal(stored.status, status);
+      assert.equal(stored.scheduledAt, updated.scheduledAt);
+      assert.equal(stored.durationMinutes, updated.durationMinutes);
+
+      appointment = stored;
+    }
+
+    await check(
+      `${width}px reprogramacion persistente`,
+      async () => {
+        const previous = appointment.scheduledAt;
+
+        await updateAppointment(
+          'Reprogramar',
+          'Guardar cambios',
+          'pending',
+          async (dialog) => {
+            await dialog.getByLabel('Fecha y hora de inicio')
+              .fill(`2035-08-${width === 390 ? '11' : '10'}T11:00`);
+          },
+        );
+
+        assert.notEqual(appointment.scheduledAt, previous);
+
+        await page.screenshot({
+          path: join(output, `${width}-reprogramada.png`),
+        });
+      },
+    );
+
+    await check(
+      `${width}px confirmacion persistente`,
+      async () => {
+        await updateAppointment(
+          'Confirmar',
+          'Si, confirmar cita'.replace('Si', 'Sí'),
+          'confirmed',
+        );
+
+        await page.screenshot({
+          path: join(output, `${width}-confirmada.png`),
+        });
+      },
+    );
+
+    await check(
+      `${width}px reprogramacion de cita confirmada`,
+      async () => {
+        const previous = appointment.scheduledAt;
+
+        await updateAppointment(
+          'Reprogramar',
+          'Guardar cambios',
+          'pending',
+          async (dialog) => {
+            await dialog.getByLabel('Fecha y hora de inicio')
+              .fill(`2035-08-${width === 390 ? '11' : '10'}T13:00`);
+          },
+        );
+
+        assert.notEqual(appointment.scheduledAt, previous);
+      },
+    );
+
+    await check(
+      `${width}px motivo de cancelacion obligatorio`,
+      async () => {
+        await page.getByRole('button', {
+          name: 'Cancelar cita',
+          exact: true,
+        }).click();
+
+        const dialog = page.getByRole('dialog');
+
+        await dialog.getByRole('button', {
+          name: 'Sí, cancelar cita',
+          exact: true,
+        }).click();
+
+        await dialog.getByText(
+          'Indica el motivo de la cancelación.',
+          { exact: true },
+        ).waitFor();
+
+        await dialog.getByRole('button', {
+          name: 'Volver',
+          exact: true,
+        }).click();
+
+        await dialog.waitFor({ state: 'hidden' });
+
+        const reply = await context.request.get(
+          `/api/citas/${appointment.id}`,
+        );
+
+        assert.equal(reply.status(), 200);
+        assert.equal(
+          (await reply.json()).appointment.status,
+          'pending',
+        );
+      },
+    );
+
+    await check(
+      `${width}px cancelacion persistente y bloqueo de acciones`,
+      async () => {
+        await updateAppointment(
+          'Cancelar cita',
+          'Sí, cancelar cita',
+          'cancelled',
+          async (dialog) => {
+            await dialog.getByLabel('Motivo de cancelación')
+              .fill('Cancelacion ficticia de prueba PRY07');
+          },
+        );
+
+        for (const name of [
+          'Confirmar',
+          'Reprogramar',
+          'Cancelar cita',
+        ]) {
+          const button = page.getByRole('button', {
+            name,
+            exact: true,
+          });
+
+          await button.waitFor();
+          assert.equal(await button.isDisabled(), true);
+        }
+
+        await page.screenshot({
+          path: join(output, `${width}-cancelada.png`),
+        });
+      },
+    );
     await context.close();
   }
 } catch (error) {
