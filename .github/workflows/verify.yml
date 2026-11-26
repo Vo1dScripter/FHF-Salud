@@ -38,6 +38,16 @@ jobs:
       - run: python scripts/tar05/verify-database.py
         env:
           CONTAINER_ENGINE: docker
+      - name: Integridad y seguridad PRY07
+        run: python scripts/pry07/verify-integrity-security.py
+        env:
+          CONTAINER_ENGINE: docker
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pry07-integridad-seguridad
+          path: evidencias/PRY07/02-emilio
+          if-no-files-found: ignore
 
   e2e:
     runs-on: ubuntu-latest

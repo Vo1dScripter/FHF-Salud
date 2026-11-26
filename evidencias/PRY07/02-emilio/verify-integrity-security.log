@@ -1,0 +1,17 @@
+# PRY07 · Emilio Martínez · verificación de integridad y seguridad
+# Inicio: 2026-11-26T03:05:50.688548+00:00
+# Contenedor efímero: fhf-pry07-emilio-554d8178da
+# PostgreSQL local disponible
+SKIP migración 202610250001_reminder_infrastructure.sql (requiere pg_cron/pg_net/Vault)
+PASS migración 202610250002_appointments.sql (0.324s)
+PASS migración 202610260001_citas_medicas_schema.sql (0.151s)
+PASS migración 202610260003_appointment_actions.sql (0.238s)
+PASS migración 202611060001_authorization_null_role.sql (0.165s)
+PASS migración 202611060002_physician_schedule_blocks.sql (0.214s)
+PASS migración 202611250001_confirm_idempotent.sql (0.160s)
+# Suite 01-integridad.sql sobre pry07_integridad_554d8178da
+# Suite 01-integridad.sql: 20 PASS, 0 FAIL
+# Suite 02-citas-reglas.sql sobre pry07_citas_554d8178da
+# Suite 02-citas-reglas.sql: 22 PASS, 0 FAIL
+# Suite 03-seguridad-rls.sql sobre pry07_seguridad_554d8178da
+# Suite 03-seguridad-rls.sql: 56 PASS, 0 FAIL
