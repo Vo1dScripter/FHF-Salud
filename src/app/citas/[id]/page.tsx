@@ -10,6 +10,7 @@ import {
   appointmentRoutes,
   type AppointmentView,
 } from '@/features/appointments';
+import { patientRoutes } from '@/features/patients';
 
 export const dynamic = 'force-dynamic';
 
@@ -91,6 +92,11 @@ export default async function AppointmentDetailPage({
       appointment={result.appointment}
       canManage={
         result.actor.role === 'admin' || result.actor.role === 'receptionist'
+      }
+      patientRecordHref={
+        result.actor.role === 'physician'
+          ? patientRoutes.record(result.appointment.patient.id)
+          : undefined
       }
     />
   );

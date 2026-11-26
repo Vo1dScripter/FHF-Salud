@@ -1,0 +1,78 @@
+PRY06 Prompt 4 - Jesus Fuentes Avendano
+Evidencia de pruebas locales - RF-08, RF-09 y RF-11
+Fecha: 2026-11-19
+Equipo: Windows, Node v24.22.1, npm 11.19.1
+Python para multimedia: 3.14.3 con Pillow 13.0.0
+Docker: no disponible en este equipo.
+
+Base verificada
+---------------
+origin: https://github.com/Vo1dScripter/FHF-Salud.git
+main local: 474acf0bff4be32c094f711227f725dda83a106d
+origin/main: 474acf0bff4be32c094f711227f725dda83a106d
+main...origin/main: 0 0
+Rama base usada: feature/pry06-registro-busqueda-pacientes
+Hash base: f3f74f0475f2983115071e4c4596fe7563caf9ca
+PR #5: open, base main, head f3f74f0 (integracion de PR #3 y PR #4)
+PR #3: open, head 3aad6cd
+PR #4: open, head c169206
+Rama de trabajo: feature/pry06-historial-clinico
+Commit de codigo: 3cef600161e7a355b4a575c9cc00db4b0af92638
+Commit de evidencia: 47ac7137bd3589068bcb3bdbf8414b2648c3317e
+PR: #6 https://github.com/Vo1dScripter/FHF-Salud/pull/6
+Revisor solicitado: Maquendo2512
+
+Comandos y resultados observados
+--------------------------------
+1) npm run test -- --runInBand clinical-records
+   EXIT=0
+   Test Suites: 6 passed, 6 total
+   Tests:       58 passed, 58 total
+
+2) npm run test:patients
+   EXIT=0
+   Test Suites: 5 passed, 5 total
+   Tests:       47 passed, 47 total
+
+3) npm run verify
+   Variables usadas: NEXT_PUBLIC_SUPABASE_URL='' y
+   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY='' para no contactar ningun entorno remoto.
+   EXIT=0
+   lint:strict: PASS (eslint . --max-warnings=0)
+   typecheck: PASS (tsc --noEmit --incremental false)
+   Jest: 22 suites passed, 180 tests passed
+   img:test: PASS (Ran 8 tests)
+   integrations:test: PASS (4 pass, 0 fail)
+   build: PASS (Next.js 16.2.0; compilacion y generacion de paginas)
+   postbuild: PASS (next-sitemap)
+
+4) git diff --check
+   EXIT=0, sin errores de espacios.
+
+5) python scripts/tar05/verify-database.py
+   NO EJECUTADO: Docker no esta instalado en este equipo. No se uso la base
+   remota, credenciales de Rodrigo ni infraestructura de produccion.
+
+6) CI GitHub: workflow "Verificar proyecto", run 44648391161
+   URL: https://github.com/Vo1dScripter/FHF-Salud/actions/runs/44648391161
+   Head: 20d3cfb9f1fd75050f5f14884ccd9b3ee613bd80
+   Resultado: PASS (job verify success, job database success).
+
+Incidencias reales y correcciones
+---------------------------------
+- El primer npm run verify fallo en img:test porque el python3 del PATH
+  (MSYS2 3.12.11) no tenia Pillow ni pip. Se corrigio el entorno usando el
+  Python 3.14.3 instalado y python3 -m pip install Pillow (13.0.0), la misma
+  dependencia que instala .github/workflows/verify.yml. No se cambio codigo
+  para ocultar el fallo; la segunda ejecucion completa termino con EXIT=0.
+- El build regenero public/robots.txt, public/sitemap.xml,
+  public/sitemap-0.xml y src/styles/app.css con timestamps o finales de linea.
+  Se restauraron a HEAD para no incluir artefactos ajenos al alcance. Solo
+  public/sitemap-0.xml tenia cambios de contenido (rutas y timestamps); no se
+  commiteo.
+
+Datos y seguridad
+-----------------
+- Todas las pruebas usan datos ficticios.
+- No se ejecutaron migraciones, cambios administrativos ni despliegues remotos.
+- No se registraron secretos ni datos clinicos en logs.

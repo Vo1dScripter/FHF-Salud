@@ -1,0 +1,79 @@
+npm warn Unknown project config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> ts-nextjs-tailwind-starter@0.1.0 verify
+> npm run lint:strict && npm run typecheck && npm test -- --runInBand && npm run img:test && npm run integrations:test && npm run build
+
+npm warn Unknown env config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown project config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> ts-nextjs-tailwind-starter@0.1.0 lint:strict
+> eslint . --max-warnings=0
+
+npm warn Unknown env config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown project config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> ts-nextjs-tailwind-starter@0.1.0 typecheck
+> tsc --noEmit --incremental false
+
+npm warn Unknown env config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown project config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> ts-nextjs-tailwind-starter@0.1.0 test
+> jest --runInBand
+
+FAIL src/features/clinical-records/__tests__/service.test.ts
+  ● servicio del expediente clínico › propaga conflicto de versión sin convertirlo en éxito
+
+    expect(received).rejects.toMatchObject(expected)
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "code": "stale",
+    +   "code": "validation",
+      }
+
+      161 |         expectedRevision: 1,
+      162 |       }),
+    > 163 |     ).rejects.toMatchObject({ code: 'stale' });
+          |               ^
+      164 |     expect(repo.getHistory).not.toHaveBeenCalled();
+      165 |   });
+      166 |
+
+      at Object.toMatchObject (node_modules/expect/build/index.js:2155:20)
+      at Object.toMatchObject (src/features/clinical-records/__tests__/service.test.ts:163:15)
+
+
+Summary of all failing tests
+FAIL src/features/clinical-records/__tests__/service.test.ts
+  ● servicio del expediente clínico › propaga conflicto de versión sin convertirlo en éxito
+
+    expect(received).rejects.toMatchObject(expected)
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "code": "stale",
+    +   "code": "validation",
+      }
+
+      161 |         expectedRevision: 1,
+      162 |       }),
+    > 163 |     ).rejects.toMatchObject({ code: 'stale' });
+          |               ^
+      164 |     expect(repo.getHistory).not.toHaveBeenCalled();
+      165 |   });
+      166 |
+
+      at Object.toMatchObject (node_modules/expect/build/index.js:2155:20)
+      at Object.toMatchObject (src/features/clinical-records/__tests__/service.test.ts:163:15)
+
+
+Test Suites: 1 failed, 25 passed, 26 total
+Tests:       1 failed, 204 passed, 205 total
+Snapshots:   0 total
+Time:        5.846 s
+Ran all test suites.
