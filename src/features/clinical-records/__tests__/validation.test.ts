@@ -27,6 +27,23 @@ describe('validación del expediente clínico', () => {
     ).toEqual(firstRevision);
   });
 
+  it('normaliza a null el texto opcional omitido sin rechazar la revisión', () => {
+    expect(
+      parseClinicalRevisionInput({
+        allergiesStatus: 'none_reported',
+        expectedRevision: 0,
+      }),
+    ).toEqual({
+      allergiesStatus: 'none_reported',
+      expectedRevision: 0,
+      allergies: null,
+      background: null,
+      changeReason: null,
+      diagnosis: null,
+      treatment: null,
+    });
+  });
+
   it('exige motivo al actualizar una revisión existente', () => {
     expect(
       parseClinicalRevisionInput({

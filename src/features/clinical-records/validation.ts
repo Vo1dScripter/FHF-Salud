@@ -9,10 +9,11 @@ const MAX_REVISION = 2_147_483_646;
 
 const optionalText = (max: number) =>
   z
-    .union([z.string().trim().max(max), z.null(), z.undefined()])
-    .transform((value) =>
-      typeof value === 'string' && value.length > 0 ? value : null,
-    );
+    .string()
+    .trim()
+    .max(max)
+    .nullish()
+    .transform((value) => value || null);
 
 /**
  * Objeto estricto: rechaza role, physicianId, authorUserId, createdAt o
@@ -25,11 +26,7 @@ export const clinicalRevisionInputSchema = z
     background: optionalText(MAX_TEXT),
     changeReason: optionalText(MAX_REASON),
     diagnosis: optionalText(MAX_TEXT),
-    expectedRevision: z.coerce
-      .number()
-      .int()
-      .min(0)
-      .max(MAX_REVISION),
+    expectedRevision: z.coerce.number().int().min(0).max(MAX_REVISION),
     treatment: optionalText(MAX_TEXT),
   })
   .superRefine((value, context) => {
@@ -49,10 +46,7 @@ export const clinicalRevisionInputSchema = z
       });
     }
     const hasClinicalContent = Boolean(
-      value.background ||
-        value.allergies ||
-        value.diagnosis ||
-        value.treatment,
+      value.background || value.allergies || value.diagnosis || value.treatment,
     );
     if (!hasClinicalContent && value.allergiesStatus === 'not_recorded') {
       context.addIssue({
