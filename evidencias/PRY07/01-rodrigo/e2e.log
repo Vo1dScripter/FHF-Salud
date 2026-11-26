@@ -1,0 +1,13 @@
+POSTGRESQL: 5 migraciones aplicadas; omitida 202610250001_reminder_infrastructure.sql
+AUTH: PASS; tres cuentas ficticias preparadas.
+BUILD: iniciando compilación local.
+BUILD: PASS
+PASS 1440px RF-01: registro autenticado mediante la interfaz
+PASS 1440px RF-02: agenda y detalle persistidos tras recargar
+PASS 1440px RF-05: traslape rechazado sin registro adicional
+PASS 1440px permisos: 401 anónimo y 403 con sesión sin rol
+PASS 390px RF-01: registro autenticado mediante la interfaz
+PASS 390px RF-02: agenda y detalle persistidos tras recargar
+PASS 390px RF-05: traslape rechazado sin registro adicional
+PASS 390px permisos: 401 anónimo y 403 con sesión sin rol
+CLEANUP: PASS; aplicación, contenedores, red y credenciales efímeras retirados.

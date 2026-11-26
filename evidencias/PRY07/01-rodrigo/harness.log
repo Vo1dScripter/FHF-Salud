@@ -1,0 +1,7 @@
+test_cleanup_retries_after_transient_container_failure (test_local_e2e.LocalE2ETest.test_cleanup_retries_after_transient_container_failure) ... ok
+test_wait_retries_connection_reset_during_startup (test_local_e2e.LocalE2ETest.test_wait_retries_connection_reset_during_startup) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.003s
+
+OK
