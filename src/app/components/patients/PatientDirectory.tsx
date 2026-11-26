@@ -47,29 +47,29 @@ export default function PatientDirectory() {
     registrationPending.current = true;
     setSaving(true);
     setRegistrationError('');
+    const fallback = 'No se pudo confirmar el alta del paciente.';
     try {
       const response = await fetch('/api/pacientes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ displayName: name.trim() }),
       });
-      const body = await response.json();
-      if (
-        !response.ok ||
-        response.status !== 201 ||
-        !patientIdSchema.safeParse(body.patientId).success
-      ) {
-        throw new Error(
-          body.error?.message ?? 'No se pudo confirmar el alta del paciente.',
+      const body = await response.json().catch(() => null);
+      const patientId = patientIdSchema.safeParse(body?.patientId);
+      const recordId = patientIdSchema.safeParse(body?.recordId);
+      if (!response.ok || response.status !== 201) {
+        setRegistrationError(
+          typeof body?.error?.message === 'string'
+            ? body.error.message
+            : fallback,
         );
+      } else if (!patientId.success || !recordId.success) {
+        setRegistrationError(fallback);
+      } else {
+        router.push(patientRoutes.record(patientId.data));
       }
-      router.push(patientRoutes.record(body.patientId));
-    } catch (error) {
-      setRegistrationError(
-        error instanceof Error
-          ? error.message
-          : 'No se pudo confirmar el alta del paciente.',
-      );
+    } catch {
+      setRegistrationError(fallback);
     } finally {
       registrationPending.current = false;
       setSaving(false);

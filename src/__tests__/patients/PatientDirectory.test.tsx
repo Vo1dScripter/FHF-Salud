@@ -8,6 +8,7 @@ jest.mock('next/navigation', () => ({ useRouter: () => ({ push }) }));
 const original = global.fetch;
 afterEach(() => {
   global.fetch = original;
+  push.mockClear();
 });
 const patient = {
   id: '22222222-2222-4222-8222-222222222222',
@@ -150,7 +151,7 @@ it('abre el expediente solo después de confirmar el alta', async () => {
     .fn()
     .mockResolvedValueOnce(reply({ patients: [], hasMore: false }))
     .mockResolvedValueOnce({
-      ...reply({ patientId: patient.id }),
+      ...reply({ patientId: patient.id, recordId: patient.id }),
       status: 201,
     });
   global.fetch = fetchMock;
@@ -175,3 +176,33 @@ it('abre el expediente solo después de confirmar el alta', async () => {
     }),
   );
 });
+
+it.each([
+  { ...reply({ patientId: patient.id }), status: 201 },
+  {
+    ok: false,
+    status: 502,
+    json: async () => {
+      throw new SyntaxError('HTML');
+    },
+  },
+])(
+  'conserva el formulario si el servidor no confirma el expediente',
+  async (response) => {
+    global.fetch = jest
+      .fn()
+      .mockResolvedValueOnce(reply({ patients: [], hasMore: false }))
+      .mockResolvedValueOnce(response);
+    render(<PatientDirectory />);
+    const input = await screen.findByLabelText('Nombre completo para el alta');
+    fireEvent.change(input, { target: { value: patient.displayName } });
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Registrar paciente y expediente' }),
+    );
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'No se pudo confirmar el alta del paciente.',
+    );
+    expect(input).toHaveValue(patient.displayName);
+    expect(push).not.toHaveBeenCalled();
+  },
+);
