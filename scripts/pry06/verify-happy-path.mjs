@@ -146,8 +146,12 @@ try {
       ),
       false,
     );
-    if (output)
+    if (output) {
+      await page.locator('#clinical-current-title').evaluate((title) => {
+        title.scrollIntoView({ block: 'center' });
+      });
       await page.screenshot({ path: `${output}/${width}-expediente.png` });
+    }
     pass(
       `PASS ${width} RF-11: modificación, fecha y revisión anterior conservadas`,
     );

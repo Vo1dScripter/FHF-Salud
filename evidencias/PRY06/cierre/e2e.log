@@ -1,0 +1,12 @@
+PASS 1440 RF-07: alta UI y expediente persistido
+PASS 1440 RF-10: búsqueda UI y navegación al expediente
+PASS 1440 RF-08/09: nota, contenido y autor persisten tras recarga
+PASS 1440 RF-11: modificación, fecha y revisión anterior conservadas
+PASS 1440 RF-12: lectura y escritura de recepción denegadas y anónimo rechazado
+PASS 1440 RF-01 a RF-06: cita vinculada, agenda, reprogramación, traslape, confirmación y cancelación
+PASS 390 RF-07: alta UI y expediente persistido
+PASS 390 RF-10: búsqueda UI y navegación al expediente
+PASS 390 RF-08/09: nota, contenido y autor persisten tras recarga
+PASS 390 RF-11: modificación, fecha y revisión anterior conservadas
+PASS 390 RF-12: lectura y escritura de recepción denegadas y anónimo rechazado
+PASS 390 RF-01 a RF-06: cita vinculada, agenda, reprogramación, traslape, confirmación y cancelación
