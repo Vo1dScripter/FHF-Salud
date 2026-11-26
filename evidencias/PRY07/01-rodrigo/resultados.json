@@ -1,0 +1,34 @@
+[
+  {
+    "name": "1440px RF-01: registro autenticado mediante la interfaz",
+    "status": "PASS"
+  },
+  {
+    "name": "1440px RF-02: agenda y detalle persistidos tras recargar",
+    "status": "PASS"
+  },
+  {
+    "name": "1440px RF-05: traslape rechazado sin registro adicional",
+    "status": "PASS"
+  },
+  {
+    "name": "1440px permisos: 401 anónimo y 403 con sesión sin rol",
+    "status": "PASS"
+  },
+  {
+    "name": "390px RF-01: registro autenticado mediante la interfaz",
+    "status": "PASS"
+  },
+  {
+    "name": "390px RF-02: agenda y detalle persistidos tras recargar",
+    "status": "PASS"
+  },
+  {
+    "name": "390px RF-05: traslape rechazado sin registro adicional",
+    "status": "PASS"
+  },
+  {
+    "name": "390px permisos: 401 anónimo y 403 con sesión sin rol",
+    "status": "PASS"
+  }
+]
