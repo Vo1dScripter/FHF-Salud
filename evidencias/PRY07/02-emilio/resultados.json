@@ -1,0 +1,860 @@
+{
+  "generated_at": "2026-11-26T03:06:15.378594+00:00",
+  "commands": [
+    "docker run -d --rm --name fhf-pry07-emilio-554d8178da --network none -e POSTGRES_HOST_AUTH_METHOD=trust docker.io/library/postgres:17-alpine",
+    "psql -X -q -A -t -v ON_ERROR_STOP=1 (migraciones y suites)",
+    "python scripts/pry07/verify-integrity-security.py"
+  ],
+  "environment": {
+    "python": "3.12.5",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "engine": "docker",
+    "engine_version": "Docker version 29.9.2, build a82e528",
+    "image": "docker.io/library/postgres:17-alpine",
+    "image_id": "sha256:a77aa70e641402a21411b92b721c58d10f23b50ae5fdd2333efd22d166e1e5f7",
+    "container": "fhf-pry07-emilio-554d8178da",
+    "postgres": "17.12|PostgreSQL 17.12 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+    "auth": "JWT simulado con request.jwt.claims y SET ROLE"
+  },
+  "migrations": [
+    {
+      "name": "202610250002_appointments.sql",
+      "seconds": 0.324
+    },
+    {
+      "name": "202610260001_citas_medicas_schema.sql",
+      "seconds": 0.151
+    },
+    {
+      "name": "202610260003_appointment_actions.sql",
+      "seconds": 0.238
+    },
+    {
+      "name": "202611060001_authorization_null_role.sql",
+      "seconds": 0.165
+    },
+    {
+      "name": "202611060002_physician_schedule_blocks.sql",
+      "seconds": 0.214
+    },
+    {
+      "name": "202611250001_confirm_idempotent.sql",
+      "seconds": 0.16
+    }
+  ],
+  "skipped_migrations": [
+    "202610250001_reminder_infrastructure.sql"
+  ],
+  "summary": {
+    "total": 114,
+    "pass": 111,
+    "fail": 0,
+    "blocked": 3,
+    "not_run": 0
+  },
+  "cases": [
+    {
+      "id": "CON-01",
+      "module": "Concurrencia real",
+      "description": "Dos reservas simultáneas del mismo horario: una gana y una es rechazada",
+      "status": "PASS",
+      "detail": "exitos=1 rechazos_23P01=1 filas=1"
+    },
+    {
+      "id": "CON-02",
+      "module": "Concurrencia real",
+      "description": "Dos confirmaciones simultáneas son idempotentes y auditan una sola vez",
+      "status": "PASS",
+      "detail": "exitos=2 conflictos_PT409=0 eventos=1 estado=confirmed"
+    },
+    {
+      "id": "CON-03",
+      "module": "Concurrencia real",
+      "description": "Bloqueo y reserva simultáneos no pueden coexistir en el mismo horario",
+      "status": "PASS",
+      "detail": "exitos=1 rechazos=1 objetos=1"
+    },
+    {
+      "id": "CON-04",
+      "module": "Concurrencia real",
+      "description": "Dos cancelaciones simultáneas no duplican auditoría ni el motivo",
+      "status": "PASS",
+      "detail": "exitos=2 eventos=1 estado=cancelled|Motivo concurrente A"
+    },
+    {
+      "id": "CON-05",
+      "module": "Concurrencia real",
+      "description": "Dos reprogramaciones simultáneas al mismo horario: solo una ocupa el espacio",
+      "status": "PASS",
+      "detail": "exitos=1 rechazos=1 filas=1"
+    },
+    {
+      "id": "CON-06",
+      "module": "Concurrencia real",
+      "description": "Dos reservas simultáneas no superpuestas se aceptan sin bloquear de más",
+      "status": "PASS",
+      "detail": "exitos=2 filas=2"
+    },
+    {
+      "id": "EXP-01",
+      "module": "Expedientes clínicos",
+      "description": "Lectura de expediente por un usuario no vinculado",
+      "status": "BLOCKED",
+      "detail": "BLOQUEADO POR INTEGRACIÓN: el PR #11 con el esquema clínico sigue abierto y no está incluido en feature/pry07-base-e2e."
+    },
+    {
+      "id": "EXP-02",
+      "module": "Expedientes clínicos",
+      "description": "Autoría y protección de revisiones clínicas",
+      "status": "BLOCKED",
+      "detail": "BLOQUEADO POR INTEGRACIÓN: no existen tablas de expediente ni de revisiones clínicas en esta rama."
+    },
+    {
+      "id": "EXP-03",
+      "module": "Expedientes clínicos",
+      "description": "Escritura directa sobre expediente y revisiones",
+      "status": "BLOCKED",
+      "detail": "BLOQUEADO POR INTEGRACIÓN: depende del esquema clínico del PR #11."
+    },
+    {
+      "id": "INT-01",
+      "module": "Integridad referencial",
+      "status": "PASS",
+      "description": "Rechaza una cita con paciente inexistente (FK)",
+      "detail": "esperado=23503 obtenido=23503 mensaje=insert or update on table \"appointments\" violates foreign key constraint \"appointments_patient_id_fkey\""
+    },
+    {
+      "id": "INT-02",
+      "module": "Integridad referencial",
+      "status": "PASS",
+      "description": "Rechaza una cita con médico inexistente (FK)",
+      "detail": "esperado=23503 obtenido=23503 mensaje=insert or update on table \"appointments\" violates foreign key constraint \"appointments_physician_id_fkey\""
+    },
+    {
+      "id": "INT-03",
+      "module": "Integridad referencial",
+      "status": "PASS",
+      "description": "Rechaza un estado de cita fuera del contrato",
+      "detail": "esperado=23514 obtenido=23514 mensaje=new row for relation \"appointments\" violates check constraint \"appointments_status_check\""
+    },
+    {
+      "id": "INT-04",
+      "module": "Integridad referencial",
+      "status": "PASS",
+      "description": "Rechaza una duración distinta de 15, 30, 45 o 60",
+      "detail": "esperado=23514 obtenido=23514 mensaje=new row for relation \"appointments\" violates check constraint \"appointments_duration_check\""
+    },
+    {
+      "id": "INT-05",
+      "module": "Integridad referencial",
+      "status": "PASS",
+      "description": "Rechaza un paciente con clave primaria duplicada",
+      "detail": "esperado=23505 obtenido=23505 mensaje=duplicate key value violates unique constraint \"patients_pkey\""
+    },
+    {
+      "id": "INT-06",
+      "module": "Integridad referencial",
+      "status": "PASS",
+      "description": "Impide borrar un paciente con citas asociadas (FK restrict)",
+      "detail": "esperado=23503 obtenido=23503 mensaje=update or delete on table \"patients\" violates foreign key constraint \"appointments_patient_id_fkey\" on table \"appointments\""
+    },
+    {
+      "id": "INT-07",
+      "module": "Integridad referencial",
+      "status": "PASS",
+      "description": "Impide borrar un médico con citas asociadas (FK restrict)",
+      "detail": "esperado=23503 obtenido=23503 mensaje=update or delete on table \"physicians\" violates foreign key constraint \"appointments_physician_id_fkey\" on table \"appointments\""
+    },
+    {
+      "id": "INT-08",
+      "module": "Integridad referencial",
+      "status": "PASS",
+      "description": "Alta válida calcula ends_at, inicia pending y registra el evento created",
+      "detail": "comprobado estado, ends_at y auditoría"
+    },
+    {
+      "id": "INT-09",
+      "module": "Integridad referencial",
+      "status": "PASS",
+      "description": "Rechaza un motivo de consulta vacío",
+      "detail": "esperado=23514 obtenido=23514 mensaje=new row for relation \"appointments\" violates check constraint \"appointments_reason_check\""
+    },
+    {
+      "id": "INT-10",
+      "module": "Integridad referencial",
+      "status": "PASS",
+      "description": "Una inserción rechazada no modifica citas ni auditoría",
+      "detail": "citas=1->1 eventos=1->1"
+    },
+    {
+      "id": "INT-11",
+      "module": "Integridad referencial",
+      "status": "PASS",
+      "description": "El trigger recalcula ends_at aunque el cliente envíe otro valor",
+      "detail": "ends_at recalculado desde starts_at y duration_minutes"
+    },
+    {
+      "id": "INT-12",
+      "module": "Integridad referencial",
+      "status": "PASS",
+      "description": "Rechaza un evento de historial con cita inexistente",
+      "detail": "esperado=23503 obtenido=23503 mensaje=insert or update on table \"appointment_events\" violates foreign key constraint \"appointment_events_appointment_id_fkey\""
+    },
+    {
+      "id": "INT-13",
+      "module": "Integridad referencial",
+      "status": "PASS",
+      "description": "Rechaza mover una cita a un paciente inexistente",
+      "detail": "esperado=23503 obtenido=23503 mensaje=insert or update on table \"appointments\" violates foreign key constraint \"appointments_patient_id_fkey\""
+    },
+    {
+      "id": "INT-14",
+      "module": "Integridad referencial",
+      "status": "PASS",
+      "description": "Rechaza mover una cita a un médico inexistente",
+      "detail": "esperado=23503 obtenido=23503 mensaje=insert or update on table \"appointments\" violates foreign key constraint \"appointments_physician_id_fkey\""
+    },
+    {
+      "id": "INT-15",
+      "module": "Integridad referencial",
+      "status": "PASS",
+      "description": "Rechaza actualizar una cita a un estado inválido",
+      "detail": "esperado=23514 obtenido=23514 mensaje=new row for relation \"appointments\" violates check constraint \"appointments_status_check\""
+    },
+    {
+      "id": "INT-16",
+      "module": "Integridad referencial",
+      "status": "PASS",
+      "description": "La cita conserva la relación con su paciente y su médico",
+      "detail": "join paciente/médico comprobado"
+    },
+    {
+      "id": "INT-17",
+      "module": "Integridad referencial",
+      "status": "PASS",
+      "description": "Rechaza un bloqueo de agenda con fin anterior al inicio",
+      "detail": "esperado=23514 obtenido=23514 mensaje=new row for relation \"physician_schedule_blocks\" violates check constraint \"physician_schedule_blocks_interval_check\""
+    },
+    {
+      "id": "INT-18",
+      "module": "Integridad referencial",
+      "status": "PASS",
+      "description": "Rechaza un bloqueo de agenda con médico inexistente",
+      "detail": "esperado=23503 obtenido=23503 mensaje=insert or update on table \"physician_schedule_blocks\" violates foreign key constraint \"physician_schedule_blocks_physician_id_fkey\""
+    },
+    {
+      "id": "INT-19",
+      "module": "Integridad referencial",
+      "status": "PASS",
+      "description": "Impide borrar una cita que tiene historial (FK restrict)",
+      "detail": "esperado=23503 obtenido=23503 mensaje=update or delete on table \"appointments\" violates foreign key constraint \"appointment_events_appointment_id_fkey\" on table \"appointment_events\""
+    },
+    {
+      "id": "INT-20",
+      "module": "Integridad referencial",
+      "status": "PASS",
+      "description": "Impide borrar un médico con bloqueos de agenda (FK restrict)",
+      "detail": "esperado=23503 obtenido=23503 mensaje=update or delete on table \"physicians\" violates foreign key constraint \"physician_schedule_blocks_physician_id_fkey\" on table \"physician_schedule_blocks\""
+    },
+    {
+      "id": "PER-01",
+      "module": "Persistencia entre conexiones",
+      "description": "La creación confirmada por recepción se lee desde otra conexión",
+      "status": "PASS",
+      "detail": "COMMIT recibido"
+    },
+    {
+      "id": "PER-02",
+      "module": "Persistencia entre conexiones",
+      "description": "La cita persistida conserva estado, fin derivado y evento created",
+      "status": "PASS",
+      "detail": "observado=pending|true|1"
+    },
+    {
+      "id": "PER-03",
+      "module": "Persistencia entre conexiones",
+      "description": "La reserva duplicada se rechaza entre conexiones",
+      "status": "PASS",
+      "detail": "ERROR:  23P01: conflicting key value violates exclusion constraint \"appointments_no_overlap\"\nDETAIL:  Key conflicts with existing key.\nSCHEMA NAME:  public\nTABLE NAME:  appointments\nCONSTRAINT NAME:  appointments_no_overlap\nLOCATION:  check_exclusion_or_unique_constraint, execIndexing.c:905\n"
+    },
+    {
+      "id": "PER-04",
+      "module": "Persistencia entre conexiones",
+      "description": "El rechazo no deja una fila duplicada",
+      "status": "PASS",
+      "detail": "filas=1"
+    },
+    {
+      "id": "PER-05",
+      "module": "Persistencia entre conexiones",
+      "description": "La cancelación por RPC se confirma y persiste",
+      "status": "PASS",
+      "detail": "COMMIT recibido"
+    },
+    {
+      "id": "PER-06",
+      "module": "Persistencia entre conexiones",
+      "description": "La cancelación persiste con motivo, autor y un solo evento",
+      "status": "PASS",
+      "detail": "observado=cancelled|Motivo persistente|true|1"
+    },
+    {
+      "id": "PER-07",
+      "module": "Persistencia entre conexiones",
+      "description": "El horario liberado acepta una reserva persistente y mantiene el historial",
+      "status": "PASS",
+      "detail": "filas_activas=2|1"
+    },
+    {
+      "id": "CIT-01",
+      "module": "Reglas de citas",
+      "status": "PASS",
+      "description": "El personal autorizado crea una cita pending con fin derivado",
+      "detail": "cita y evento created comprobados"
+    },
+    {
+      "id": "CIT-02",
+      "module": "Reglas de citas",
+      "status": "PASS",
+      "description": "Rechaza dos citas superpuestas para el mismo médico",
+      "detail": "esperado=23P01 obtenido=23P01 mensaje=conflicting key value violates exclusion constraint \"appointments_no_overlap\""
+    },
+    {
+      "id": "CIT-03",
+      "module": "Reglas de citas",
+      "status": "PASS",
+      "description": "Rechaza reprogramar una cita sobre un horario ocupado",
+      "detail": "esperado=23P01 obtenido=23P01 mensaje=conflicting key value violates exclusion constraint \"appointments_no_overlap\""
+    },
+    {
+      "id": "CIT-04",
+      "module": "Reglas de citas",
+      "status": "PASS",
+      "description": "Permite el mismo horario para médicos distintos",
+      "detail": "dos médicos con cita a la misma hora"
+    },
+    {
+      "id": "CIT-05",
+      "module": "Reglas de citas",
+      "status": "PASS",
+      "description": "Reprogramar guarda inicio, duración, fin y evento rescheduled",
+      "detail": "cita reprogramada y auditada"
+    },
+    {
+      "id": "CIT-06",
+      "module": "Reglas de citas",
+      "status": "PASS",
+      "description": "Cancelar conserva la fila, el motivo y el autor",
+      "detail": "estado, motivo y actor comprobados"
+    },
+    {
+      "id": "CIT-07",
+      "module": "Reglas de citas",
+      "status": "PASS",
+      "description": "La cancelación conserva la cita y registra un único evento cancelled",
+      "detail": "fila y auditoría conservadas"
+    },
+    {
+      "id": "CIT-08",
+      "module": "Reglas de citas",
+      "status": "PASS",
+      "description": "El horario liberado por cancelación acepta una nueva reserva",
+      "detail": "reserva nueva aceptada"
+    },
+    {
+      "id": "CIT-09",
+      "module": "Reglas de citas",
+      "status": "PASS",
+      "description": "Confirmar guarda estado, fecha y autor, con un evento confirmed",
+      "detail": "confirmación y auditoría comprobadas"
+    },
+    {
+      "id": "CIT-10",
+      "module": "Reglas de citas",
+      "status": "PASS",
+      "description": "Repetir la confirmación con la versión vigente no duplica la auditoría",
+      "detail": "un solo evento confirmed"
+    },
+    {
+      "id": "CIT-11",
+      "module": "Reglas de citas",
+      "status": "PASS",
+      "description": "Reprogramar una confirmada la devuelve a pending y retira la confirmación",
+      "detail": "estado y campos de confirmación comprobados"
+    },
+    {
+      "id": "CIT-12",
+      "module": "Reglas de citas",
+      "status": "PASS",
+      "description": "Rechaza una mutación con updated_at desactualizado",
+      "detail": "esperado=PT409 obtenido=PT409 mensaje=La cita cambió mientras se editaba."
+    },
+    {
+      "id": "CIT-13",
+      "module": "Reglas de citas",
+      "status": "PASS",
+      "description": "Rechaza confirmar una cita cancelada",
+      "detail": "esperado=PT422 obtenido=PT422 mensaje=No se puede confirmar una cita cancelada."
+    },
+    {
+      "id": "CIT-14",
+      "module": "Reglas de citas",
+      "status": "PASS",
+      "description": "Rechaza reprogramar una cita cancelada",
+      "detail": "esperado=PT422 obtenido=PT422 mensaje=No se puede reprogramar una cita cancelada."
+    },
+    {
+      "id": "CIT-15",
+      "module": "Reglas de citas",
+      "status": "PASS",
+      "description": "Rechaza una cancelación sin motivo y conserva la cita",
+      "detail": "esperado=PT400 obtenido=PT400 mensaje=Indica un motivo de cancelación válido."
+    },
+    {
+      "id": "CIT-15b",
+      "module": "Reglas de citas",
+      "status": "PASS",
+      "description": "La cancelación rechazada no cambia el estado de la cita",
+      "detail": "estado pending conservado"
+    },
+    {
+      "id": "CIT-16",
+      "module": "Reglas de citas",
+      "status": "PASS",
+      "description": "Rechaza operar sobre una cita inexistente",
+      "detail": "esperado=PT404 obtenido=PT404 mensaje=La cita no existe."
+    },
+    {
+      "id": "CIT-17",
+      "module": "Reglas de citas",
+      "status": "PASS",
+      "description": "El traslape rechazado no crea filas ni auditoría adicional",
+      "detail": "sin cita en el horario rechazado"
+    },
+    {
+      "id": "CIT-18",
+      "module": "Reglas de citas",
+      "status": "PASS",
+      "description": "Repetir la cancelación conserva el motivo y no duplica auditoría",
+      "detail": "motivo original y un solo evento"
+    },
+    {
+      "id": "CIT-19",
+      "module": "Reglas de citas",
+      "status": "PASS",
+      "description": "Rechaza reprogramar una cita al pasado",
+      "detail": "esperado=PT400 obtenido=PT400 mensaje=La cita no puede quedar en el pasado."
+    },
+    {
+      "id": "CIT-20",
+      "module": "Reglas de citas",
+      "status": "PASS",
+      "description": "Rechaza una duración inválida en reprogramación",
+      "detail": "esperado=PT400 obtenido=PT400 mensaje=Los datos de la reprogramación no son válidos."
+    },
+    {
+      "id": "CIT-21",
+      "module": "Reglas de citas",
+      "status": "PASS",
+      "description": "La cita cancelada conserva sus eventos anteriores",
+      "detail": "eventos created y cancelled presentes"
+    },
+    {
+      "id": "SEC-01",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Las cinco tablas del módulo tienen RLS activo",
+      "detail": "patients, physicians, appointments, appointment_events y physician_schedule_blocks"
+    },
+    {
+      "id": "SEC-02",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "authenticated puede leer e insertar citas pero no actualizar ni borrar",
+      "detail": "SELECT/INSERT sí; UPDATE/DELETE no"
+    },
+    {
+      "id": "SEC-03",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "El historial de citas solo permite SELECT a authenticated",
+      "detail": "sin escritura directa sobre append-only"
+    },
+    {
+      "id": "SEC-04",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "anon no tiene privilegios sobre ninguna tabla del módulo",
+      "detail": "sin SELECT en las cinco tablas"
+    },
+    {
+      "id": "SEC-05",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Las RPC solo son ejecutables por authenticated",
+      "detail": "anon sin EXECUTE; authenticated con EXECUTE"
+    },
+    {
+      "id": "SEC-06",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "La función de trigger de bloqueos no es ejecutable por authenticated",
+      "detail": "EXECUTE revocado"
+    },
+    {
+      "id": "SEC-07",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "anon no puede leer citas",
+      "detail": "esperado=42501 obtenido=42501 mensaje=permission denied for table appointments"
+    },
+    {
+      "id": "SEC-08",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "anon no puede insertar citas",
+      "detail": "esperado=42501 obtenido=42501 mensaje=permission denied for table appointments"
+    },
+    {
+      "id": "SEC-09",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "anon no puede leer pacientes",
+      "detail": "esperado=42501 obtenido=42501 mensaje=permission denied for table patients"
+    },
+    {
+      "id": "SEC-10",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "anon no puede leer médicos",
+      "detail": "esperado=42501 obtenido=42501 mensaje=permission denied for table physicians"
+    },
+    {
+      "id": "SEC-11",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "anon no puede leer el historial",
+      "detail": "esperado=42501 obtenido=42501 mensaje=permission denied for table appointment_events"
+    },
+    {
+      "id": "SEC-12",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "anon no puede leer bloqueos de agenda",
+      "detail": "esperado=42501 obtenido=42501 mensaje=permission denied for table physician_schedule_blocks"
+    },
+    {
+      "id": "SEC-13",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "anon no puede ejecutar la confirmación",
+      "detail": "esperado=42501 obtenido=42501 mensaje=permission denied for function confirm_appointment"
+    },
+    {
+      "id": "SEC-14",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "anon no puede ejecutar la cancelación",
+      "detail": "esperado=42501 obtenido=42501 mensaje=permission denied for function cancel_appointment"
+    },
+    {
+      "id": "SEC-15",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "anon no puede ejecutar la reprogramación",
+      "detail": "esperado=42501 obtenido=42501 mensaje=permission denied for function reschedule_appointment"
+    },
+    {
+      "id": "SEC-16",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Una cuenta sin rol no ve citas",
+      "detail": "filas=0"
+    },
+    {
+      "id": "SEC-17",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Una cuenta sin rol no ve pacientes",
+      "detail": "filas=0"
+    },
+    {
+      "id": "SEC-18",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Una cuenta sin rol no ve médicos",
+      "detail": "filas=0"
+    },
+    {
+      "id": "SEC-19",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Una cuenta sin rol no ve historial",
+      "detail": "filas=0"
+    },
+    {
+      "id": "SEC-20",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Una cuenta sin rol no ve bloqueos",
+      "detail": "filas=0"
+    },
+    {
+      "id": "SEC-21",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Una cuenta sin rol no puede insertar citas",
+      "detail": "esperado=42501 obtenido=42501 mensaje=new row violates row-level security policy for table \"appointments\""
+    },
+    {
+      "id": "SEC-22",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Una cuenta sin rol no puede insertar bloqueos",
+      "detail": "esperado=42501 obtenido=42501 mensaje=new row violates row-level security policy for table \"physician_schedule_blocks\""
+    },
+    {
+      "id": "SEC-23",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Una cuenta sin rol no puede confirmar",
+      "detail": "esperado=42501 obtenido=42501 mensaje=Solo administración o recepción puede modificar citas."
+    },
+    {
+      "id": "SEC-24",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Una cuenta sin rol no puede cancelar",
+      "detail": "esperado=42501 obtenido=42501 mensaje=Solo administración o recepción puede modificar citas."
+    },
+    {
+      "id": "SEC-25",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Una cuenta sin rol no puede reprogramar",
+      "detail": "esperado=42501 obtenido=42501 mensaje=Solo administración o recepción puede modificar citas."
+    },
+    {
+      "id": "SEC-26",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Recepción lee toda la agenda",
+      "detail": "citas=4"
+    },
+    {
+      "id": "SEC-27",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Recepción lee pacientes y médicos",
+      "detail": "pacientes=3 medicos=3"
+    },
+    {
+      "id": "SEC-28",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Recepción crea una cita pending",
+      "detail": "alta autorizada"
+    },
+    {
+      "id": "SEC-29",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Recepción no puede crear una cita confirmada directamente",
+      "detail": "esperado=42501 obtenido=42501 mensaje=new row violates row-level security policy for table \"appointments\""
+    },
+    {
+      "id": "SEC-30",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "La FK sigue rechazando un paciente inexistente",
+      "detail": "esperado=23503 obtenido=23503 mensaje=insert or update on table \"appointments\" violates foreign key constraint \"appointments_patient_id_fkey\""
+    },
+    {
+      "id": "SEC-31",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Recepción no puede actualizar citas directamente",
+      "detail": "esperado=42501 obtenido=42501 mensaje=permission denied for table appointments"
+    },
+    {
+      "id": "SEC-32",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Recepción no puede borrar citas directamente",
+      "detail": "esperado=42501 obtenido=42501 mensaje=permission denied for table appointments"
+    },
+    {
+      "id": "SEC-33",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Recepción no puede escribir el historial directamente",
+      "detail": "esperado=42501 obtenido=42501 mensaje=permission denied for table appointment_events"
+    },
+    {
+      "id": "SEC-34",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Recepción lee todo el historial",
+      "detail": "eventos=5"
+    },
+    {
+      "id": "SEC-35",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Recepción crea un bloqueo de agenda",
+      "detail": "bloqueo insertado"
+    },
+    {
+      "id": "SEC-36",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Rechaza un bloqueo que se traslapa con una cita activa",
+      "detail": "esperado=23P01 obtenido=23P01 mensaje=El bloqueo se traslapa con una cita activa."
+    },
+    {
+      "id": "SEC-37",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Rechaza una cita que se traslapa con un bloqueo",
+      "detail": "esperado=23P01 obtenido=23P01 mensaje=El medico no esta disponible en ese horario."
+    },
+    {
+      "id": "SEC-38",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Una cita cancelada no impide bloquear el horario",
+      "detail": "bloqueo sobre cancelada aceptado"
+    },
+    {
+      "id": "SEC-39",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Rechaza campos de cancelación en una cita no cancelada",
+      "detail": "esperado=23514 obtenido=23514 mensaje=new row for relation \"appointments\" violates check constraint \"appointments_cancellation_fields_check\""
+    },
+    {
+      "id": "SEC-40",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Recepción cancela por RPC y se registra su autoría",
+      "detail": "estado y actor de la cancelación"
+    },
+    {
+      "id": "SEC-41",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "El médico lee solo sus propias citas",
+      "detail": "citas_visibles=2"
+    },
+    {
+      "id": "SEC-42",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "El médico lee solo pacientes con cita propia",
+      "detail": "pacientes_visibles=1"
+    },
+    {
+      "id": "SEC-43",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "El médico solo ve su propio registro profesional",
+      "detail": "medicos_visibles=1"
+    },
+    {
+      "id": "SEC-44",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "El médico solo ve el historial de sus citas",
+      "detail": "eventos_visibles=2"
+    },
+    {
+      "id": "SEC-45",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "El médico no puede confirmar citas",
+      "detail": "esperado=42501 obtenido=42501 mensaje=Solo administración o recepción puede modificar citas."
+    },
+    {
+      "id": "SEC-46",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "El médico no puede cancelar citas",
+      "detail": "esperado=42501 obtenido=42501 mensaje=Solo administración o recepción puede modificar citas."
+    },
+    {
+      "id": "SEC-47",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "El médico no puede reprogramar citas",
+      "detail": "esperado=42501 obtenido=42501 mensaje=Solo administración o recepción puede modificar citas."
+    },
+    {
+      "id": "SEC-48",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "El médico no puede insertar citas directamente",
+      "detail": "esperado=42501 obtenido=42501 mensaje=new row violates row-level security policy for table \"appointments\""
+    },
+    {
+      "id": "SEC-49",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "El médico no puede insertar bloqueos de agenda",
+      "detail": "esperado=42501 obtenido=42501 mensaje=new row violates row-level security policy for table \"physician_schedule_blocks\""
+    },
+    {
+      "id": "SEC-50",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "El médico no puede modificar bloqueos directamente",
+      "detail": "fila sin cambios"
+    },
+    {
+      "id": "SEC-51",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "El médico no puede borrar bloqueos directamente",
+      "detail": "fila conservada"
+    },
+    {
+      "id": "SEC-52",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "El médico solo ve sus propios bloqueos",
+      "detail": "bloqueos_visibles=2"
+    },
+    {
+      "id": "SEC-53",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "Un médico no ve citas ni pacientes de otro médico",
+      "detail": "citas=1 pacientes=1"
+    },
+    {
+      "id": "SEC-54",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "El evento confirmed guarda al administrador y la transición",
+      "detail": "autoría y transición comprobadas"
+    },
+    {
+      "id": "SEC-55",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "El evento created de una cita guarda al usuario que la creó",
+      "detail": "autoría de la creación por recepción"
+    },
+    {
+      "id": "SEC-56",
+      "module": "Seguridad y RLS",
+      "status": "PASS",
+      "description": "El historial no se puede reescribir con UPDATE directo",
+      "detail": "sin privilegio UPDATE"
+    }
+  ],
+  "notes": [
+    "Los JWT se simulan con request.jwt.claims y SET ROLE.",
+    "No se usó GoTrue, PostgREST, Supabase remoto ni datos reales.",
+    "El contenedor y sus datos son desechables."
+  ]
+}
