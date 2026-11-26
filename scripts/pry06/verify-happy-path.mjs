@@ -195,7 +195,9 @@ try {
         (item) => item.id === appointment.id,
       ),
     );
-    await staffPage.getByRole('link', { name: 'Ver detalle' }).click();
+    await staffPage.goto('/citas');
+    const row = staffPage.getByRole('row').filter({ hasText: name });
+    await row.locator(`a[href="/citas/${appointment.id}"]`).click();
     await staffPage
       .getByRole('heading', { name: 'Detalle de la cita' })
       .waitFor();
@@ -253,7 +255,7 @@ try {
     await confirm('confirm', 'Confirmar', 'Sí, confirmar cita', 'confirmed');
     await confirm('cancel', 'Cancelar cita', 'Sí, cancelar cita', 'cancelled');
     pass(
-      `PASS ${width} RF-01 a RF-06: cita vinculada, lectura, reprogramación, traslape, confirmación y cancelación`,
+      `PASS ${width} RF-01 a RF-06: cita vinculada, agenda, reprogramación, traslape, confirmación y cancelación`,
     );
     await staff.close();
     await context.close();
