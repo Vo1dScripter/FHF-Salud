@@ -3,7 +3,8 @@
 ## Reporte
 
 - **Rama:** `feature/pry07-regresion-manual`, base `feature/pry07-e2e-historial-clinico` (que ya integra `pry06-integracion-final`). `main` no contiene PRY06 ni PRY07.
-- **Commit:** ver el historial del PR.
+- **Commit:** `2c20661`
+- **PR y revisor:** [PR #16](https://github.com/Vo1dScripter/FHF-Salud/pull/16), revisor: el asignado en el propio PR (revisión solicitada, pendiente). No está fusionado ni aprobado.
 - **Cambios:**
   - `scripts/pry07/regression-smoke.mjs` y el script npm `pry07:smoke`.
   - Pruebas de regresión en `src/__tests__/regression/`: `CrossModuleLinks`, `GlobalNavigation` y `PreviewRegression`.
@@ -12,13 +13,12 @@
 
 | Comprobación | Resultado |
 | --- | --- |
-| `npm run typecheck` | NO EJECUTADO hasta el final: el proceso quedó colgado más de 25 minutos y se canceló |
+| `npm run typecheck` | NO COMPLETADO: el proceso quedó colgado más de 25 minutos y se canceló, sin resultado |
 | `npm run lint:strict` | NO EJECUTADO: falta de tiempo |
 | Jest `src/__tests__/regression` | NO EJECUTADO por el autor: el revisor debe correrlo |
 | `npm run pry07:smoke` | NO EJECUTADO: falta de tiempo |
 
 - **Evidencia:** `evidencias/PRY07/05-manuel/` (29 capturas, 1440 px y 390 px, datos ficticios). No se revisaron una por una; revisar antes de usarlas en el PDF.
-- **PR y revisor:** ver el PR #__ y el revisor asignado en GitHub.
 - **Incidencias:** se agotó el límite gratuito de OpenCode durante la sesión y no se terminaron la validación completa de interfaz ni las correcciones adicionales.
 - **Siguiente integrante:** ejecutar `npm install`, `npm run typecheck`, `npm run lint:strict`, `npm run test -- --runInBand src/__tests__/regression` y `npm run pry07:smoke`, y anotar los resultados reales.
 
