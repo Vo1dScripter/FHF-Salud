@@ -1,0 +1,142 @@
+{
+  "timestamp": "2026-11-17T05:34:54.124Z",
+  "completed": true,
+  "scope": "UI fixtures + configuración real sin Supabase; no E2E de BD",
+  "results": [
+    {
+      "width": 1440,
+      "check": "API y UI reales: configuración ausente 503",
+      "status": "PASS"
+    },
+    {
+      "width": 1440,
+      "check": "fixture: navegación, 25 registros, búsqueda, paginación, teclado/foco, temas y overflow",
+      "status": "PASS"
+    },
+    {
+      "width": 1440,
+      "check": "fixture: empty",
+      "status": "PASS"
+    },
+    {
+      "width": 1440,
+      "check": "fixture: forbidden",
+      "status": "PASS"
+    },
+    {
+      "width": 1440,
+      "check": "fixture: unauthenticated",
+      "status": "PASS"
+    },
+    {
+      "width": 1440,
+      "check": "fixture: unavailable",
+      "status": "PASS"
+    },
+    {
+      "width": 1440,
+      "check": "fixture: validation",
+      "status": "PASS"
+    },
+    {
+      "width": 1440,
+      "check": "fixture: loading",
+      "status": "PASS"
+    },
+    {
+      "width": 1440,
+      "check": "retorno a Citas y cero pageerror",
+      "status": "PASS"
+    },
+    {
+      "width": 768,
+      "check": "API y UI reales: configuración ausente 503",
+      "status": "PASS"
+    },
+    {
+      "width": 768,
+      "check": "fixture: navegación, 25 registros, búsqueda, paginación, teclado/foco, temas y overflow",
+      "status": "PASS"
+    },
+    {
+      "width": 768,
+      "check": "fixture: empty",
+      "status": "PASS"
+    },
+    {
+      "width": 768,
+      "check": "fixture: forbidden",
+      "status": "PASS"
+    },
+    {
+      "width": 768,
+      "check": "fixture: unauthenticated",
+      "status": "PASS"
+    },
+    {
+      "width": 768,
+      "check": "fixture: unavailable",
+      "status": "PASS"
+    },
+    {
+      "width": 768,
+      "check": "fixture: validation",
+      "status": "PASS"
+    },
+    {
+      "width": 768,
+      "check": "fixture: loading",
+      "status": "PASS"
+    },
+    {
+      "width": 768,
+      "check": "retorno a Citas y cero pageerror",
+      "status": "PASS"
+    },
+    {
+      "width": 390,
+      "check": "API y UI reales: configuración ausente 503",
+      "status": "PASS"
+    },
+    {
+      "width": 390,
+      "check": "fixture: navegación, 25 registros, búsqueda, paginación, teclado/foco, temas y overflow",
+      "status": "PASS"
+    },
+    {
+      "width": 390,
+      "check": "fixture: empty",
+      "status": "PASS"
+    },
+    {
+      "width": 390,
+      "check": "fixture: forbidden",
+      "status": "PASS"
+    },
+    {
+      "width": 390,
+      "check": "fixture: unauthenticated",
+      "status": "PASS"
+    },
+    {
+      "width": 390,
+      "check": "fixture: unavailable",
+      "status": "PASS"
+    },
+    {
+      "width": 390,
+      "check": "fixture: validation",
+      "status": "PASS"
+    },
+    {
+      "width": 390,
+      "check": "fixture: loading",
+      "status": "PASS"
+    },
+    {
+      "width": 390,
+      "check": "retorno a Citas y cero pageerror",
+      "status": "PASS"
+    }
+  ]
+}

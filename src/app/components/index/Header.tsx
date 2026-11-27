@@ -5,10 +5,12 @@ import { appointmentRoutes } from '@/features/appointments';
 
 export default function Header({
   appointments = false,
+  patients = false,
 }: {
   appointments?: boolean;
+  patients?: boolean;
 }) {
-  const prefix = appointments ? '/' : '';
+  const prefix = appointments || patients ? '/' : '';
   const navItems = [
     { href: `${prefix}#inicio`, label: 'Inicio' },
     { href: `${prefix}#alcance`, label: 'Alcance' },
@@ -18,11 +20,14 @@ export default function Header({
       href: appointmentRoutes.list,
       label: 'Citas médicas',
     },
+    { active: patients, href: '/pacientes', label: 'Pacientes' },
   ];
   return (
     <header
       className={
-        appointments ? 'fhf-header fhf-header--appointments' : 'fhf-header'
+        appointments || patients
+          ? 'fhf-header fhf-header--appointments'
+          : 'fhf-header'
       }
     >
       <div className='fhf-shell'>
