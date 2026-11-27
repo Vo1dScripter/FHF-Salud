@@ -51,6 +51,19 @@ class LocalE2ETest(unittest.TestCase):
             scripts = runner.e2e_scripts()
         self.assertEqual(scripts, [selected.resolve()])
 
+    def test_cancelled_appointment_fixture_satisfies_cancellation_check(self):
+        # Regresión: appointments_cancellation_fields_check exige estos campos y
+        # su ausencia abortaba toda la preparación antes de generar evidencia.
+        statement = runner.cancelled_appointment_sql(
+            "p-ficticio",
+            "m-ficticio",
+            "2035-09-10T10:00:00Z",
+            "Cita ficticia cancelada",
+        )
+        for column in ("cancelled_at", "cancellation_reason"):
+            self.assertIn(column, statement)
+        self.assertIn("'cancelled'", statement)
+
     def test_jwt_contains_role_and_future_expiration(self):
         token = runner.sign("anon", "secreto-ficticio")
         self.assertEqual(len(token.split(".")), 3)

@@ -16,7 +16,9 @@ begin
   exception when others then
     got := sqlstate;
   end;
-  if got <> p_state then
+  -- Algunas violaciones admiten más de un SQLSTATE según la versión de
+  -- PostgreSQL (p. ej. ON DELETE RESTRICT: 23001 en PG18, 23503 en PG17).
+  if not (got = any(string_to_array(p_state, '|'))) then
     raise exception 'FAIL %: se esperaba % y se obtuvo %', p_label, p_state, got;
   end if;
 end;
@@ -136,7 +138,7 @@ select public.test_expect(
 select public.test_expect(
   $q$delete from public.patients
      where id = 'c2000000-0000-4000-8000-000000000003'$q$,
-  '23503', 'no se borra un paciente con expediente');
+  '23001|23503', 'no se borra un paciente con expediente');
 select public.test_expect(
   $q$update public.patients set birth_date = date '1800-01-01'
      where id = 'c2000000-0000-4000-8000-000000000001'$q$,

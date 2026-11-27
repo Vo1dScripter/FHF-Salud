@@ -146,6 +146,22 @@ def expired_session(account, physician_id, secret, now):
     }
 
 
+def cancelled_appointment_sql(patient_id, physician_id, starts_at, reason):
+    """Cita cancelada ficticia que cumple el CHECK de campos de cancelación.
+
+    appointments_cancellation_fields_check exige cancelled_at y
+    cancellation_reason no nulos cuando status = 'cancelled'. Omitirlos aborta
+    toda la preparación del escenario con ON_ERROR_STOP.
+    """
+    return (
+        "insert into public.appointments"
+        "(patient_id,physician_id,starts_at,duration_minutes,reason,status,"
+        "cancelled_at,cancellation_reason) values "
+        f"('{patient_id}','{physician_id}','{starts_at}',30,'{reason}',"
+        f"'cancelled','{starts_at}','Cancelación ficticia PRY07 E2E');"
+    )
+
+
 def session_cookie(host, session):
     """Codifica la sesión con el mismo formato base64url de @supabase/ssr."""
     encoded = base64.urlsafe_b64encode(
@@ -404,6 +420,17 @@ def verify_clinical(sql, fixtures):
             4,
             f"fechas del servidor ({width})",
         )
+    primary = fixtures["clinical"]["1440"]["patientId"]
+    expect(
+        int(value(
+            f"select count(*) from public.appointments "
+            f"where patient_id = '{primary}' and physician_id = '{physician_b_id}' "
+            f"and status = 'cancelled' and cancelled_at is not null "
+            f"and btrim(coalesce(cancellation_reason, '')) <> '';"
+        )),
+        1,
+        "cita cancelada del médico sin vínculo",
+    )
     missing = fixtures["nonexistentPatientId"]
     expect(
         int(value(
@@ -529,8 +556,14 @@ def run():
                 f"('{clinical_ids['390']}','{physician_id}','{accounts['physician']['id']}');"
                 f"insert into public.appointments(patient_id,physician_id,starts_at,duration_minutes,reason,status) values "
                 f"('{clinical_ids['1440']}','{physician_id}','2035-09-10T09:00:00Z',30,'Cita ficticia E2E historial 1440','confirmed'),"
-                f"('{clinical_ids['390']}','{physician_id}','2035-09-11T09:00:00Z',30,'Cita ficticia E2E historial 390','confirmed'),"
-                f"('{clinical_ids['1440']}','{physician_b_id}','2035-09-10T10:00:00Z',30,'Cita ficticia cancelada sin vínculo','cancelled');"
+                f"('{clinical_ids['390']}','{physician_id}','2035-09-11T09:00:00Z',30,'Cita ficticia E2E historial 390','confirmed');"
+            )
+            sql(
+                cancelled_appointment_sql(
+                    clinical_ids['1440'], physician_b_id,
+                    '2035-09-10T10:00:00Z',
+                    'Cita ficticia cancelada sin vínculo',
+                )
             )
             clinical_texts = {}
             for width in CLINICAL_WIDTHS:
