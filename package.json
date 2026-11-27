@@ -27,6 +27,7 @@
     "prepare": "husky",
     "supabase:check": "node scripts/check-supabase.mjs",
     "integrations:test": "node --test scripts/tests/*.node-test.mjs",
+    "pry07:smoke": "node scripts/pry07/regression-smoke.mjs",
     "test:patients": "jest --runInBand patients"
   },
   "dependencies": {

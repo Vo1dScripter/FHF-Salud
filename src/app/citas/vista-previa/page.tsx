@@ -67,9 +67,7 @@ export default async function AppointmentPreviewPage({
         <AppointmentDetail appointment={selected} />
       ) : (
         <AppointmentList
-          detailHref={(id) =>
-            `/citas/vista-previa?estado=detalle&id=${encodeURIComponent(id)}`
-          }
+          detailHrefPrefix='/citas/vista-previa?estado=detalle&id='
           state={listState}
         />
       )}
