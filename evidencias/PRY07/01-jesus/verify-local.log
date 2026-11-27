@@ -1,0 +1,210 @@
+npm warn Unknown project config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> ts-nextjs-tailwind-starter@0.1.0 verify
+> npm run lint:strict && npm run typecheck && npm test -- --runInBand && npm run img:test && npm run integrations:test && npm run build
+
+npm warn Unknown env config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown project config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> ts-nextjs-tailwind-starter@0.1.0 lint:strict
+> eslint . --max-warnings=0
+
+npm warn Unknown env config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown project config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> ts-nextjs-tailwind-starter@0.1.0 typecheck
+> tsc --noEmit --incremental false
+
+npm warn Unknown env config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown project config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> ts-nextjs-tailwind-starter@0.1.0 test
+> jest --runInBand
+
+PASS src/__tests__/clinical-records/ClinicalHistoryPage.test.tsx
+PASS src/__tests__/appointments/AppointmentActions.test.tsx
+PASS src/__tests__/clinical-records/ClinicalHistory.test.tsx
+  ● Console
+
+    console.error
+      Encountered two children with the same key, `55555555-5555-4555-8555-555555555555`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:6604:23
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at warnOnInvalidKey (node_modules/react-dom/cjs/react-dom-client.development.js:6603:13)
+      at reconcileChildrenArray (node_modules/react-dom/cjs/react-dom-client.development.js:6672:31)
+      at reconcileChildFibersImpl (node_modules/react-dom/cjs/react-dom-client.development.js:6993:30)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:7098:33
+      at reconcileChildren (node_modules/react-dom/cjs/react-dom-client.development.js:9702:13)
+      at beginWork (node_modules/react-dom/cjs/react-dom-client.development.js:12049:13)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17641:22)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at performWorkUntilDeadline (node_modules/scheduler/cjs/scheduler.development.js:45:48)
+      at Timeout.task [as _onTimeout] (node_modules/jsdom/lib/jsdom/browser/Window.js:579:19)
+
+    console.error
+      Encountered two children with the same key, `55555555-5555-4555-8555-555555555555`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:6604:23
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at warnOnInvalidKey (node_modules/react-dom/cjs/react-dom-client.development.js:6603:13)
+      at reconcileChildrenArray (node_modules/react-dom/cjs/react-dom-client.development.js:6672:31)
+      at reconcileChildFibersImpl (node_modules/react-dom/cjs/react-dom-client.development.js:6993:30)
+      at node_modules/react-dom/cjs/react-dom-client.development.js:7098:33
+      at reconcileChildren (node_modules/react-dom/cjs/react-dom-client.development.js:9702:13)
+      at beginWork (node_modules/react-dom/cjs/react-dom-client.development.js:12049:13)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17641:22)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at performWorkUntilDeadline (node_modules/scheduler/cjs/scheduler.development.js:45:48)
+      at Timeout.task [as _onTimeout] (node_modules/jsdom/lib/jsdom/browser/Window.js:579:19)
+
+PASS src/__tests__/patients/PatientDirectory.test.tsx
+PASS src/__tests__/appointments/AppointmentFlow.test.tsx
+PASS src/lib/clinical-records/__tests__/route.test.ts
+PASS src/__tests__/appointments/Preparation.test.tsx
+PASS src/__tests__/pages/HomePage.test.tsx
+PASS src/__tests__/appointments/AppointmentDetailPage.test.tsx
+PASS src/__tests__/appointments/AppointmentDetail.test.tsx
+PASS src/features/appointments/__tests__/service.test.ts
+PASS src/lib/patients/__tests__/route.test.ts
+PASS src/lib/patients/__tests__/server.test.ts
+PASS src/features/patients/__tests__/contracts.test.ts
+PASS src/features/clinical-records/__tests__/validation.test.ts
+PASS src/features/clinical-records/__tests__/repository.test.ts
+PASS src/lib/clinical-records/__tests__/server.test.ts
+PASS src/features/clinical-records/__tests__/service.test.ts
+PASS src/features/patients/__tests__/repository.test.ts
+PASS src/features/clinical-records/__tests__/access.test.ts
+PASS src/components/theme/__tests__/ThemeToggle.test.tsx
+PASS src/lib/supabase/__tests__/config.test.ts
+PASS src/features/appointments/__tests__/datetime.test.ts
+PASS src/lib/__tests__/appointment-preview.test.ts
+PASS src/features/appointments/__tests__/availability.test.ts
+PASS src/lib/__tests__/og.test.ts
+
+Test Suites: 26 passed, 26 total
+Tests:       206 passed, 206 total
+Snapshots:   0 total
+Time:        9.146 s
+Ran all test suites.
+npm warn Unknown env config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown project config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> ts-nextjs-tailwind-starter@0.1.0 img:test
+> python3 -m unittest discover -s tests -p "test_*.py"
+
+Aviso: Se detecto un manifest legado en imagenes.json; se migrara al nuevo formato.
+....Aviso: pillow-avif-plugin no esta instalado; se omitio la salida AVIF.
+Aviso: pillow-avif-plugin no esta instalado; se omitio la salida AVIF.
+....
+----------------------------------------------------------------------
+Ran 8 tests in 0.691s
+
+OK
+npm warn Unknown env config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown project config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> ts-nextjs-tailwind-starter@0.1.0 integrations:test
+> node --test scripts/tests/*.node-test.mjs
+
+✔ reminder endpoint rejects missing configuration, missing and incorrect credentials (27.8523ms)
+✔ authorized infrastructure call reports unavailable and never fake dispatch success (2.0088ms)
+✔ unsupported methods cannot dispatch (0.8422ms)
+✔ push worker never displays private payloads or follows supplied external URLs (2.0386ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 318.9341
+npm warn Unknown env config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+npm warn Unknown project config "enable-pre-post-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> ts-nextjs-tailwind-starter@0.1.0 prebuild
+> node scripts/reset-project-cache.mjs && gulp css
+
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[19:53:37] Using gulpfile ~\FHF-Salud\gulpfile.js
+[19:53:37] Starting 'css'...
+✅ CSS compilado y optimizado.
+[19:53:38] Finished 'css' after 940 ms
+
+> ts-nextjs-tailwind-starter@0.1.0 build
+> next build
+
+▲ Next.js 16.4.6 (Turbopack)
+✓ Running next.config.ts took 38ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 1566ms
+  Running TypeScript ...
+  Finished TypeScript in 2.3s ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/9) ...
+  Generating static pages using 15 workers (2/9) 
+  Generating static pages using 15 workers (4/9) 
+  Generating static pages using 15 workers (6/9) 
+✓ Generating static pages using 15 workers (9/9) in 331ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/citas
+├ ƒ /api/citas/[id]
+├ ƒ /api/citas/referencias
+├ ƒ /api/hello
+├ ƒ /api/pacientes
+├ ƒ /api/pacientes/[id]/expediente
+├ ○ /citas
+├ ƒ /citas/[id]
+├ ○ /citas/acceso
+├ ○ /citas/nueva
+├ ○ /citas/vista-previa
+├ ○ /pacientes
+└ ƒ /pacientes/[id]
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+
+> ts-nextjs-tailwind-starter@0.1.0 postbuild
+> next-sitemap --config next-sitemap.config.js
+
+✨ [next-sitemap] Loading next-sitemap config: file:///C:/Users/Admin/FHF-Salud/next-sitemap.config.js
+✅ [next-sitemap] Generation completed
+┌───────────────┬────────┐
+│ (index)       │ Values │
+├───────────────┼────────┤
+│ indexSitemaps │ 1      │
+│ sitemaps      │ 1      │
+└───────────────┴────────┘
+-----------------------------------------------------
+ SITEMAP INDICES 
+-----------------------------------------------------
+
+   ○ https://fhf-salud.vercel.app/sitemap.xml
+
+
+-----------------------------------------------------
+ SITEMAPS 
+-----------------------------------------------------
+
+   ○ https://fhf-salud.vercel.app/sitemap-0.xml
+
+
