@@ -1,5 +1,10 @@
 # Implementación del módulo de citas · RF-01 a RF-06
 
+> Nota de vigencia PRY06: esta sección conserva la evidencia del 26/10/2026.
+> El PR #2 integrado el 06/11/2026 añadió 26 comprobaciones remotas PASS en
+> [TAR05](tar05-e2e.md). «Remoto pendiente» describe la etapa histórica anterior;
+> no se repitió esa corrida durante PRY06.
+
 ## Estado de esta entrega
 
 El código de RF-01 (registro), RF-02 (consulta de agenda), RF-03

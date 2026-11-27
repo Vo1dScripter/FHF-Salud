@@ -1,0 +1,13 @@
+test_cancelled_appointment_fixture_satisfies_cancellation_check (test_local_e2e.LocalE2ETest.test_cancelled_appointment_fixture_satisfies_cancellation_check) ... ok
+test_cleanup_retries_after_transient_container_failure (test_local_e2e.LocalE2ETest.test_cleanup_retries_after_transient_container_failure) ... ok
+test_e2e_scripts_defaults_to_appointments_and_clinical_history (test_local_e2e.LocalE2ETest.test_e2e_scripts_defaults_to_appointments_and_clinical_history) ... ok
+test_e2e_scripts_honors_explicit_override (test_local_e2e.LocalE2ETest.test_e2e_scripts_honors_explicit_override) ... ok
+test_expired_session_uses_past_token_and_invalid_refresh (test_local_e2e.LocalE2ETest.test_expired_session_uses_past_token_and_invalid_refresh) ... ok
+test_jwt_contains_role_and_future_expiration (test_local_e2e.LocalE2ETest.test_jwt_contains_role_and_future_expiration) ... ok
+test_session_cookie_matches_supabase_base64url_format (test_local_e2e.LocalE2ETest.test_session_cookie_matches_supabase_base64url_format) ... ok
+test_wait_retries_connection_reset_during_startup (test_local_e2e.LocalE2ETest.test_wait_retries_connection_reset_during_startup) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.005s
+
+OK

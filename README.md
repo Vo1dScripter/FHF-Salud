@@ -5,6 +5,20 @@ de Software (SCD-1011). La portada conserva su interfaz y el módulo de Gestión
 de Citas Médicas está implementado de extremo a extremo en código: RF-01 a
 RF-06, sesión Supabase, persistencia PostgreSQL, RLS y auditoría.
 
+## PRY06 · pacientes (base de integración)
+
+Navegación y consulta protegida `/pacientes`, API SSR `/api/pacientes`, contratos
+Zod/TypeScript y pruebas disponibles. Solo médicos activos; RLS conserva el alcance
+por citas. Alta y expediente clínico necesitan las migraciones y PR del equipo;
+RF-07 a RF-12 todavía no están completos. Contratos y límites:
+[docs/pry06/contratos-y-plan.md](docs/pry06/contratos-y-plan.md). Reproducción y
+resultados: [handoff de Rodrigo](docs/pry06/01-rodrigo-handoff.md).
+
+**Lectura de la evidencia histórica:** los párrafos siguientes de octubre que dicen
+«remoto pendiente» quedaron superados por la corrida TAR05 del 6 de noviembre
+incorporada en el PR #2: 26 PASS versionados en [docs/tar05-e2e.md](docs/tar05-e2e.md).
+No constituyen una nueva verificación remota de PRY06.
+
 ## Entrega verificada — 26 de octubre de 2026
 
 La corrida E2E final se ejecutó contra PostgreSQL 18.4 real, PostgREST 16.5,
@@ -21,9 +35,9 @@ de médico y agenda móvil a 390×844.
 Calidad: 75 pruebas Jest, 8 pruebas de multimedia, 4 de integración, lint
 estricto, typecheck y build de producción PASS.
 
-Esta evidencia es **local**: el proyecto Supabase remoto no se modificó porque
-esta copia no tiene URL, clave publicable, usuarios ni acceso al panel/CLI. La
-migración y la prueba E2E remotas siguen pendientes de activación.
+Esta corrida fue **local**. El 6 de noviembre de 2026, TAR05 registró
+**26 comprobaciones PASS** en Vercel con Supabase real. El alcance, los
+resultados y la limpieza del fixture están en [docs/tar05-e2e.md](docs/tar05-e2e.md).
 
 ## Autoría
 
@@ -108,9 +122,8 @@ límites y acuerdos de integración están en
 La configuración de identidad está en `src/constant/config.ts`; actualiza
 `siteConfig.url` al definir el dominio de despliegue. Los clientes de navegador
 y servidor, las cookies SSR y la renovación de sesión en `src/proxy.ts` ya están
-integrados. La migración está probada en PostgreSQL local, pero no se aplicó al
-proyecto Supabase remoto desde esta copia de trabajo; la prueba E2E contra
-Supabase sigue pendiente de activación.
+integrados. Las verificaciones de PostgreSQL local y de Supabase remoto para
+citas se describen en el [cierre TAR05](docs/tar05-e2e.md).
 
 ## Plantilla Next.js
 
@@ -609,10 +622,9 @@ respuestas 401/403/409/400 y móvil sin desbordamiento. Resultado: **14/14 PASS*
 los detalles y capturas están en [docs/demostracion.md](docs/demostracion.md) y
 [evidencias/](evidencias/).
 
-La migración y la prueba E2E contra el proyecto Supabase remoto siguen pendientes
-de activación; esta copia de trabajo no incluye credenciales remotas. Las pruebas
-SQL se ejecutaron contra PostgreSQL 18.4 local y las pruebas Jest usan dobles de
-prueba.
+Las pruebas SQL de esa corrida se ejecutaron contra PostgreSQL 18.4 local.
+Las pruebas Jest usan dobles de prueba. La corrida remota posterior queda
+registrada en [docs/tar05-e2e.md](docs/tar05-e2e.md).
 
 Actualización TAR05: el commit de integración existe como `ef8a8bf`, por
 Manuel Alvarez, y el merge `e5299b5` incorporó la rama del modelo de datos.
@@ -672,8 +684,8 @@ reemplaza sesión, autorización ni RLS. Nunca colocar claves `sb_secret_`,
 
 El proyecto se creó con exposición automática de tablas nuevas **desactivada**
 y RLS automático **activado**. Las migraciones de citas y acciones definen las
-tablas, políticas y RPC, pero no se aplicaron al proyecto remoto desde esta copia
-de trabajo. No se crearon usuarios ni registros de demostración en Supabase.
+tablas, políticas y RPC. La sección de actualización remota TAR05 registra las
+migraciones aplicadas y la limpieza de usuarios y registros ficticios.
 
 Supabase Auth tiene Site URL `https://fhf-salud.vercel.app` y retorno local
 `http://localhost:3000/`. El acceso implementado usa email/contraseña; los

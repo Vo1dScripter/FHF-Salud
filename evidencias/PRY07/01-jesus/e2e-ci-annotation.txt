@@ -1,0 +1,47 @@
+# Resumen E2E publicado por GitHub Actions
+# Commit: 54636389ab7b61e8de9acc8a59dca320e7a0f25f
+# Run: https://github.com/Vo1dScripter/FHF-Salud/actions/runs/45925241586
+# Job e2e: 140264916469 (success)
+# Fecha de consulta: 2026-11-27T01:56:50Z
+# Fuente: api.github.com/repos/Vo1dScripter/FHF-Salud/check-runs/140264916469/annotations
+
+POSTGRESQL: 9 migraciones aplicadas
+ omitida 202610250001_reminder_infrastructure.sql
+AUTH: PASS
+ cuatro cuentas ficticias preparadas.
+BUILD: iniciando compilación local.
+BUILD: PASS
+E2E: ejecutando appointments.mjs
+PASS 1440px RF-01: registro autenticado mediante la interfaz
+PASS 1440px RF-02: agenda y detalle persistidos tras recargar
+PASS 1440px RF-05: traslape rechazado sin registro adicional
+PASS 1440px permisos: 401 anónimo y 403 con sesión sin rol
+PASS 390px RF-01: registro autenticado mediante la interfaz
+PASS 390px RF-02: agenda y detalle persistidos tras recargar
+PASS 390px RF-05: traslape rechazado sin registro adicional
+PASS 390px permisos: 401 anónimo y 403 con sesión sin rol
+E2E: ejecutando clinical-history.mjs
+PASS 1440px RF-07: médico autorizado localiza y abre el expediente
+PASS 1440px RF-09: primera nota persistida con autoría y fecha del servidor
+PASS 1440px RF-08: recarga conserva la primera revisión y su asociación
+PASS 1440px RF-11: segunda revisión conserva la primera sin sobrescribir
+PASS 1440px RF-11: conflicto 409 ante escritura concurrente y recarga
+PASS 1440px RF-11: recarga tras conflicto y revisión final persistida
+PASS 390px RF-07: médico autorizado localiza y abre el expediente
+PASS 390px RF-09: primera nota persistida con autoría y fecha del servidor
+PASS 390px RF-08: recarga conserva la primera revisión y su asociación
+PASS 390px RF-11: segunda revisión conserva la primera sin sobrescribir
+PASS 390px RF-11: conflicto 409 ante escritura concurrente y recarga
+PASS 390px RF-11: recarga tras conflicto y revisión final persistida
+PASS RF-12: anónimo recibe 401 y no ve datos clínicos
+PASS RF-12: recepción recibe 403 y no modifica el expediente
+PASS RF-12: médico sin vínculo recibe 404/403 sin datos ni escritura
+PASS RF-12: cuenta sin rol recibe 403
+PASS RF-12: paciente inexistente recibe 404 sin crear expediente
+PASS RF-12: entrada inválida y suplantación rechazadas con 400
+PASS RF-12: sesión vencida recibe 401 sin leer ni escribir datos
+PASS RF-12: las escrituras denegadas no alteran el expediente
+SQL: PASS
+ expedientes, cuatro revisiones inmutables por paciente, autoría, fechas, vínculos y ausencia de escrituras denegadas verificados.
+CLEANUP: PASS
+ aplicación, contenedores, red y credenciales efímeras retirados.

@@ -1,0 +1,12 @@
+{
+  "commit": "54636389ab7b61e8de9acc8a59dca320e7a0f25f",
+  "workflow_run_id": 45925241586,
+  "job_id": 140264916469,
+  "job_name": "e2e",
+  "conclusion": "success",
+  "artifact_id": 15166291583,
+  "artifact_name": "pry07-e2e",
+  "artifact_bytes": 599948,
+  "run_url": "https://github.com/Vo1dScripter/FHF-Salud/actions/runs/45925241586",
+  "note": "El artefacto requiere autenticación para descargarse; el resumen PASS se conserva en e2e-ci-annotation.txt."
+}

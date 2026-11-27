@@ -18,6 +18,7 @@ import tempfile
 import threading
 import time
 from urllib.error import HTTPError, URLError
+from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 from uuid import uuid4
 
@@ -29,11 +30,13 @@ IMAGES = {
     "rest": "docker.io/postgrest/postgrest:v13.0.4",
 }
 INFRASTRUCTURE = "202610250001_reminder_infrastructure.sql"
+CLINICAL_WIDTHS = ("1440", "390")
 
 
 def container(*args, source=None):
     result = subprocess.run(
-        [ENGINE, *args], input=source, text=True, capture_output=True, timeout=300
+        [ENGINE, *args], input=source, text=True, encoding="utf-8",
+        capture_output=True, timeout=300,
     )
     if result.returncode:
         raise RuntimeError(f"El motor falló en {args[0]} (código {result.returncode}).")
@@ -91,14 +94,90 @@ def ready(url):
         return False
 
 
-def sign(role, secret):
+def jwt(claims, secret):
     def encode(value):
         return base64.urlsafe_b64encode(value).rstrip(b"=").decode()
 
     header = encode(b'{"alg":"HS256","typ":"JWT"}')
-    claims = encode(json.dumps({"role": role, "exp": int(time.time()) + 3600}).encode())
-    body = f"{header}.{claims}"
+    payload = encode(json.dumps(claims, separators=(",", ":")).encode())
+    body = f"{header}.{payload}"
     return f"{body}.{encode(hmac.digest(secret.encode(), body.encode(), hashlib.sha256))}"
+
+
+def sign(role, secret):
+    return jwt({"role": role, "exp": int(time.time()) + 3600}, secret)
+
+
+def expired_session(account, physician_id, secret, now):
+    """Sesión ficticia vencida: JWT caducado y refresh token inválido."""
+    metadata = {
+        "appointment_role": "physician",
+        "physician_id": str(physician_id),
+    }
+    token = jwt(
+        {
+            "aud": "authenticated",
+            "app_metadata": metadata,
+            "email": account["email"],
+            "exp": now - 3600,
+            "iat": now - 7200,
+            "role": "authenticated",
+            "session_id": str(uuid4()),
+            "sub": account["id"],
+            "user_metadata": {},
+        },
+        secret,
+    )
+    return {
+        "access_token": token,
+        "expires_at": now - 3600,
+        "expires_in": 3600,
+        "refresh_token": "invalid-" + secrets.token_hex(16),
+        "token_type": "bearer",
+        "user": {
+            "app_metadata": metadata,
+            "aud": "authenticated",
+            "created_at": account.get("createdAt", ""),
+            "email": account["email"],
+            "id": account["id"],
+            "role": "authenticated",
+            "user_metadata": {},
+        },
+    }
+
+
+def cancelled_appointment_sql(patient_id, physician_id, starts_at, reason):
+    """Cita cancelada ficticia que cumple el CHECK de campos de cancelación.
+
+    appointments_cancellation_fields_check exige cancelled_at y
+    cancellation_reason no nulos cuando status = 'cancelled'. Omitirlos aborta
+    toda la preparación del escenario con ON_ERROR_STOP.
+    """
+    return (
+        "insert into public.appointments"
+        "(patient_id,physician_id,starts_at,duration_minutes,reason,status,"
+        "cancelled_at,cancellation_reason) values "
+        f"('{patient_id}','{physician_id}','{starts_at}',30,'{reason}',"
+        f"'cancelled','{starts_at}','Cancelación ficticia PRY07 E2E');"
+    )
+
+
+def session_cookie(host, session):
+    """Codifica la sesión con el mismo formato base64url de @supabase/ssr."""
+    encoded = base64.urlsafe_b64encode(
+        json.dumps(session, separators=(",", ":")).encode()
+    ).rstrip(b"=").decode()
+    return f"sb-{host.split('.')[0]}-auth-token", f"base64-{encoded}"
+
+
+def e2e_scripts():
+    selected = os.getenv("PRY07_E2E_SCRIPT")
+    if selected:
+        return [Path(selected).resolve()]
+    return [
+        ROOT / "scripts/pry07/appointments.mjs",
+        ROOT / "scripts/pry07/clinical-history.mjs",
+    ]
 
 
 def gateway(stack, ports, anonymous, public_key):
@@ -175,8 +254,8 @@ def gateway(stack, ports, anonymous, public_key):
     return f"http://127.0.0.1:{server.server_port}", allow_origin
 
 
-def seed_account(auth_port, admin, sql, role, physician_id):
-    account = {"email": f"{role}@example.com", "password": secrets.token_hex(24)}
+def seed_account(auth_port, admin, sql, role, physician_id, label=None):
+    account = {"email": f"{label or role}@example.com", "password": secrets.token_hex(24)}
     metadata = {"appointment_role": role} if role != "unassigned" else {}
     if role == "physician":
         metadata["physician_id"] = str(physician_id)
@@ -186,13 +265,192 @@ def seed_account(auth_port, admin, sql, role, physician_id):
         headers={"Authorization": f"Bearer {admin}", "Content-Type": "application/json"},
     )
     try:
-        with urlopen(request, timeout=10):
-            pass
+        with urlopen(request, timeout=10) as reply:
+            created = json.loads(reply.read())
     except (URLError, OSError):
         raise RuntimeError(f"Auth rechazó la cuenta de prueba {role}.") from None
+    account["id"] = created["id"]
+    account["createdAt"] = created.get("created_at", "")
     # Standalone GoTrue does not populate the PostgREST role automatically.
     sql(f"update auth.users set role = 'authenticated' where email = '{account['email']}';")
     return account
+
+
+def verify_clinical(sql, fixtures):
+    """Comprueba en PostgreSQL el resultado real del escenario clínico."""
+
+    def value(statement):
+        return sql(statement).strip()
+
+    def expect(actual, expected, label):
+        if actual != expected:
+            raise RuntimeError(f"Verificación clínica falló: {label}.")
+        return actual
+
+    physician_id = fixtures["physicianId"]
+    physician_user_id = fixtures["accounts"]["physician"]["id"]
+    physician_b_id = fixtures["physicianBId"]
+    for width in CLINICAL_WIDTHS:
+        clinical = fixtures["clinical"][width]
+        patient_id = clinical["patientId"]
+        record = value(
+            f"select id, current_revision from public.clinical_records "
+            f"where patient_id = '{patient_id}';"
+        )
+        if not record:
+            raise RuntimeError(f"Verificación clínica falló: falta el expediente {width}.")
+        record_id, current_revision = record.split("|")
+        expect(int(current_revision), 4, f"revisión vigente {width}")
+        revisions = value(
+            f"select count(*), count(distinct revision_number), "
+            f"min(revision_number), max(revision_number), "
+            f"count(distinct author_physician_id), "
+            f"min(author_physician_id::text), min(author_user_id::text) "
+            f"from public.clinical_record_revisions where record_id = '{record_id}';"
+        ).split("|")
+        expect(int(revisions[0]), 4, f"total de revisiones {width}")
+        expect(int(revisions[1]), 4, f"números de revisión únicos {width}")
+        expect(int(revisions[2]), 1, f"primera revisión {width}")
+        expect(int(revisions[3]), 4, f"última revisión {width}")
+        expect(int(revisions[4]), 1, f"autor único {width}")
+        expect(revisions[5], physician_id, f"médico autor {width}")
+        expect(revisions[6], physician_user_id, f"usuario autor {width}")
+        expect(
+            int(value(
+                f"select count(*) from public.patient_physicians "
+                f"where patient_id = '{patient_id}' and physician_id = '{physician_id}';"
+            )),
+            1,
+            f"vínculo del médico autorizado {width}",
+        )
+        expect(
+            int(value(
+                f"select count(*) from public.patient_physicians "
+                f"where patient_id = '{patient_id}' and physician_id = '{physician_b_id}';"
+            )),
+            0,
+            f"vínculo del médico sin acceso {width}",
+        )
+        expect(
+            int(value(
+                f"select count(*) from public.clinical_records "
+                f"where patient_id = '{patient_id}';"
+            )),
+            1,
+            f"expediente único {width}",
+        )
+        expect(
+            int(value(
+                f"select count(*) from public.clinical_record_revisions "
+                f"where record_id = '{record_id}' and (coalesce(background,'') "
+                f"|| coalesce(allergies,'') || coalesce(diagnosis,'') "
+                f"|| coalesce(treatment,'') || coalesce(change_reason,'')) "
+                f"like '%DENEGADO%';"
+            )),
+            0,
+            f"escrituras denegadas ausentes {width}",
+        )
+        texts = clinical["texts"]
+        expect(
+            int(value(
+                f"select count(*) from public.clinical_record_revisions "
+                f"where record_id = '{record_id}' "
+                f"and diagnosis = '{texts['stale']['diagnosis']}';"
+            )),
+            0,
+            f"intento obsoleto no persistido ({width})",
+        )
+        for number, stage in ((1, "first"), (2, "second"), (3, "concurrent"), (4, "final")):
+            expect(
+                value(
+                    f"select coalesce(diagnosis,'') from public.clinical_record_revisions "
+                    f"where record_id = '{record_id}' and revision_number = {number};"
+                ),
+                texts[stage]["diagnosis"],
+                f"diagnóstico de la revisión {number} ({width})",
+            )
+        for number, status in ((1, "reported"), (2, "none_reported"), (3, "not_recorded"), (4, "reported")):
+            expect(
+                value(
+                    f"select allergies_status from public.clinical_record_revisions "
+                    f"where record_id = '{record_id}' and revision_number = {number};"
+                ),
+                status,
+                f"estado de alergias de la revisión {number} ({width})",
+            )
+        expect(
+            value(
+                f"select coalesce(change_reason,'') from public.clinical_record_revisions "
+                f"where record_id = '{record_id}' and revision_number = 1;"
+            ),
+            "",
+            f"motivo vacío de la primera revisión ({width})",
+        )
+        expect(
+            value(
+                f"select coalesce(change_reason,'') from public.clinical_record_revisions "
+                f"where record_id = '{record_id}' and revision_number = 3;"
+            ),
+            texts["concurrent"]["changeReason"],
+            f"motivo de la revisión concurrente ({width})",
+        )
+        expect(
+            value(
+                f"select coalesce(allergies,'') from public.clinical_record_revisions "
+                f"where record_id = '{record_id}' and revision_number = 4;"
+            ),
+            texts["final"]["allergies"],
+            f"alergias de la revisión final ({width})",
+        )
+        expect(
+            int(value(
+                f"select count(*) from public.clinical_record_revisions "
+                f"where record_id = '{record_id}' and revision_number > 1 "
+                f"and change_reason is null;"
+            )),
+            0,
+            f"motivos obligatorios ({width})",
+        )
+        expect(
+            int(value(
+                f"select count(*) from public.clinical_record_revisions "
+                f"where record_id = '{record_id}' "
+                f"and created_at > now() - interval '1 hour';"
+            )),
+            4,
+            f"fechas del servidor ({width})",
+        )
+    primary = fixtures["clinical"]["1440"]["patientId"]
+    expect(
+        int(value(
+            f"select count(*) from public.appointments "
+            f"where patient_id = '{primary}' and physician_id = '{physician_b_id}' "
+            f"and status = 'cancelled' and cancelled_at is not null "
+            f"and btrim(coalesce(cancellation_reason, '')) <> '';"
+        )),
+        1,
+        "cita cancelada del médico sin vínculo",
+    )
+    missing = fixtures["nonexistentPatientId"]
+    expect(
+        int(value(
+            f"select count(*) from public.clinical_records where patient_id = '{missing}';"
+        )),
+        0,
+        "expediente inexistente no creado",
+    )
+    expect(
+        int(value(
+            f"select count(*) from public.patient_physicians where patient_id = '{missing}';"
+        )),
+        0,
+        "vínculo inexistente no creado",
+    )
+    print(
+        "SQL: PASS; expedientes, cuatro revisiones inmutables por paciente, "
+        "autoría, fechas, vínculos y ausencia de escrituras denegadas verificados.",
+        flush=True,
+    )
 
 
 def stop(process):
@@ -266,20 +524,114 @@ def run():
             }, 3000)
             wait_for("Auth", lambda: ready(f"http://127.0.0.1:{auth}/health"))
             wait_for("PostgREST", lambda: ready(f"http://127.0.0.1:{rest}/"))
-            patient_id, physician_id = uuid4(), uuid4()
+            patient_id, physician_id, physician_b_id = uuid4(), uuid4(), uuid4()
+            clinical_ids = {width: uuid4() for width in CLINICAL_WIDTHS}
+            nonexistent_patient_id = uuid4()
+            clinical_names = {
+                "1440": "Paciente Ficticio Historial 1440",
+                "390": "Paciente Ficticio Historial 390",
+            }
             sql(
-                f"insert into public.patients(id,display_name) values ('{patient_id}','Paciente ficticio PRY07');"
-                f"insert into public.physicians(id,display_name) values ('{physician_id}','Médico ficticio PRY07');"
+                f"insert into public.patients(id,display_name,birth_date,sex,phone) values "
+                f"('{patient_id}','Paciente ficticio PRY07',null,null,null),"
+                f"('{clinical_ids['1440']}','{clinical_names['1440']}','1988-04-12','female','5550001440'),"
+                f"('{clinical_ids['390']}','{clinical_names['390']}','1990-09-23','male','5550000390');"
+                f"insert into public.physicians(id,display_name) values "
+                f"('{physician_id}','Médico ficticio PRY07'),"
+                f"('{physician_b_id}','Médica ficticia sin vínculo PRY07');"
             )
             admin = sign("service_role", jwt_secret)
             accounts = {
-                role: seed_account(auth, admin, sql, role, physician_id)
-                for role in ("receptionist", "physician", "unassigned")
+                "receptionist": seed_account(auth, admin, sql, "receptionist", physician_id),
+                "physician": seed_account(auth, admin, sql, "physician", physician_id),
+                "physicianB": seed_account(
+                    auth, admin, sql, "physician", physician_b_id, "physician-b"
+                ),
+                "unassigned": seed_account(auth, admin, sql, "unassigned", physician_id),
             }
-            print("AUTH: PASS; tres cuentas ficticias preparadas.", flush=True)
-            with open(scratch / "fixtures.json", "w", opener=lambda p, flags: os.open(p, flags, 0o600)) as fixture:
-                json.dump({"accounts": accounts, "patientId": str(patient_id), "physicianId": str(physician_id)}, fixture)
+            print("AUTH: PASS; cuatro cuentas ficticias preparadas.", flush=True)
+            sql(
+                f"insert into public.patient_physicians(patient_id,physician_id,created_by) values "
+                f"('{clinical_ids['1440']}','{physician_id}','{accounts['physician']['id']}'),"
+                f"('{clinical_ids['390']}','{physician_id}','{accounts['physician']['id']}');"
+                f"insert into public.appointments(patient_id,physician_id,starts_at,duration_minutes,reason,status) values "
+                f"('{clinical_ids['1440']}','{physician_id}','2035-09-10T09:00:00Z',30,'Cita ficticia E2E historial 1440','confirmed'),"
+                f"('{clinical_ids['390']}','{physician_id}','2035-09-11T09:00:00Z',30,'Cita ficticia E2E historial 390','confirmed');"
+            )
+            sql(
+                cancelled_appointment_sql(
+                    clinical_ids['1440'], physician_b_id,
+                    '2035-09-10T10:00:00Z',
+                    'Cita ficticia cancelada sin vínculo',
+                )
+            )
+            clinical_texts = {}
+            for width in CLINICAL_WIDTHS:
+                clinical_texts[width] = {
+                    "first": {
+                        "allergies": f"Alergia ficticia inicial {width}",
+                        "allergiesStatus": "reported",
+                        "background": f"Antecedentes ficticios iniciales {width}",
+                        "diagnosis": f"Diagnóstico ficticio inicial {width}",
+                        "treatment": f"Tratamiento ficticio inicial {width}",
+                    },
+                    "second": {
+                        "allergies": None,
+                        "allergiesStatus": "none_reported",
+                        "background": f"Antecedentes ficticios revisados {width}",
+                        "changeReason": f"Motivo ficticio de la segunda revisión {width}",
+                        "diagnosis": f"Diagnóstico ficticio revisado {width}",
+                        "treatment": f"Tratamiento ficticio revisado {width}",
+                    },
+                    "concurrent": {
+                        "allergies": None,
+                        "allergiesStatus": "not_recorded",
+                        "background": f"Antecedentes ficticios concurrentes {width}",
+                        "changeReason": f"Actualización concurrente ficticia {width}",
+                        "diagnosis": f"Diagnóstico ficticio concurrente {width}",
+                        "treatment": f"Tratamiento ficticio concurrente {width}",
+                    },
+                    "stale": {
+                        "allergies": None,
+                        "allergiesStatus": "none_reported",
+                        "background": f"Antecedentes ficticios obsoletos {width}",
+                        "changeReason": f"Intento obsoleto ficticio {width}",
+                        "diagnosis": f"Diagnóstico ficticio obsoleto {width}",
+                        "treatment": f"Tratamiento ficticio obsoleto {width}",
+                    },
+                    "final": {
+                        "allergies": f"Alergia ficticia final {width}",
+                        "allergiesStatus": "reported",
+                        "background": f"Antecedentes ficticios finales {width}",
+                        "changeReason": f"Motivo ficticio de la revisión final {width}",
+                        "diagnosis": f"Diagnóstico ficticio final {width}",
+                        "treatment": f"Tratamiento ficticio final {width}",
+                    },
+                }
             api, allow_origin = gateway(stack, {"auth": auth, "rest": rest}, sign("anon", jwt_secret), public_key)
+            now = int(time.time())
+            cookie_name, cookie_value = session_cookie(
+                urlparse(api).hostname or "127.0.0.1",
+                expired_session(accounts["physician"], physician_id, jwt_secret, now),
+            )
+            fixtures = {
+                "accounts": accounts,
+                "clinical": {
+                    width: {
+                        "patientId": str(clinical_ids[width]),
+                        "patientName": clinical_names[width],
+                        "texts": clinical_texts[width],
+                    }
+                    for width in CLINICAL_WIDTHS
+                },
+                "expiredSession": {"name": cookie_name, "value": cookie_value},
+                "nonexistentPatientId": str(nonexistent_patient_id),
+                "patientId": str(patient_id),
+                "physicianBId": str(physician_b_id),
+                "physicianId": str(physician_id),
+            }
+            with open(scratch / "fixtures.json", "w", encoding="utf-8", opener=lambda p, flags: os.open(p, flags, 0o600)) as fixture_file:
+                json.dump(fixtures, fixture_file)
             env = {
                 **os.environ, "NEXT_PUBLIC_SUPABASE_URL": api,
                 "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY": public_key,
@@ -288,7 +640,7 @@ def run():
                 "PRY07_E2E_OUTPUT": str(output),
             }
             print("BUILD: iniciando compilación local.", flush=True)
-            with (scratch / "build.log").open("w") as build_log:
+            with (scratch / "build.log").open("w", encoding="utf-8") as build_log:
                 result = subprocess.run(["npm", "run", "build"], cwd=ROOT, env=env, stdout=build_log,
                                         stderr=subprocess.STDOUT, timeout=300)
             if result.returncode:
@@ -300,18 +652,20 @@ def run():
                 port = reservation.getsockname()[1]
             app = f"http://127.0.0.1:{port}"
             allow_origin(app)
-            app_log = stack.enter_context((scratch / "app.log").open("w"))
+            app_log = stack.enter_context((scratch / "app.log").open("w", encoding="utf-8"))
             process = subprocess.Popen(
                 ["node", "node_modules/next/dist/bin/next", "start", "-H", "127.0.0.1", "-p", str(port)],
                 cwd=ROOT, env=env, stdout=app_log, stderr=subprocess.STDOUT,
             )
             stack.callback(stop, process)
             wait_for("Aplicación", lambda: ready(app + "/citas/acceso"), process)
-            test = Path(os.getenv("PRY07_E2E_SCRIPT", ROOT / "scripts/pry07/appointments.mjs")).resolve()
-            if not test.is_relative_to(ROOT) or not test.is_file():
-                raise RuntimeError("El escenario E2E debe ser un archivo de esta copia local.")
-            subprocess.run(["node", str(test)], cwd=ROOT, env={**env, "PRY07_BASE_URL": app},
-                           check=True, timeout=180)
+            for test in e2e_scripts():
+                if not test.is_relative_to(ROOT) or not test.is_file():
+                    raise RuntimeError("El escenario E2E debe ser un archivo de esta copia local.")
+                print(f"E2E: ejecutando {test.name}", flush=True)
+                subprocess.run(["node", str(test)], cwd=ROOT, env={**env, "PRY07_BASE_URL": app},
+                               check=True, timeout=300)
+            verify_clinical(sql, fixtures)
         print("CLEANUP: PASS; aplicación, contenedores, red y credenciales efímeras retirados.", flush=True)
 
 

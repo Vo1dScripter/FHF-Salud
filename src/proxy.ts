@@ -6,4 +6,6 @@ export async function proxy(request: NextRequest) {
   return updateSession(request);
 }
 
-export const config = { matcher: ['/citas/:path*'] };
+export const config = {
+  matcher: ['/citas/:path*', '/pacientes/:path*', '/api/pacientes/:path*'],
+};
