@@ -36,6 +36,14 @@ export default function QuickNav({
     <nav
       className={cn('quick-nav', `quick-nav--${variant}`, className)}
       aria-label='Navegación principal'
+      onKeyDown={(event) => {
+        if (event.key === 'Escape' && isOpen) {
+          setIsOpen(false);
+          event.currentTarget
+            .querySelector<HTMLButtonElement>('.quick-nav__toggle')
+            ?.focus();
+        }
+      }}
     >
       <Link className='quick-nav__brand' href='/'>
         {brand}
@@ -44,14 +52,6 @@ export default function QuickNav({
       <div
         className={cn('quick-nav__links', isOpen && 'is-open')}
         id={menuId}
-        onKeyDown={(event) => {
-          if (event.key === 'Escape') {
-            setIsOpen(false);
-            event.currentTarget.parentElement
-              ?.querySelector<HTMLButtonElement>('.quick-nav__toggle')
-              ?.focus();
-          }
-        }}
       >
         {items.map((item) => (
           <Link

@@ -513,8 +513,14 @@
   font-style: italic;
   line-height: 2rem;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.8rem;
+}
+.appointment-form-panel > .appointment-form-note {
+  margin-bottom: 2.4rem;
+}
+.appointments-page .appointment-form-note .appointment-icon {
+  margin-top: 0.4rem;
 }
 .appointment-detail dl {
   margin: 2.4rem 0 0;

@@ -19,7 +19,7 @@ import { type AppointmentListState, formatAppointmentDate } from './types';
 export default function AppointmentList({
   canCreate = true,
   canManage = false,
-  detailHref = appointmentRoutes.detail,
+  detailHrefPrefix,
   onAppointmentUpdated,
   onClearFilters,
   onRetry,
@@ -29,7 +29,11 @@ export default function AppointmentList({
   canCreate?: boolean;
   /** Pista de presentación; el servidor vuelve a autorizar cada mutación. */
   canManage?: boolean;
-  detailHref?: (id: string) => string;
+  /**
+   * Prefijo serializable para enlaces de detalle. Los componentes de servidor
+   * no pueden pasar funciones a este componente cliente.
+   */
+  detailHrefPrefix?: string;
   onAppointmentUpdated?: (appointment: AppointmentView) => void;
   onClearFilters?: () => void;
   onRetry?: () => void;
@@ -40,6 +44,10 @@ export default function AppointmentList({
     mode: AppointmentActionMode;
   } | null>(null);
   const isPreparation = state.kind === 'preparation';
+  const detailHref = (id: string) =>
+    detailHrefPrefix
+      ? `${detailHrefPrefix}${encodeURIComponent(id)}`
+      : appointmentRoutes.detail(id);
   return (
     <section aria-label='Listado de citas'>
       <div className='appointments-list-heading'>
